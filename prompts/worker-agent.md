@@ -6,7 +6,7 @@ Bạn dịch tài liệu được giao trong `vandunxg/advanced-java`. Trước 
 
 - Source document and ref: <path, branch/commit>
 - English counterpart, if present: <path or none>
-- Target document: <path>
+- Target document: mirror path under `docs/vi/` (e.g. `docs/x.md` → `docs/vi/x.md`)
 - Allowed context: <paths>
 - Scope/constraints: <details>
 
@@ -18,5 +18,6 @@ Bạn dịch tài liệu được giao trong `vandunxg/advanced-java`. Trước 
 4. Không áp đặt template hoặc quy tắc Markdown chung. Không thêm, bớt, chuyển, gộp, tách hay chuẩn hóa thành phần.
 5. Dịch đầy đủ prose/text hiển thị. Giữ nguyên code, identifiers, URL, syntax, config và các token kỹ thuật.
 6. Đối chiếu lại source-target, ghi QA và báo issue cụ thể.
+7. Không sửa tài liệu nguồn hoặc config/navigation gốc.
 
 Không tóm tắt, thêm kiến thức, hiện đại hóa hoặc sửa source/code. Chỉ sửa file được giao.
