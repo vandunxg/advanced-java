@@ -1,42 +1,28 @@
-# Workflow dịch file Markdown
+# Workflow dịch docs
 
 ## 1. Nhận task
 
-Mỗi task cần khai báo:
-- file nguồn chính xác (path và branch/commit nếu có);
-- file đích tương ứng dưới `docs/vi/`;
-- các file liên quan được phép đọc để tham khảo;
-- giới hạn scope nếu chỉ dịch một section.
+Task cần chỉ rõ:
+- tài liệu gốc và source ref;
+- English counterpart nếu có;
+- target path/file tương ứng;
+- context file được phép đọc;
+- giới hạn scope nếu chỉ dịch một phần.
 
-Không dịch file khác chỉ vì chúng được liên kết từ nguồn.
+## 2. Đọc và đối chiếu cấu trúc
 
-## 2. Đọc và lập ranh giới
-
-Đọc trọn file nguồn trước khi dịch. Ghi nhận:
-- hierarchy heading và thứ tự section;
-- code fence, inline code, tables, lists, links, images;
-- nội dung tiếp diễn từ/đến file khác;
-- tên Java/API, version, con số và thuật ngữ trọng yếu.
-
-Dùng file kế cận chỉ để hiểu context và liên kết; không đưa nội dung không thuộc file nguồn vào bản dịch.
+Đọc toàn bộ tài liệu gốc. Khi có English counterpart, đọc bản đó để đối chiếu cấu trúc, cách trình bày và thuật ngữ. Ghi nhận đường dẫn, thứ tự nội dung, hierarchy, các thành phần hiển thị, metadata, link và code. Source khác biệt thì đánh dấu cho QA; không tự lược bỏ.
 
 ## 3. Tạo bản dịch
 
-Tạo file tại `docs/vi/<same-relative-path>.md`, giữ tên file gốc. Dịch theo từng đoạn và giữ cấu trúc. Không thêm tiêu đề “Bản dịch” trừ khi cấu trúc của dự án yêu cầu.
+Tạo file tại target path tương ứng với tài liệu tham chiếu trong layout ngôn ngữ được task/repo chỉ định. Tên file, đường dẫn tương đối và cấu trúc bên trong phải khớp tài liệu tiếng Anh tương ứng; nếu không có, khớp source gốc.
 
-Giữ link external nguyên URL. Với relative links và anchors, chỉ chỉnh path khi cần trỏ đúng bản tiếng Việt và target đã tồn tại; ghi mapping trong QA. Không để link trỏ nhầm nguồn dịch hoặc đường dẫn hỏng.
+Dịch text hiển thị tại chỗ, giữ nguyên thứ tự, ranh giới và markup thực tế. Không thêm section/header mới hoặc đổi format chỉ theo một chuẩn Markdown chung. Không ghi đè source.
 
-## 4. Kiểm tra trước khi bàn giao
+## 4. Links và components
 
-Đối chiếu từ đầu đến cuối với source: đủ nội dung, code không đổi, cấu trúc Markdown giữ đúng, link/path hợp lệ, thuật ngữ nhất quán. Ghi QA report cho file.
+Giữ URL, destination, route, anchor, component, attribute và syntax đúng theo tài liệu tham chiếu. Chỉ cập nhật link nếu task yêu cầu hoặc cần thiết để ánh xạ bản dịch và target đã tồn tại; kiểm tra mọi target đã thay đổi. Không tự ý chỉnh nav/site config.
 
-Nếu có lỗi source, phần không đọc được, link mơ hồ hoặc nội dung cần tác giả xác nhận, đánh dấu rõ; không tự lấp khoảng trống.
+## 5. QA
 
-## 5. File không phải prose thông thường
-
-Với README, index, sidebar, frontmatter, HTML/VuePress component, Mermaid hoặc metadata:
-- giữ nguyên cấu trúc và key/slug được tooling sử dụng;
-- chỉ dịch text hiển thị cho người đọc;
-- không sửa cấu hình hoặc cú pháp;
-- không dịch file máy sinh hoặc binary;
-- nếu dịch có thể làm đổi route/anchor/build, ghi rõ và yêu cầu task bao gồm cập nhật điều hướng trước khi thay đổi.
+Đối chiếu source gốc từng phần với bản dịch; đối chiếu English counterpart để xác nhận structural parity khi có. Ghi các chênh lệch, file đích, lỗi source và link issue trong QA report. Chỉ dịch file được giao; không kéo nội dung liên kết vào.
