@@ -25,7 +25,9 @@ Không áp đặt một template hay quy tắc Markdown chung lên tài liệu d
 
 ## Scope và vận hành
 
-- Mỗi task phải nêu source gốc, English counterpart nếu có, source ref, target tương ứng và phạm vi được giao.
+- Mỗi task phải nêu source gốc, English counterpart nếu có, source ref, target tương ứng dưới `docs/vi/` và phạm vi được giao.
+- Giữ nguyên toàn bộ docs gốc. Bản dịch là cây `/vi` riêng, mirror path của docs gốc/English counterpart; chỉ thêm trang dịch vào cây đó.
+- VitePress có language switch giữa locale gốc và `/vi/`. Chỉ sửa locale config cần thiết để bật switch; không sửa cấu trúc/nội dung trang gốc.
 - Không sửa tài liệu nguồn, build, giao diện, dependency, route hoặc file ngoài scope.
 - Mỗi file đích chỉ có một owner tại một thời điểm.
 - QA phải so sánh bản dịch với source gốc và English counterpart khi có; chỉ báo PASS sau khi xác minh.
