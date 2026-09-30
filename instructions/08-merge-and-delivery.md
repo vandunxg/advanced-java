@@ -6,7 +6,7 @@ Chỉ báo hoàn tất khi mọi file trong scope có bản dịch tương ứng
 
 ## 2. Structural parity
 
-Bản dịch phải theo đúng file/path và cấu trúc của English counterpart nếu có; nếu không có, theo tài liệu gốc. Giữ nguyên thứ tự, hierarchy, ranh giới, cách trình bày và vị trí các thành phần. Bản dịch chỉ nằm dưới `docs/vi/`; không ghi đè, di chuyển hoặc chỉnh sửa docs gốc. Chỉ thêm/sửa locale entry trong VitePress config để switch UI hoạt động; không đổi homepage hoặc routes của locale gốc. Nếu English counterpart khác source, bảo toàn nội dung source và ghi khác biệt.
+Bản dịch phải theo đúng file/path và cấu trúc của English counterpart nếu có; nếu không có, theo tài liệu gốc. Giữ nguyên thứ tự, hierarchy, ranh giới, cách trình bày và vị trí các thành phần. Bản dịch chỉ nằm dưới `docs/vi/`; không ghi đè, di chuyển hoặc chỉnh sửa docs gốc. Locale definitions nằm riêng trong `docs/.vitepress/locales.ts`; thay đổi trong `config.mts` chỉ gồm import và property `locales`. Không đổi homepage hoặc routes của locale gốc. Nếu English counterpart khác source, bảo toàn nội dung source và ghi khác biệt.
 
 Không đưa QA/progress notes vào tài liệu dịch trừ khi chúng thực sự thuộc source.
 
