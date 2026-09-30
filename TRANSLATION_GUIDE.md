@@ -27,6 +27,9 @@ Không chuẩn hóa đầu ra theo một template Markdown chung hoặc theo cá
 9. `instructions/08-merge-and-delivery.md`
 10. Prompt task trong `prompts/`
 
-## Định vị bản dịch
+## Bản dịch `/vi` và ngôn ngữ trên UI
 
-Đích dịch phải theo đúng cấu trúc thư mục và tên file của English counterpart nếu có; nếu không có, theo đúng đường dẫn tài liệu gốc trong layout ngôn ngữ mà task chỉ định. Ví dụ `docs/vi/<source-relative-path>` chỉ là ví dụ mapping khi nó khớp repo; không được xem là template bắt buộc. Không ghi đè source. Không tự tạo navigation hoặc đổi route.
+- Giữ nguyên docs gốc. Toàn bộ bản tiếng Việt nằm trong `docs/vi/`, mirror đúng đường dẫn/tên file dưới `docs/` của tài liệu gốc (hoặc English counterpart tương ứng).
+- Trang chủ tiếng Việt là `docs/vi/index.md`, tương ứng với `docs/index.md`.
+- Language switch được cung cấp bởi locale config của VitePress. Giữ lựa chọn locale gốc và thêm `vi` trỏ tới `/vi/`; không đổi homepage gốc, không sửa source docs và không sao chép/ghi đè file gốc.
+- Khi upstream cập nhật, các thay đổi nguồn nằm tách biệt với `/vi`; chỉ cập nhật locale config khi upstream có thay đổi cần merge. Không sửa nội dung nguồn để giảm sai khác.
