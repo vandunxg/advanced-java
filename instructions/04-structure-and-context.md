@@ -1,6 +1,6 @@
 # Quy tắc cấu trúc và ngữ cảnh
 
-Repo advanced-java có các tài liệu Markdown độc lập, liên kết chéo và một số chủ đề nối tiếp nhau. Quy tắc này thay cho cách chia source thành các PDF part.
+Repo advanced-java có các tài liệu Markdown độc lập, liên kết chéo và một số chủ đề nối tiếp nhau.
 
 ## 1. File và section boundary
 
