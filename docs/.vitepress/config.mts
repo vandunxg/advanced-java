@@ -3,6 +3,24 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "advanced-java",
   ignoreDeadLinks: true,
+  locales: {
+    root: {
+      label: "中文",
+      lang: "zh-CN",
+    },
+    vi: {
+      label: "Tiếng Việt",
+      lang: "vi-VN",
+      link: "/vi/",
+      themeConfig: {
+        nav: [
+          { text: "Trang chủ", link: "/vi/" },
+          { text: "Tài liệu gốc (中文)", link: "/" },
+        ],
+        sidebar: [],
+      },
+    },
+  },
   themeConfig: {
     search: {
       provider: 'local'
