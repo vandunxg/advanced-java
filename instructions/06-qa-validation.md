@@ -1,27 +1,25 @@
 # Quy tắc QA và validation
 
-QA phải đối chiếu trực tiếp file nguồn và bản dịch tương ứng; không đánh PASS chỉ vì bản dịch đọc tự nhiên.
+QA phải đối chiếu trực tiếp tài liệu gốc và bản dịch; khi có English counterpart, dùng thêm để xác nhận cấu trúc đầu ra.
 
-## 1. Độ đầy đủ
+## 1. Content completeness
 
-Kiểm tra mọi heading, paragraph, câu hỏi, list item, table cell/row, caption, note, warning, link label và prose quanh code đều có nội dung tương ứng. Không có phần tự thêm.
+Kiểm tra mọi nội dung trong source có counterpart trong bản dịch; không thiếu/duplicate và không có prose tự thêm. Source gốc là căn cứ đầy đủ nội dung. Nếu source và English counterpart khác nhau, ghi rõ khác biệt.
 
-## 2. Fidelity kỹ thuật Java
+## 2. Structural parity
 
-Kiểm tra:
-- tên class/API/method/package/annotation/parameter chính xác;
-- Java và framework version, con số, đơn vị, độ phức tạp, thứ tự bước;
-- semantics của concurrency, exception, transaction, cache, queue và distributed system;
-- phủ định, điều kiện, giới hạn, ngoại lệ, mức độ khuyến nghị;
-- thuật ngữ nhất quán với glossary.
+So sánh bản dịch với English counterpart nếu có, nếu không thì với source gốc:
+- cùng file/path mapping và thứ tự nội dung;
+- cùng heading hierarchy, ranh giới đoạn, section, thứ tự ví dụ;
+- cùng cấu trúc và vị trí table, list, code, image, diagram, component, metadata;
+- cùng link/anchor/route mapping và cách trình bày;
+- không có định dạng áp đặt từ template/quy ước ngoài source.
 
-## 3. Code và cấu trúc
+Không chỉ kiểm tra syntax Markdown theo một chuẩn riêng; xác nhận bản dịch tái tạo cấu trúc của tài liệu tham chiếu.
 
-So sánh source và target:
-- code/command/query/config/log không đổi;
-- code fence và inline code cân bằng;
-- heading hierarchy, table, list, blockquote, HTML/diagram còn nguyên;
-- link/anchor/image path không bị hỏng hoặc thay đổi ngoài scope.
+## 3. Technical fidelity
+
+Kiểm tra tên class/API/method/package/annotation, version, số liệu, đơn vị, logic, phủ định, điều kiện, exception, recommendation và thuật ngữ Java/backend. Đảm bảo code, command, query, config, log và identifier không đổi.
 
 ## 4. Trạng thái QA
 
@@ -31,24 +29,14 @@ Dùng một trạng thái:
 - `NEEDS_FIX`
 - `BLOCKED_SOURCE_UNCLEAR`
 
-Không dùng PASS nếu còn lỗi meaning, thiếu nội dung, sai thuật ngữ hoặc link/boundary cần xử lý. Ghi report tại `docs/vi/qa/<same-relative-path>.qa.md`:
+Ghi QA report tại vị trí task/repo chỉ định. Mẫu dưới đây chỉ để ghi kết quả review, không phải format áp đặt cho tài liệu được dịch:
 
-```markdown
-# QA: <source path>
-
-- Status: PASS
-- Source ref: <branch or commit>
-- Translation: <target path>
-- Completeness: checked
-- Java/code fidelity: checked
-- Markdown/links: checked
-
-## Findings
-None.
+```text
+Source: <original path and ref>
+English counterpart: <path or n/a>
+Translation: <target path>
+Status: <status>
+Findings: <specific locations, or none>
 ```
 
-Khi có issue, ghi vị trí, source observation, impact và cách cần xử lý. Không viết nhận xét chung chung như “cần cải thiện”.
-
-## 5. Source unclear
-
-Nếu source mơ hồ ảnh hưởng meaning, dùng `BLOCKED_SOURCE_UNCLEAR`; trích ngắn đúng đoạn cần xử lý, mô tả vấn đề và tiếp tục các phần độc lập nếu có thể. Không giải quyết bằng cách đoán.
+Không PASS nếu còn thiếu nội dung, cấu trúc không khớp, meaning/term sai hoặc issue chưa được nêu.
