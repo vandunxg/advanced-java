@@ -24,7 +24,7 @@ Có thể đọc tài liệu liên kết để hiểu thuật ngữ/cross-refere
 
 ## 5. Tên file, links và anchors
 
-Giữ file/path mapping, slug, heading anchor, route và link theo cấu trúc English counterpart khi có; nếu không có, theo source gốc. Không đổi path/anchor chỉ để bản dịch có tổ chức theo một convention tự chọn. Nếu thay đổi có yêu cầu nhưng làm khác source structure, cần ghi rõ trong task và QA.
+Giữ file/path mapping theo cây `docs/vi/`, mirror tài liệu gốc: `docs/<path>` → `docs/vi/<path>`. Trang chủ gốc `docs/index.md` có bản dịch ở `docs/vi/index.md`. Giữ slug, heading anchor, route và link theo tài liệu tham chiếu. Không đổi path/anchor tùy ý.
 
 ## 6. Source thiếu/hỏng
 
