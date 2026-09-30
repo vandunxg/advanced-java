@@ -9,10 +9,11 @@ hero:
   actions:
     - theme: alt
       text: Trang chủ GitHub
-      link: https://github.com/vandunxg/advanced-java
+      link: https://github.com/doocs/advanced-java
     - theme: brand
       text: Bắt đầu học
       link: /high-concurrency/mq-interview
+
 
 features:
   - title: "⚡ Kiến trúc high concurrency"
