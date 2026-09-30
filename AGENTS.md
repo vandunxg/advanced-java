@@ -1,6 +1,6 @@
 # Repository Agent Instructions
 
-Tài liệu này hướng dẫn agent khi dịch nội dung trong repository. Trước khi nhận task dịch hoặc review bản dịch, hãy đọc theo thứ tự:
+Tài liệu này áp dụng cho agent làm việc với nội dung repository. Trước task dịch/review, đọc theo thứ tự:
 
 1. `instructions/00-core-rules.md`
 2. `instructions/01-translation-style.md`
@@ -13,16 +13,19 @@ Tài liệu này hướng dẫn agent khi dịch nội dung trong repository. Tr
 9. `instructions/08-merge-and-delivery.md`
 10. Prompt phù hợp trong `prompts/`
 
-## Context của repository
+## Context
 
-`vandunxg/advanced-java` là bộ tài liệu học tập/phỏng vấn về Java backend, concurrency, message queues, databases, distributed systems, high availability, microservices và xử lý dữ liệu lớn. Nội dung nguồn hiện chủ yếu viết bằng tiếng Trung, xen kẽ thuật ngữ tiếng Anh, URL, Markdown và code.
+`vandunxg/advanced-java` là bộ tài liệu học tập/phỏng vấn về Java backend, concurrency, message queues, databases, distributed systems, high availability, microservices và xử lý dữ liệu lớn. Tài liệu có thể gồm bản tiếng Trung gốc, tài liệu tiếng Anh đối chiếu, Markdown, code, diagrams, metadata hoặc component của site.
 
-Mục tiêu là tạo bản tiếng Việt đầy đủ, dễ đọc, chính xác về kỹ thuật và giữ cấu trúc/navigability của tài liệu. Dịch prose trong tài liệu; không thay đổi hành vi hay nội dung code.
+## Quy tắc bắt buộc về cấu trúc đầu ra
 
-## Phạm vi và nguyên tắc vận hành
+Bản dịch phải có cấu trúc giống hệt tài liệu tiếng Anh tương ứng (nếu có) và tài liệu gốc: cùng file/đường dẫn tương ứng, thứ tự nội dung, tiêu đề, cấp mục, đoạn, ví dụ, bảng, danh sách, diagram, component, metadata và cách trình bày. Tài liệu gốc là căn cứ để không bỏ sót nội dung; bản tiếng Anh tương ứng là mẫu cấu trúc khi tồn tại. Nếu hai bản khác nhau về cấu trúc hoặc nội dung, không tự chọn/bỏ phần: giữ toàn bộ nội dung có trong bản gốc theo cấu trúc tương ứng và ghi sai khác trong QA.
 
-- Mỗi task phải nêu rõ các file nguồn được giao và file đích dưới `docs/vi/`, giữ nguyên đường dẫn tương đối bên dưới `docs/`.
-- Không tự ý sửa nội dung tiếng Trung nguồn, cấu hình build, giao diện, dependency hoặc file ngoài phạm vi.
-- Mỗi file đích chỉ có một worker chỉnh tại một thời điểm.
-- Mọi kết luận QA phải đối chiếu với file nguồn cụ thể; ghi lại nguồn, file dịch, trạng thái và lỗi còn lại.
-- Chỉ báo hoàn thành những file đã được dịch và kiểm tra thực tế.
+Không áp đặt một template hay quy tắc Markdown chung lên tài liệu dịch. Giữ đúng cấu trúc và markup mà từng tài liệu nguồn/cặp đối chiếu thực sự dùng.
+
+## Scope và vận hành
+
+- Mỗi task phải nêu source gốc, English counterpart nếu có, source ref, target tương ứng và phạm vi được giao.
+- Không sửa tài liệu nguồn, build, giao diện, dependency, route hoặc file ngoài scope.
+- Mỗi file đích chỉ có một owner tại một thời điểm.
+- QA phải so sánh bản dịch với source gốc và English counterpart khi có; chỉ báo PASS sau khi xác minh.
