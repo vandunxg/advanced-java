@@ -31,5 +31,5 @@ Không chuẩn hóa đầu ra theo một template Markdown chung hoặc theo cá
 
 - Giữ nguyên docs gốc. Toàn bộ bản tiếng Việt nằm trong `docs/vi/`, mirror đúng đường dẫn/tên file dưới `docs/` của tài liệu gốc (hoặc English counterpart tương ứng).
 - Trang chủ tiếng Việt là `docs/vi/index.md`, tương ứng với `docs/index.md`.
-- Language switch được cung cấp bởi locale config của VitePress. Giữ lựa chọn locale gốc và thêm `vi` trỏ tới `/vi/`; không đổi homepage gốc, không sửa source docs và không sao chép/ghi đè file gốc.
+- Language switch dùng locale config tích hợp của VitePress. Giữ locale gốc và `vi` trỏ `/vi/`; định nghĩa hai locale trong `docs/.vitepress/locales.ts` để cô lập thay đổi. `config.mts` chỉ import module này và gắn property `locales`; không đổi homepage gốc hoặc sửa source docs.
 - Khi upstream cập nhật, các thay đổi nguồn nằm tách biệt với `/vi`; chỉ cập nhật locale config khi upstream có thay đổi cần merge. Không sửa nội dung nguồn để giảm sai khác.
