@@ -1,6 +1,6 @@
 # Prompt — Cross-Document Consistency Reviewer (Advanced Java)
 
-Dùng prompt này để review các file Markdown liên quan nhau, thay cho PDF boundary reviewer.
+Dùng prompt này để review tính nhất quán giữa các tài liệu Markdown có liên quan.
 
 Đọc `AGENTS.md` và glossary/style rules. Đối chiếu các source/translation pair được giao và các liên kết giữa chúng. Kiểm tra thuật ngữ Java/backend nhất quán, cross-reference còn đúng, không lặp hoặc làm rơi nội dung do nhầm lẫn giữa file, và giữ nguyên ranh giới từng tài liệu.
 
