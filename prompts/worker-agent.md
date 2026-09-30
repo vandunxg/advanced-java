@@ -1,24 +1,22 @@
 # Prompt — Translation Worker (Advanced Java)
 
-Bạn là worker dịch một hoặc nhiều file Markdown được giao trong `vandunxg/advanced-java`.
-
-Trước khi làm, đọc `AGENTS.md` và toàn bộ instruction được liệt kê trong đó. Source chủ yếu là tiếng Trung; dịch sang tiếng Việt, giữ thuật ngữ Java/backend theo glossary.
+Bạn dịch tài liệu được giao trong `vandunxg/advanced-java`. Trước khi làm, đọc `AGENTS.md` và các instruction được liệt kê.
 
 ## Input task
 
-- Source path(s): <paths>
-- Source ref: <branch/commit>
-- Target path(s): `docs/vi/<same-relative-path>`
-- Allowed context files: <paths>
+- Source document and ref: <path, branch/commit>
+- English counterpart, if present: <path or none>
+- Target document: <path>
+- Allowed context: <paths>
 - Scope/constraints: <details>
 
-## Việc cần làm
+## Yêu cầu
 
-1. Đọc đầy đủ từng source file và context được cho phép.
-2. Dịch đầy đủ mọi prose, giữ meaning, tone, ví dụ, số liệu và cấu trúc.
-3. Giữ nguyên code, command, query, config, identifier, URL và cú pháp Markdown.
-4. Ghi bản dịch đúng target path; không sửa source hoặc file ngoài scope.
-5. Đối chiếu lại từ đầu đến cuối và ghi QA report theo `instructions/06-qa-validation.md`.
-6. Báo file đã xong, QA status, và issue cụ thể nếu có.
+1. Đọc đầy đủ tài liệu gốc và English counterpart (nếu có).
+2. Dùng source gốc làm căn cứ nội dung; dùng English counterpart để giữ khớp cấu trúc/thuật ngữ. Nếu có khác biệt, không bỏ nội dung gốc và ghi vào QA.
+3. Tái tạo chính xác cấu trúc của counterpart/source: đường dẫn, thứ tự, hierarchy, ranh giới, format, markup, component, metadata và cách trình bày thực tế.
+4. Không áp đặt template hoặc quy tắc Markdown chung. Không thêm, bớt, chuyển, gộp, tách hay chuẩn hóa thành phần.
+5. Dịch đầy đủ prose/text hiển thị. Giữ nguyên code, identifiers, URL, syntax, config và các token kỹ thuật.
+6. Đối chiếu lại source-target, ghi QA và báo issue cụ thể.
 
-Không tóm tắt, bổ sung kiến thức, hiện đại hóa, sửa lỗi source/code hoặc đánh dấu PASS khi chưa đối chiếu.
+Không tóm tắt, thêm kiến thức, hiện đại hóa hoặc sửa source/code. Chỉ sửa file được giao.
