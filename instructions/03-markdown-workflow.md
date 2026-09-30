@@ -15,7 +15,7 @@ Task cần chỉ rõ:
 
 ## 3. Tạo bản dịch
 
-Tạo file tại target path tương ứng với tài liệu tham chiếu trong layout ngôn ngữ được task/repo chỉ định. Tên file, đường dẫn tương đối và cấu trúc bên trong phải khớp tài liệu tiếng Anh tương ứng; nếu không có, khớp source gốc.
+Tạo bản dịch trong `docs/vi/`, mirror đúng đường dẫn và tên file của tài liệu gốc dưới `docs/` (hoặc English counterpart nếu nó có mapping riêng trong repo). Ví dụ `docs/high-concurrency/x.md` thành `docs/vi/high-concurrency/x.md`; `docs/index.md` thành `docs/vi/index.md`. Không thay đổi file gốc.
 
 Dịch text hiển thị tại chỗ, giữ nguyên thứ tự, ranh giới và markup thực tế. Không thêm section/header mới hoặc đổi format chỉ theo một chuẩn Markdown chung. Không ghi đè source.
 
