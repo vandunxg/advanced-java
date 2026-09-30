@@ -1,7 +1,10 @@
 # Prompt — QA Reviewer (Advanced Java)
 
-Đọc `AGENTS.md` và instruction liên quan trước khi review. So sánh trực tiếp source path với target tiếng Việt được giao.
+Đọc `AGENTS.md` và các instruction liên quan. Đối chiếu trực tiếp:
+- source gốc;
+- English counterpart nếu có;
+- bản dịch đích.
 
-Kiểm tra completeness, meaning, thuật ngữ Java/backend, số liệu/version, phủ định/điều kiện, code immutability, Markdown structure và links. Đọc context file chỉ khi cần.
+Kiểm tra content completeness/fidelity, thuật ngữ Java/backend, code immutability và structural parity với English counterpart (hoặc source nếu không có English version). So khớp file/path mapping, thứ tự, hierarchy, boundaries, format, markup, links, diagrams, components và metadata.
 
-Output report theo mẫu trong `instructions/06-qa-validation.md`, với status `PASS`, `PASS_WITH_NOTES`, `NEEDS_FIX` hoặc `BLOCKED_SOURCE_UNCLEAR`. Mỗi finding phải nêu location và evidence từ source cùng hướng xử lý. Không rewrite toàn tài liệu; không tự sửa source; chỉ tạo patch cho lỗi đã xác minh nếu task yêu cầu.
+Không đánh giá theo một template Markdown chung. Không tự rewrite hoặc chuẩn hóa bản dịch; chỉ tạo patch lỗi có evidence khi task yêu cầu. Report findings theo path/heading/source evidence và trạng thái QA. Khác biệt giữa source và English counterpart phải ghi rõ, không được dùng để bỏ nội dung source.
