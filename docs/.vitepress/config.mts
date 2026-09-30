@@ -4,6 +4,7 @@ import { locales } from "./locales";
 export default defineConfig({
   title: "advanced-java",
   ignoreDeadLinks: true,
+  base: process.env.GITHUB_ACTIONS === "true" && process.env.GITHUB_REPOSITORY !== "doocs/advanced-java" ? "/advanced-java/" : "/",
   locales,
   themeConfig: {
     search: {
