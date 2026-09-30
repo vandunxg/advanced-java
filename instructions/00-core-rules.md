@@ -14,7 +14,7 @@ Tài liệu gốc quyết định nội dung nào phải được giữ. English
 
 Không áp đặt template hoặc quy ước Markdown được định nghĩa sẵn nếu chúng không xuất hiện trong tài liệu tham chiếu. Không tái cấu trúc, chuẩn hóa, di chuyển, gộp, tách hay bổ sung thành phần vì sở thích định dạng.
 
-Bản dịch đặt dưới `docs/vi/` và mirror path/tên file của tài liệu gốc; `docs/vi/index.md` là bản dịch của `docs/index.md`. Không chỉnh sửa docs gốc để tạo bản dịch. Chỉ thêm/sửa locale config để UI có switch giữa ngôn ngữ gốc và `/vi/`; giữ nguyên route và nội dung nguồn.
+Bản dịch đặt dưới `docs/vi/` và mirror path/tên file của tài liệu gốc; `docs/vi/index.md` là bản dịch của `docs/index.md`. Không chỉnh sửa docs gốc để tạo bản dịch. Định nghĩa switch trong `docs/.vitepress/locales.ts`; `config.mts` chỉ cần import module và dùng property `locales`. Giữ nguyên route và nội dung nguồn.
 
 ## 3. Dịch đầy đủ
 
