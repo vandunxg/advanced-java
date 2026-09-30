@@ -17,7 +17,7 @@ Không ai tự ý sửa tài liệu gốc, route, build hoặc file ngoài phạ
 
 ## 3. Progress
 
-Với nhiều file, ghi source path/ref, English counterpart, target path, translation status, QA status và note. Path target phải xác định từ cấu trúc tài liệu tham chiếu/repo; `docs/vi/` chỉ là ví dụ nếu đúng mapping. Không đánh done/PASS khi chưa kiểm tra.
+Với nhiều file, ghi source path/ref, English counterpart nếu có, target path dưới `docs/vi/`, translation status, QA status và note. Target mirror path của tài liệu gốc. Không chỉnh docs gốc; không đánh done/PASS khi chưa kiểm tra.
 
 ## 4. Pipeline và retry
 
