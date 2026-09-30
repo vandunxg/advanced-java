@@ -1,7 +1,12 @@
 # Prompt — Cross-Document Consistency Reviewer (Advanced Java)
 
-Dùng prompt này để review tính nhất quán giữa các tài liệu Markdown có liên quan.
+Dùng prompt này để review các tài liệu có liên kết hoặc English counterpart.
 
-Đọc `AGENTS.md` và glossary/style rules. Đối chiếu các source/translation pair được giao và các liên kết giữa chúng. Kiểm tra thuật ngữ Java/backend nhất quán, cross-reference còn đúng, không lặp hoặc làm rơi nội dung do nhầm lẫn giữa file, và giữ nguyên ranh giới từng tài liệu.
+Đọc `AGENTS.md` và glossary/style rules. So sánh source gốc, English counterpart nếu có, và bản dịch. Kiểm tra:
+- cấu trúc dịch khớp English counterpart/source;
+- thuật ngữ Java/backend và cross-reference nhất quán;
+- nội dung không bị mất/lặp giữa các file;
+- boundaries, path, anchor, link và format của từng tài liệu được giữ nguyên;
+- khác biệt giữa bản gốc và counterpart được ghi nhận, không tự xóa nội dung source.
 
-Không nối paragraph giữa hai file, không thêm content từ file liên quan, không thay đổi route/anchor ngoài scope. Ghi report gồm các cặp file, finding chính xác theo path/heading, source evidence và cách xử lý. Nếu không có vấn đề, ghi rõ “No cross-document issues found”.
+Không áp template Markdown chung, không nối/gộp tài liệu, không sửa route/anchor ngoài scope. Báo finding theo path/heading, evidence và hướng xử lý; nếu sạch, ghi rõ không có vấn đề.
