@@ -72,7 +72,7 @@ Do 360 mã nguồn mở, đây là phương án ở tầng proxy. Trước đây
 
 #### Sharding-jdbc
 
-Do Dangdang mã nguồn mở, đây là phương án ở tầng client, là phương án tầng client của [`ShardingSphere`](https://shardingsphere.apache.org); [`ShardingSphere`](https://shardingsphere.apache.org) còn cung cấp phương án tầng proxy là Sharding-Proxy. Trước đây giải pháp này được dùng khá nhiều vì hỗ trợ khá nhiều cú pháp SQL, ít hạn chế; đến 2019.4 đã phát hành phiên bản `4.0.0-RC1`, hỗ trợ sharding database/table, read/write separation, tạo distributed id và flexible transaction (transaction kiểu nỗ lực tối đa để gửi, transaction TCC). Thực tế trước đây có khá nhiều công ty dùng (trên website chính thức có danh sách công ty sử dụng; có thể thấy từ năm 2017 đến nay có nhiều công ty dùng). Cộng đồng hiện vẫn tiếp tục phát triển và bảo trì, tương đối năng động; theo tôi đây là **phương án hiện vẫn có thể chọn**.
+Do Dangdang mã nguồn mở, đây là phương án ở tầng client, là phương án tầng client của [ `ShardingSphere` ](https://shardingsphere.apache.org); [ `ShardingSphere` ](https://shardingsphere.apache.org) còn cung cấp phương án tầng proxy là Sharding-Proxy. Trước đây giải pháp này được dùng khá nhiều vì hỗ trợ khá nhiều cú pháp SQL, ít hạn chế; đến 2019.4 đã phát hành phiên bản `4.0.0-RC1`, hỗ trợ sharding database/table, read/write separation, tạo distributed id và flexible transaction (transaction kiểu nỗ lực tối đa để gửi, transaction TCC). Thực tế trước đây có khá nhiều công ty dùng (trên website chính thức có danh sách công ty sử dụng; có thể thấy từ năm 2017 đến nay có nhiều công ty dùng). Cộng đồng hiện vẫn tiếp tục phát triển và bảo trì, tương đối năng động; theo tôi đây là **phương án hiện vẫn có thể chọn**.
 
 #### Mycat
 
