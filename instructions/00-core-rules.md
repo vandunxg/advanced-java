@@ -2,36 +2,38 @@
 
 ## 1. Source of truth
 
-File Markdown nguồn trong repository, tại branch/commit được giao, là nguồn chuẩn. Đọc toàn bộ file nguồn trước khi dịch. Có thể đọc file liền trước/liền sau và trang được liên kết để hiểu ngữ cảnh, nhưng chỉ ghi nội dung thuộc file được giao.
+Tài liệu gốc được giao, tại branch/commit được chỉ định, là nguồn chuẩn về nội dung. Đọc trọn tài liệu trước khi dịch. Có thể đọc context được liên kết để hiểu nghĩa, nhưng không nhập nội dung không thuộc phạm vi vào bản dịch.
 
-Không dịch từ trí nhớ, bản dịch Internet, bản fork khác hoặc kiến thức Java hiện tại thay cho source. Nếu source có vẻ sai hoặc lỗi thời, dịch trung thành và ghi chú riêng trong QA; không âm thầm sửa.
+Không dịch từ trí nhớ, bản dịch Internet, fork khác hoặc kiến thức Java hiện tại thay cho source. Nếu source có vẻ sai/lỗi thời, dịch trung thành và báo riêng trong QA; không âm thầm sửa.
 
-## 2. Dịch đầy đủ
+## 2. Cấu trúc đầu ra phải khớp source
 
-Dịch mọi nội dung có nghĩa: heading, paragraph, list, table, caption, note, warning, FAQ, câu hỏi phỏng vấn, giải thích quanh code và comment ngoài code block.
+Nếu có tài liệu tiếng Anh tương ứng, dùng nó làm mẫu cấu trúc cùng với tài liệu gốc. Bản dịch phải khớp cấu trúc của cặp tài liệu: đường dẫn/file tương ứng, thứ tự, heading hierarchy, đoạn, danh sách, bảng, ví dụ, code, diagram, component, metadata và cách trình bày. Nếu không có English counterpart, giữ đúng cấu trúc của tài liệu gốc.
 
-Không được tóm tắt, bỏ câu/ví dụ, thêm ví dụ hoặc giải thích riêng, thay reasoning/recommendation, đổi mức độ chắc chắn, hay cập nhật thông tin theo phiên bản Java/framework mới hơn.
+Tài liệu gốc quyết định nội dung nào phải được giữ. English counterpart chỉ làm rõ cấu trúc/thuật ngữ đối chiếu; không được dùng để bỏ qua khác biệt trong source. Nếu hai bản không khớp, bảo toàn đủ nội dung source trong cấu trúc phù hợp và ghi lại chênh lệch.
 
-## 3. Ngôn ngữ và ngữ cảnh Java
+Không áp đặt template hoặc quy ước Markdown được định nghĩa sẵn nếu chúng không xuất hiện trong tài liệu tham chiếu. Không tái cấu trúc, chuẩn hóa, di chuyển, gộp, tách hay bổ sung thành phần vì sở thích định dạng.
 
-Bản dịch là tiếng Việt tự nhiên, rõ ràng, giữ English cho tên API, thuật ngữ chuẩn, pattern và từ chuyên môn khi dịch sang tiếng Việt làm sai hoặc khó nhận diện. Tuân thủ glossary.
+## 3. Dịch đầy đủ
 
-Ngữ cảnh repo bao gồm Java/JVM, Spring và backend, concurrency, message queues, databases, distributed systems, high availability, microservices, system design và xử lý dữ liệu lớn. Không biến hướng dẫn tổng quát thành khẳng định riêng cho Java nếu source không nói vậy.
+Dịch mọi nội dung có nghĩa trong scope: heading, paragraph, list, table, caption, note, warning, FAQ, câu hỏi phỏng vấn, prose quanh code và text hiển thị của component.
 
-Phân biệt chính xác khái niệm Java như class/object, interface, thread, lock, memory visibility, exception, collection, JVM/JDK/JRE, API và framework. Không dịch tên công nghệ hoặc tên sản phẩm thành danh từ chung.
+Không tóm tắt, bỏ câu/ví dụ, thêm giải thích riêng, thay reasoning/recommendation, đổi độ chắc chắn hoặc cập nhật theo version mới hơn.
 
-## 4. Code bất biến
+## 4. Ngôn ngữ và ngữ cảnh Java
 
-Code, shell command, SQL, JSON/YAML/XML, cấu hình, log, stack trace, identifier, package/class/method/field name, annotation, literal, operator và URL phải giữ nguyên source. Không format lại, sửa lỗi, tối ưu, thêm/bớt dòng, đổi version, hoặc làm ví dụ compile được hơn.
+Viết tiếng Việt tự nhiên; giữ English cho tên API, thuật ngữ chuẩn, pattern và từ chuyên môn khi dịch làm sai hoặc khó nhận diện. Tuân thủ glossary.
 
-Nếu không rõ vùng nào là code, đối chiếu Markdown gốc và ngữ cảnh; không tự suy diễn hoặc dịch phần có thể là cú pháp.
+Ngữ cảnh repo gồm Java/JVM, Spring/backend, concurrency, message queues, databases, distributed systems, high availability, microservices, system design và big data. Không biến ý tổng quát thành khẳng định riêng về Java nếu source không nói vậy.
 
-## 5. Tính trung thành kỹ thuật
+## 5. Code bất biến
 
-Giữ nguyên điều kiện, phủ định, thứ tự nhân quả, giả định, giới hạn, ngoại lệ, con số, đơn vị, version, độ phức tạp và phạm vi áp dụng. Bảo toàn khác biệt giữa may/can/should/must và các phủ định như không, chưa, chỉ khi, trừ khi.
+Code, shell command, SQL, JSON/YAML/XML, config, log, stack trace, identifier, package/class/method/field, annotation, literal, operator và URL giữ nguyên. Không format, sửa lỗi, tối ưu, thêm/bớt dòng hoặc đổi version.
 
-Không đổi semantics các khái niệm như consistency, availability, partition tolerance, idempotency, transaction, retry, timeout, replication, sharding, cache, lock, thread safety và message ordering.
+## 6. Tính trung thành kỹ thuật
 
-## 6. Xử lý source mơ hồ
+Giữ điều kiện, phủ định, quan hệ nhân quả, giả định, giới hạn, ngoại lệ, số liệu, version, độ phức tạp và phạm vi áp dụng. Không làm đổi semantics của concurrency, consistency, transaction, queue, cache, lock hay distributed systems.
 
-Không đoán nội dung bị thiếu hoặc thuật ngữ khó đọc. Dịch phần chắc chắn; ghi vị trí và lý do vào QA, dùng trạng thái `BLOCKED_SOURCE_UNCLEAR` nếu ảnh hưởng meaning. Không chèn chú giải vào bản dịch như thể đó là lời tác giả.
+## 7. Source mơ hồ
+
+Không đoán nội dung thiếu hoặc thuật ngữ khó đọc. Dịch phần chắc chắn; ghi vị trí và lý do trong QA. Dùng `BLOCKED_SOURCE_UNCLEAR` nếu sự mơ hồ ảnh hưởng meaning.
