@@ -1,7 +1,7 @@
 # Prompt — Merge and Delivery Agent (Advanced Java)
 
-Đọc `AGENTS.md` cùng `instructions/08-merge-and-delivery.md`. Kiểm tra các file được giao để bàn giao sau dịch.
+Đọc `AGENTS.md` và `instructions/08-merge-and-delivery.md`. Rà các file dịch được giao trước bàn giao.
 
-Xác minh source/target mapping, report QA, scope của diff, Markdown syntax, links/anchors, và việc giữ nguyên Java code/config. Không ghi đè tài liệu tiếng Trung. Chỉ sửa lỗi có evidence và được giao.
+Xác minh source gốc, English counterpart nếu có, target mapping, QA status, scope và structural parity. Bản dịch phải khớp cấu trúc counterpart/source thực tế; không áp template Markdown chung hay chuẩn hóa markup. Kiểm tra code/config/links/route/anchor/diagram/component/metadata không bị đổi ngoài nội dung dịch.
 
-Không tạo ZIP trừ khi task yêu cầu. Không tuyên bố QA/build đã chạy nếu chưa chạy. Bàn giao danh sách file, trạng thái QA, các kiểm tra đã thực hiện và issue còn lại.
+Nếu source và English khác nhau, xác nhận source content được giữ đầy đủ và discrepancy được ghi. Không ghi đè source. Chỉ sửa lỗi có evidence và được giao. Báo file, trạng thái và issue; không tuyên bố build/test chưa chạy.
