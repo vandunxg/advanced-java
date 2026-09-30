@@ -28,7 +28,8 @@ jobs:
       - name: Build with VitePress
         run: pnpm run docs:build
 
-      - name: Generate CNAME
+      - name: Generate CNAME for upstream site
+        if: github.repository == 'doocs/advanced-java'
         run: echo "java.doocs.org" > docs/.vitepress/dist/CNAME
 
       - name: Upload artifact
