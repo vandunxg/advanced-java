@@ -1,38 +1,29 @@
-# Quy tắc bảo toàn Markdown
+# Quy tắc bảo toàn cấu trúc tài liệu
 
-## 1. Heading và paragraph
+## Nguyên tắc ưu tiên
 
-Dịch text heading, giữ nguyên cấp heading, thứ tự và ranh giới paragraph. Không merge/split đoạn trừ khi source thể hiện ranh giới semantic và định dạng bị lỗi rõ ràng; mọi chuẩn hóa phải không đổi meaning.
+Không áp dụng bộ quy tắc Markdown chung để định dạng lại nội dung. Bản dịch phải tái tạo cấu trúc của tài liệu tiếng Anh tương ứng và source gốc, hoặc của source gốc nếu không có bản tiếng Anh. Markup/format thực tế trong source quyết định cách biểu diễn.
 
-## 2. Inline code và code block
+Dịch text nhìn thấy cho người đọc tại vị trí tương ứng; giữ nguyên thứ tự, ranh giới, cấp bậc, nhóm nội dung, liên kết, code và mọi thành phần cấu trúc. Không thêm, bỏ, di chuyển, gộp, tách, chuẩn hóa hoặc chuyển đổi định dạng chỉ để “đúng Markdown” hay đẹp hơn.
 
-Giữ nguyên nội dung bên trong backtick và fenced code. Bao gồm Java, shell, SQL, JSON, YAML, XML, properties, config, log, stack trace, lệnh terminal, identifier và comment trong code.
+## Những gì phải đối chiếu
 
-Không đổi ngôn ngữ fence, format, indent, quote, escaping hoặc line order. Giữ cấu trúc fence. Nếu phát hiện lỗi source, ghi QA thay vì sửa.
+Giữ đúng như source/cặp tài liệu tham chiếu:
+- tên file, thư mục, thứ tự file và quan hệ link;
+- heading, hierarchy, numbering, paragraph boundaries;
+- code, inline tokens, examples, table, list, quote và emphasis;
+- image, alt/caption, diagram, component, HTML, frontmatter/metadata;
+- anchor, URL, route, attribute, directive và custom syntax;
+- khoảng trắng, line breaks hoặc delimiter khi chúng ảnh hưởng hiển thị/cấu trúc.
 
-## 3. Comment và prose cạnh code
+Không giả định tài liệu phải dùng một dạng Markdown cụ thể. Nếu source dùng HTML/component hoặc một cách biểu diễn riêng, giữ chính cách đó; không đổi thành Markdown table/list/code fence hoặc ngược lại.
 
-Comment nằm trong code listing giữ nguyên. Caption, mô tả hoặc đoạn prose trước/sau listing được dịch. Dựa vào vùng Markdown rõ ràng, không suy đoán.
+## Code và kỹ thuật
 
-## 4. Table, list và emphasis
+Giữ nguyên code block, inline code, command, query, config, log, stack trace, identifier, comment trong code, syntax fence và indentation. Không sửa lỗi, đổi language tag, format lại hoặc làm ví dụ compile được.
 
-Giữ số cột/hàng, thứ tự, cell association và list semantics/nesting. Dịch prose trong cell và list item nhưng giữ inline code, identifier, số liệu và link.
+Chỉ dịch prose/caption/label được trình bày như text người đọc. Với diagram/component, dịch text hiển thị chỉ khi không làm thay đổi syntax, ID, tham chiếu hay hành vi.
 
-Bảo toàn bold, italic, blockquote, horizontal rule và nội dung HTML/VuePress component. Không chuyển bảng/list thành prose để tiện dịch.
+## Nếu format source bị lỗi
 
-## 5. Link, ảnh, anchor
-
-- Giữ nguyên URL external và destination.
-- Dịch link label nếu là prose; giữ nguyên tên file, API, product và official title khi cần nhận diện.
-- Giữ nguyên target ảnh, alt syntax, HTML attribute và thứ tự.
-- Không tự đổi đường dẫn, anchor, filename hay slug. Mọi cập nhật link cho cấu trúc song ngữ phải kiểm tra target tồn tại và thuộc scope task.
-
-## 6. Mermaid và diagram
-
-Giữ nguyên graph syntax, node ID, edge, direction, sequence và các giá trị config. Chỉ dịch label hiển thị khi không phá cú pháp; nếu không chắc, giữ diagram nguyên văn và ghi QA.
-
-## 7. Ký hiệu và token
-
-Bảo toàn dấu câu có ý nghĩa, toán tử, ký hiệu, version, số, đơn vị, URL, generic delimiter và ký tự đặc biệt, gồm `< > <= >= == != -> :: & | && || @ #`.
-
-Không dịch text trong inline code, HTML attribute, comment code, frontmatter key hoặc key cấu hình.
+Không âm thầm sửa cấu trúc lỗi hoặc bù syntax bị thiếu. Dịch phần có thể xác định, báo lỗi source trong QA. Chỉ sửa định dạng khi task yêu cầu sửa source hoặc khi có quyết định rõ ràng về structural mapping.
