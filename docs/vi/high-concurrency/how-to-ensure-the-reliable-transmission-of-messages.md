@@ -6,7 +6,7 @@ Làm thế nào đảm bảo truyền message đáng tin cậy? Hay nói cách k
 
 ## Phân tích suy nghĩ của người phỏng vấn
 
-Điều này là chắc chắn: có một nguyên tắc cơ bản khi dùng MQ, đó là **không được thừa cũng không được thiếu dữ liệu**. Không được thừa nghĩa là vấn đề **tiêu thụ lặp lại và tính idempotent** đã nói trước đó. Không được thiếu nghĩa là không để mất dữ liệu. Vì vậy bạn bắt buộc phải cân nhắc vấn đề này.
+Điều này là chắc chắn: có một nguyên tắc cơ bản khi dùng MQ, đó là **không được thừa cũng không được thiếu dữ liệu**. Không được thừa nghĩa là vấn đề **[tiêu thụ lặp lại và tính idempotent](./how-to-ensure-that-messages-are-not-repeatedly-consumed.md)** đã nói trước đó. Không được thiếu nghĩa là không để mất dữ liệu. Vì vậy bạn bắt buộc phải cân nhắc vấn đề này.
 
 Nếu dùng MQ để truyền các message cực kỳ cốt lõi, chẳng hạn message tính phí hoặc trừ tiền, thì phải đảm bảo trong quá trình MQ truyền tải **tuyệt đối không làm mất message tính phí**.
 
@@ -59,7 +59,7 @@ Vì vậy, để **tránh mất dữ liệu** ở phía producer, thông thườ
 
 Có 3 cách triển khai `confirm` phía producer của client:
 
-1. **Chế độ confirm thông thường**: sau mỗi message được gửi, gọi phương thức `waitForConfirms()` để đợi server confirm. Nếu server trả về false hoặc không trả về trong một khoảng thời gian, client có thể gửi lại message.
+1.**Chế độ confirm thông thường**: sau mỗi message được gửi, gọi phương thức `waitForConfirms()` để đợi server confirm. Nếu server trả về false hoặc không trả về trong một khoảng thời gian, client có thể gửi lại message.
 
 ```java
 channel.basicPublish(ConfirmConfig.exchangeName, ConfirmConfig.routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, ConfirmConfig.msg_10B.getBytes());
@@ -69,7 +69,7 @@ if (!channel.waitForConfirms()) {
 }
 ```
 
-2. **Chế độ confirm theo lô**: sau khi gửi một lô message, gọi phương thức `waitForConfirms()` để đợi server confirm.
+2.**Chế độ confirm theo lô**: sau khi gửi một lô message, gọi phương thức `waitForConfirms()` để đợi server confirm.
 
 ```java
 channel.confirmSelect();
@@ -82,7 +82,7 @@ if (!channel.waitForConfirms()) {
 }
 ```
 
-3. **Chế độ confirm bất đồng bộ**: cung cấp một callback; sau khi server confirm một hoặc nhiều message, client sẽ gọi lại phương thức này.
+3.**Chế độ confirm bất đồng bộ**: cung cấp một callback; sau khi server confirm một hoặc nhiều message, client sẽ gọi lại phương thức này.
 
 ```java
 SortedSet<Long> confirmSet = Collections.synchronizedSortedSet(new TreeSet<Long>());
