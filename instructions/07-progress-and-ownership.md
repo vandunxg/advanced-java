@@ -1,36 +1,34 @@
 # Tiến độ, ownership và atomicity
 
-## 1. Một file đích, một owner
+## 1. Một target, một owner
 
-Mỗi file dưới `docs/vi/` chỉ có một worker chỉnh tại một thời điểm. Giao task theo path cụ thể và không để hai worker cùng sửa một file.
+Mỗi target file chỉ có một worker chỉnh tại một thời điểm. Task phải xác định source gốc, English counterpart nếu có, target path tương ứng và scope. Không để hai worker cùng sửa một file.
 
-Nếu cần chia một tài liệu dài thành section task, một worker sở hữu file đích và các section phải có ranh giới rõ. Chỉ ghép patch sau khi kiểm tra không overlap và cấu trúc Markdown hợp lệ.
+Nếu chia tài liệu dài thành section task, giữ quyền sở hữu file nhất quán và section boundaries không overlap. Sau khi ghép patch, xác nhận cấu trúc lại khớp tài liệu tham chiếu; không chuẩn hóa format khi ghép.
 
 ## 2. Vai trò
 
-- Worker chỉ dịch file/section được giao.
-- Reviewer đối chiếu source và ghi lỗi có vị trí.
-- Orchestrator phân công, theo dõi tiến độ, xử lý dependency.
-- Merge/delivery owner kiểm tra thay đổi cuối, liên kết và báo cáo.
+- Worker dịch đúng tài liệu/section được giao, giữ cấu trúc source.
+- Reviewer đối chiếu source gốc và English counterpart khi có.
+- Orchestrator phân công theo path và theo dõi dependency.
+- Merge/delivery owner kiểm tra structural parity và scope cuối.
 
-Không worker nào tự ý đổi source, route, dependency hay file không được giao.
+Không ai tự ý sửa tài liệu gốc, route, build hoặc file ngoài phạm vi.
 
 ## 3. Progress
 
-Dùng progress report của task/repo, ví dụ `docs/vi/PROGRESS.md`, khi xử lý nhiều file. Mỗi record có source path, target path, translation status, QA status và ghi chú. Không tạo/đổi progress file toàn cục nếu task nhỏ chỉ có một file.
-
-Chỉ ghi `done` hoặc `PASS` sau khi thao tác đó thực sự hoàn thành và được kiểm tra.
+Với nhiều file, ghi source path/ref, English counterpart, target path, translation status, QA status và note. Path target phải xác định từ cấu trúc tài liệu tham chiếu/repo; `docs/vi/` chỉ là ví dụ nếu đúng mapping. Không đánh done/PASS khi chưa kiểm tra.
 
 ## 4. Pipeline và retry
 
 ```text
-DISCOVER FILES
-  → ASSIGN UNIQUE OWNERS
-  → TRANSLATE
-  → QA AGAINST SOURCE
-  → FIX FAILED FILES
-  → CHECK LINKS / STRUCTURE
+DISCOVER SOURCE/CANONICAL PAIRS
+  → ASSIGN NON-OVERLAPPING OWNERS
+  → TRANSLATE WITH SOURCE STRUCTURE
+  → QA CONTENT AND STRUCTURAL PARITY
+  → FIX VERIFIED FINDINGS
+  → FINAL SCOPE CHECK
   → REPORT
 ```
 
-Khi QA fail, sửa lỗi có evidence, kiểm tra lại phần bị ảnh hưởng và các link liên quan. Không dịch lại hàng loạt file vì lỗi cục bộ.
+Khi QA fail, sửa lỗi có evidence và rà lại structural parity vùng bị ảnh hưởng. Không dịch lại file không liên quan.
