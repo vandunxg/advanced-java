@@ -1,33 +1,35 @@
 # Quy tắc cấu trúc và ngữ cảnh
 
-Repo advanced-java có các tài liệu Markdown độc lập, liên kết chéo và một số chủ đề nối tiếp nhau.
+## 1. Cấu trúc là của từng tài liệu nguồn
 
-## 1. File và section boundary
+Mỗi tài liệu có tổ chức riêng. Tài liệu tiếng Anh tương ứng (nếu có) và tài liệu gốc là căn cứ để giữ cấu trúc bản dịch. Không dùng một cấu trúc Markdown mẫu/định sẵn thay cho cấu trúc quan sát được trong các tài liệu đó.
 
-File là đơn vị ownership mặc định. Heading thuộc file chứa heading đó. Không chuyển paragraph, heading, bảng, list hoặc code từ file khác sang file hiện tại để làm nội dung “đầy đủ”.
+Giữ chính xác thứ tự và hierarchy nội dung, vị trí, ranh giới, nhóm mục, cách trình bày, code/example, table/list, diagram, component, metadata và các chi tiết cấu trúc khác có trong nguồn. Không tự chuẩn hóa theo sở thích hay lược bỏ chi tiết tưởng như chỉ để trang trí.
 
-Nếu task chỉ giao một section, giữ rõ điểm bắt đầu/kết thúc và không ghi lại phần còn lại của file. Ưu tiên tạo patch phạm vi hẹp trong file đích đã chỉ định.
+## 2. Khi English counterpart và source gốc khác nhau
 
-## 2. Ngữ cảnh giữa các trang
+Source gốc quyết định nội dung cần dịch và không được mất. English counterpart là đối chiếu cho cấu trúc/thuật ngữ khi tồn tại. Nếu khác nhau về heading, section, thứ tự, ví dụ hoặc thành phần:
+- giữ đầy đủ phần source gốc trong bản dịch;
+- không thêm phần chỉ có ở English counterpart trừ khi task chỉ định dịch hợp nhất;
+- ghi chênh lệch với vị trí cụ thể trong QA;
+- không tự chọn một bên để làm source of truth cho nội dung.
 
-Nếu đoạn đầu/cuối tham chiếu khái niệm ở file khác:
-- đọc trang được liên kết khi cần;
-- giữ thuật ngữ và cách gọi nhất quán;
-- không lặp lại định nghĩa hoặc đoạn văn của trang kia;
-- không tự sửa nguồn để đồng bộ nội dung.
+## 3. File và section boundary
 
-Các câu hỏi/phần giải thích có thể lặp giữa tài liệu khác nhau. Giữ mọi lặp lại có trong từng source.
+Giữ mỗi nội dung trong file/section tương ứng. Không chuyển paragraph, heading, bảng, list hay code từ file khác vào để làm tài liệu trông đầy đủ. Nếu task chỉ giao một section, giữ đúng điểm bắt đầu/kết thúc và cấu trúc tại chỗ.
 
-## 3. Continuation và liên kết
+## 4. Context giữa các trang
 
-Không nối văn bản giữa hai file thành một paragraph duy nhất. Giữ nội dung trong đúng file, và bảo toàn ranh giới section/file. Bản dịch tương ứng nên có đường dẫn song song.
+Có thể đọc tài liệu liên kết để hiểu thuật ngữ/cross-reference. Không lặp định nghĩa hoặc nội dung từ trang khác nếu không có trong source. Giữ mọi phần lặp lại thực sự có trong tài liệu nguồn.
 
-Giữ nguyên slug của file và heading khi chúng là API của site/link. Nếu dịch anchor làm route đổi, không sửa liên kết hiện hữu ngoài phạm vi; dùng cách bảo toàn anchor theo cấu hình site hoặc ghi issue để xử lý đồng bộ.
+## 5. Tên file, links và anchors
 
-## 4. Source thiếu hoặc hỏng
+Giữ file/path mapping, slug, heading anchor, route và link theo cấu trúc English counterpart khi có; nếu không có, theo source gốc. Không đổi path/anchor chỉ để bản dịch có tổ chức theo một convention tự chọn. Nếu thay đổi có yêu cầu nhưng làm khác source structure, cần ghi rõ trong task và QA.
 
-Nếu link source trỏ tới file không tồn tại, nội dung bị cắt, code fence chưa đóng hoặc paragraph dang dở:
-- xác minh file/source lân cận nếu được phép;
-- chỉ dịch nội dung có sẵn;
-- ghi issue cùng path và đoạn liên quan;
-- không bịa phần bị thiếu và không sửa bản source.
+## 6. Source thiếu/hỏng
+
+Nếu source bị cắt, link hỏng, syntax lỗi hoặc thiếu phần:
+- xác minh tài liệu liên quan nếu được phép;
+- chỉ dịch phần có thật;
+- ghi issue cùng path/heading;
+- không tự bịa phần thiếu hoặc sửa source.
