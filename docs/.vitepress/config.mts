@@ -7,6 +7,16 @@ export default defineConfig({
   base: process.env.GITHUB_ACTIONS === "true" && process.env.GITHUB_REPOSITORY !== "doocs/advanced-java" ? "/advanced-java/" : "/",
   locales,
   themeConfig: {
+    i18nRouting(data, route, targetLocale) {
+      const target = data.site.value.locales[targetLocale];
+      const targetLink =
+        target.link || (targetLocale === "root" ? "/" : `/${targetLocale}/`);
+      const relativePath = route.data.relativePath
+        .replace(/^vi\//, "")
+        .replace(/\.md$/, "");
+      const pagePath = relativePath === "index" ? "" : relativePath;
+      return `${targetLink}${pagePath}${route.hash || ""}`;
+    },
     search: {
       provider: 'local'
     },
