@@ -20,7 +20,7 @@ function createVietnameseSidebar() {
       .map((filename) => {
         const fileUrl = new URL(`../vi/${directory}/${filename}`, import.meta.url);
         const content = readFileSync(fileUrl, "utf-8");
-        const title = content.match(/^#\\s+(.+)$/m)?.[1] ?? filename;
+        const title = content.match(/^#++(.+)$/m)?.[1] ?? filename;
         return {
           text: title,
           link: `/vi/${directory}/${filename.replace(/\\.md$/, "")}`,
