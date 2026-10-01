@@ -6,7 +6,7 @@ Dubbo hỗ trợ những giao thức giao tiếp và giao thức tuần tự hó
 
 ## Phân tích góc nhìn của người phỏng vấn
 
-Ở câu hỏi trước, cần trình bày nguyên lý hoạt động cơ bản của Dubbo: ít nhất phải biết Dubbo gồm những tầng nào, và cách khởi tạo lời gọi RPC thường ngày — đăng ký, khám phá, gọi dịch vụ — đây là những kiến thức cơ bản.
+Ở câu hỏi trước, cần trình bày nguyên lý hoạt động cơ bản của Dubbo; đây là điều bắt buộc phải biết. Ít nhất phải biết Dubbo được chia thành những tầng nào, cũng như cách thường gửi yêu cầu RPC — đăng ký, khám phá, gọi dịch vụ — đây là những kiến thức cơ bản.
 
 Sau đó có thể hỏi sâu hơn về tầng bên dưới, chẳng hạn bắt đầu bằng giao thức tuần tự hóa: thông thường RPC hoạt động như thế nào?
 
@@ -22,7 +22,7 @@ Sau đó có thể hỏi sâu hơn về tầng bên dưới, chẳng hạn bắt
 
 Theo **mặc định**, Dubbo dùng giao thức dubbo, một kết nối dài duy nhất và giao tiếp bất đồng bộ NIO, dựa trên Hessian làm giao thức tuần tự hóa. Giao thức này phù hợp với trường hợp lượng dữ liệu truyền tải nhỏ (mỗi yêu cầu dưới 100kb) nhưng mức đồng thời cao, đồng thời số lượng máy consumer lớn hơn nhiều số lượng máy provider.
 
-Để hỗ trợ mức đồng thời cao, thông thường chỉ có vài máy cung cấp dịch vụ nhưng có hàng trăm máy consumer; lượng lời gọi mỗi ngày có thể lên đến hàng trăm triệu! Khi đó dùng kết nối dài là phù hợp nhất: chỉ cần duy trì một kết nối dài với mỗi consumer, tổng cộng có thể chỉ khoảng 100 kết nối. Sau đó, giao tiếp bất đồng bộ NIO dựa trên các kết nối dài có thể hỗ trợ yêu cầu đồng thời cao.
+Để hỗ trợ mức đồng thời cao, thông thường chỉ có vài máy cung cấp dịch vụ nhưng có hàng trăm máy consumer; lượng lời gọi mỗi ngày có thể lên đến hơn 100 triệu! Khi đó dùng kết nối dài là phù hợp nhất: chỉ cần duy trì một kết nối dài với mỗi consumer, tổng cộng có thể chỉ khoảng 100 kết nối. Sau đó, giao tiếp bất đồng bộ NIO dựa trên các kết nối dài có thể đáp ứng các yêu cầu có mức đồng thời cao.
 
 Nói đơn giản, kết nối dài là kết nối được thiết lập một lần rồi có thể tiếp tục gửi yêu cầu mà không cần thiết lập lại kết nối.
 
@@ -34,7 +34,7 @@ Với kết nối ngắn, cần thiết lập lại kết nối trước mỗi l
 
 -   Giao thức rmi `rmi://`
 
-Giao thức RMI dùng triển khai java.rmi.* theo chuẩn JDK, sử dụng kết nối ngắn kiểu blocking và cơ chế tuần tự hóa tiêu chuẩn của JDK. Giao thức này dùng nhiều kết nối ngắn, phù hợp khi số lượng consumer và provider xấp xỉ nhau, có thể truyền tệp và thường ít được dùng.
+Giao thức RMI dùng triển khai java.rmi.\* theo chuẩn JDK, sử dụng kết nối ngắn kiểu blocking và cơ chế tuần tự hóa tiêu chuẩn của JDK. Giao thức này dùng nhiều kết nối ngắn, phù hợp khi số lượng consumer và provider xấp xỉ nhau, có thể truyền tệp và thường ít được dùng.
 
 -   Giao thức hessian `hessian://`
 
@@ -88,7 +88,7 @@ Cơ chế tuần tự hóa đối tượng của Hessian có 8 kiểu nguyên th
 Ngoài ra còn có 3 kiểu đệ quy:
 
 -   list cho danh sách và mảng
--   map cho map và dictionary
+-   map cho các map và dictionary
 -   object cho đối tượng
 
 Còn có một kiểu đặc biệt:
@@ -97,4 +97,4 @@ Còn có một kiểu đặc biệt:
 
 ### Vì sao PB có hiệu suất cao nhất?
 
-PB có hiệu năng tốt như vậy chủ yếu nhờ hai điểm: **thứ nhất**, nó dùng trình biên dịch proto để tự động tuần tự hóa và giải tuần tự hóa, tốc độ rất nhanh, có thể nhanh hơn `XML` và `JSON` từ `20~100` lần; **thứ hai**, khả năng nén dữ liệu tốt, tức là dữ liệu sau khi tuần tự hóa có kích thước nhỏ. Kích thước nhỏ giúp tối ưu băng thông và tốc độ truyền tải.
+PB có hiệu năng tốt như vậy chủ yếu nhờ hai điểm: **thứ nhất**, nó dùng trình biên dịch proto để tự động tuần tự hóa và giải tuần tự hóa, tốc độ rất nhanh, được cho là nhanh hơn `XML` và `JSON` từ `20~100` lần; **thứ hai**, khả năng nén dữ liệu tốt, tức là dữ liệu sau khi tuần tự hóa có kích thước nhỏ. Kích thước nhỏ giúp tối ưu băng thông và tốc độ truyền tải.

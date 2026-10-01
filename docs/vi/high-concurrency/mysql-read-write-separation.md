@@ -20,7 +20,7 @@ Primary database ghi các thay đổi vào binlog. Sau khi replica database kế
 
 ![mysql-master-slave](../../high-concurrency/images/mysql-master-slave.png)
 
-Một điểm rất quan trọng là quá trình replica đồng bộ dữ liệu của primary được tuần tự hóa. Nghĩa là các thao tác được thực hiện song song trên primary sẽ được thực thi tuần tự trên replica. Đây là điểm rất quan trọng: do đặc điểm replica sao chép log từ primary và thực thi SQL tuần tự, trong tình huống high concurrency, dữ liệu của replica chắc chắn sẽ chậm hơn primary một chút, tức **có độ trễ**. Vì vậy thường xảy ra tình huống dữ liệu vừa ghi vào primary chưa đọc được ngay; phải đợi vài chục mili giây, thậm chí vài trăm mili giây mới đọc được.
+Một điểm rất quan trọng là quá trình replica đồng bộ dữ liệu từ primary được tuần tự hóa. Nghĩa là các thao tác được thực hiện song song trên primary sẽ được thực thi tuần tự trên replica. Đây là điểm rất quan trọng: do đặc điểm replica sao chép log từ primary và thực thi SQL tuần tự, trong tình huống high concurrency, dữ liệu của replica chắc chắn sẽ chậm hơn primary một chút, tức **có độ trễ**. Vì vậy thường xảy ra tình huống dữ liệu vừa ghi vào primary chưa đọc được ngay; phải đợi vài chục mili giây, thậm chí vài trăm mili giây mới đọc được.
 
 Ngoài ra còn có một vấn đề khác: nếu primary đột ngột sập và dữ liệu chưa kịp đồng bộ sang replica thì một số dữ liệu có thể không có trên replica, tức có thể bị mất.
 
@@ -42,11 +42,11 @@ Chúng tôi dùng lệnh MySQL:
 show slave status
 ```
 
-để xem `Seconds_Behind_Master`; có thể thấy dữ liệu primary được replica sao chép bị chậm vài ms.
+để xem `Seconds_Behind_Master`; có thể thấy replica đang chậm hơn primary vài ms khi sao chép dữ liệu.
 
 Thông thường, nếu độ trễ primary-replica khá nghiêm trọng thì có các phương án sau:
 
 -   Sharding database: tách một primary database thành nhiều primary database để concurrency ghi của từng primary giảm đi vài lần; khi đó độ trễ primary-replica có thể không đáng kể.
--   Bật parallel replication được MySQL hỗ trợ để nhiều database được replication song song. Nếu concurrency ghi vào một database nào đó đặc biệt cao, một database đạt 2000 lần ghi đồng thời mỗi giây thì parallel replication cũng không có ý nghĩa.
+-   Bật parallel replication được MySQL hỗ trợ để nhiều database được replication song song. Nếu concurrency ghi vào một database nào đó đặc biệt cao, đạt 2000/s, thì parallel replication cũng không có ý nghĩa.
 -   Viết lại code. Đồng nghiệp viết code cần cẩn trọng; chèn dữ liệu xong truy vấn ngay có thể chưa thấy dữ liệu.
 -   Nếu thực sự bắt buộc phải chèn trước rồi truy vấn thấy dữ liệu ngay, sau đó lập tức thực hiện một số thao tác khác thì hãy **cấu hình kết nối trực tiếp đến primary cho truy vấn đó**. **Không khuyến nghị** cách này; nếu làm như vậy thì read/write separation mất ý nghĩa.

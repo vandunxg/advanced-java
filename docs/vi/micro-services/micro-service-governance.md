@@ -40,7 +40,7 @@ Giải pháp:
 
 ## Chịu lỗi và hạ cấp dịch vụ
 
-Vấn đề cần giải quyết: trong microservice, một yêu cầu thường gọi đến nhiều dịch vụ. Nếu một dịch vụ không khả dụng và không có cơ chế chịu lỗi thì có thể khiến hàng loạt dịch vụ không khả dụng — đây là hiệu ứng domino.
+Vấn đề cần giải quyết: trong microservice, một yêu cầu thường gọi đến nhiều dịch vụ. Nếu một dịch vụ không khả dụng và không có cơ chế chịu lỗi thì có thể khiến hàng loạt dịch vụ không khả dụng — đây là hiệu ứng tuyết lở.
 
 Giải pháp:
 
@@ -81,17 +81,17 @@ Giải pháp:
 
 ## Kiểm thử tự động
 
-Vấn đề cần giải quyết: phát hiện trước ngoại lệ, xác định dịch vụ có khả dụng hay không
+Vấn đề cần giải quyết: phát hiện sớm các bất thường, xác định dịch vụ có khả dụng hay không
 
 Giải pháp:
 
 -   junit
 
-## Quy trình đưa dịch vụ lên và gỡ dịch vụ xuống
+## Quy trình đưa dịch vụ vào vận hành và ngừng vận hành
 
-Vấn đề cần giải quyết: tránh tùy tiện đưa dịch vụ lên hoặc gỡ dịch vụ xuống
+Vấn đề cần giải quyết: tránh tùy tiện đưa dịch vụ vào vận hành hoặc ngừng vận hành
 
-Giải pháp: Dịch vụ mới cần được người quản lý xét duyệt trước khi đưa lên. Khi cần gỡ dịch vụ xuống, phải thông báo cho từng bên gọi để họ sửa đổi; chỉ được gỡ dịch vụ khi không còn bên nào gọi đến dịch vụ đó.
+Giải pháp: Dịch vụ mới cần được người quản lý xét duyệt trước khi đưa vào vận hành. Khi ngừng dịch vụ, phải thông báo cho từng bên gọi để họ sửa đổi; chỉ được ngừng dịch vụ khi không còn bên nào gọi đến dịch vụ đó.
 
 ## Tương thích
 

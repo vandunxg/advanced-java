@@ -1,6 +1,6 @@
-# Kiến trúc trang chi tiết sản phẩm của website thương mại điện tử
+# Kiến trúc hệ thống trang chi tiết sản phẩm của website thương mại điện tử
 
-## Kiến trúc trang chi tiết sản phẩm của website thương mại điện tử nhỏ
+## Kiến trúc hệ thống trang chi tiết sản phẩm của website thương mại điện tử nhỏ
 
 Website thương mại điện tử nhỏ dùng phương pháp tĩnh hóa toàn bộ trang để hiển thị nội dung. Cơ sở dữ liệu lưu tất cả thông tin sản phẩm; hệ thống tĩnh hóa trang đưa dữ liệu vào template tĩnh, tạo thành trang đã tĩnh hóa rồi đẩy lên máy chủ Nginx. Khi người dùng duyệt trang web, hệ thống lấy một trang html đã được tĩnh hóa sẵn và trả về trực tiếp, không cần xử lý logic nghiệp vụ nào.
 
@@ -26,7 +26,7 @@ Với website nhỏ, số lượng trang ít nên cách này rất thiết thự
 
 ## Kiến trúc trang chi tiết sản phẩm của website thương mại điện tử lớn
 
-Trong thiết kế hệ thống trang chi tiết sản phẩm của website thương mại điện tử lớn, khi dữ liệu sản phẩm thay đổi, hệ thống sẽ đưa thông điệp thay đổi vào message queue (MQ). Khi **dịch vụ cache** nhận thông điệp này từ message queue, nó nhận biết dữ liệu đã thay đổi, gọi API của dịch vụ dữ liệu để lấy dữ liệu sau khi cập nhật, sau đó đẩy dữ liệu đã tổng hợp vào redis. Dữ liệu cache cục bộ của Nginx có thời hạn nhất định, chẳng hạn 10 phút. Khi dữ liệu hết hạn, Nginx sẽ lấy dữ liệu cache mới nhất từ redis và lưu vào cache cục bộ của mình.
+Trong thiết kế hệ thống trang chi tiết sản phẩm của website thương mại điện tử lớn, khi dữ liệu sản phẩm thay đổi, hệ thống sẽ đưa thông điệp thay đổi vào message queue (MQ). Khi **dịch vụ cache** tiêu thụ thông điệp này từ message queue, nó nhận biết dữ liệu đã thay đổi, gọi API của dịch vụ dữ liệu để lấy dữ liệu sau khi cập nhật, sau đó đẩy dữ liệu đã tổng hợp vào redis. Dữ liệu cache cục bộ của Nginx có thời hạn nhất định, chẳng hạn 10 phút. Khi dữ liệu hết hạn, Nginx sẽ lấy dữ liệu cache mới nhất từ redis và lưu vào cache cục bộ của mình.
 
 Khi người dùng duyệt trang web, dữ liệu cục bộ của Nginx được kết xuất động vào template html cục bộ rồi trả về cho người dùng.
 
@@ -34,8 +34,8 @@ Khi người dùng duyệt trang web, dữ liệu cục bộ của Nginx đượ
 
 Cách này không nhanh bằng việc trả về trực tiếp trang html, nhưng vì dữ liệu nằm trong cache cục bộ nên vẫn rất nhanh. Chi phí hiệu năng chủ yếu là kết xuất động một trang html. Nếu template html thay đổi, không cần tĩnh hóa lại tất cả các trang, cũng không cần gửi request nên không phát sinh chi phí request mạng; chỉ cần kết xuất dữ liệu vào template html mới nhất rồi phản hồi.
 
-Với kiến trúc này, chúng ta cần **đảm bảo tính high availability của hệ thống**.
+Với kiến trúc này, chúng ta cần **đảm bảo high availability của hệ thống**.
 
-Nếu lưu lượng truy cập hệ thống cao, cache cục bộ của Nginx hết hạn và cache trong redis cũng bị thuật toán LRU dọn sạch, lượng request tới dịch vụ sản phẩm từ dịch vụ cache sẽ tăng cao. Nhưng nếu lúc đó API của dịch vụ sản phẩm gặp sự cố và các lần gọi bị chậm, toàn bộ thread của dịch vụ cache có thể bị chiếm hết bởi những lần gọi API dịch vụ sản phẩm. Mỗi thread sẽ bị treo lâu khi gọi API này; các request tiếp theo cũng bị kẹt tại đó. Khi ấy, dịch vụ cache không còn đủ thread để gọi API của một số dịch vụ khác, khiến nhiều trang chi tiết sản phẩm không thể hiển thị bình thường.
+Nếu lưu lượng truy cập hệ thống cao, cache cục bộ của Nginx hết hạn và cache trong redis cũng bị thuật toán LRU dọn sạch, lượng request tới dịch vụ sản phẩm từ dịch vụ cache sẽ tăng cao. Nhưng nếu lúc đó API của dịch vụ sản phẩm gặp sự cố và các lần gọi bị chậm, toàn bộ thread của dịch vụ cache đều bị các lần gọi API dịch vụ sản phẩm chiếm hết. Mỗi thread sẽ bị treo lâu khi gọi API này; các request tiếp theo cũng bị kẹt tại đó. Khi ấy, dịch vụ cache không còn đủ thread để gọi API của một số dịch vụ khác, khiến nhiều trang chi tiết sản phẩm không thể hiển thị bình thường.
 
 Đây chính là hiện tượng tài nguyên của dịch vụ cache bị cạn kiệt do API dịch vụ sản phẩm gặp sự cố.

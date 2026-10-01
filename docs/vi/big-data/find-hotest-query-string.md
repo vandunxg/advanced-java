@@ -14,13 +14,13 @@ Chuỗi truy vấn dài tối đa 255B; 1000w chuỗi cần khoảng 2.55G bộ 
 
 Chia để trị vẫn là một phương pháp rất hữu ích.
 
-Chia thành nhiều tệp nhỏ để bảo đảm các chuỗi trong mỗi tệp nhỏ có thể được tải trực tiếp vào bộ nhớ xử lý, rồi tìm 10 chuỗi xuất hiện nhiều nhất trong từng tệp; cuối cùng dùng một heap min để thống kê 10 chuỗi xuất hiện nhiều nhất trong tất cả các tệp.
+Chia thành nhiều tệp nhỏ để bảo đảm các chuỗi trong mỗi tệp nhỏ có thể được nạp trực tiếp vào bộ nhớ để xử lý, rồi tìm 10 chuỗi xuất hiện nhiều nhất trong từng tệp; cuối cùng dùng một heap min để thống kê 10 chuỗi xuất hiện nhiều nhất trong tất cả các tệp.
 
 Phương pháp này khả thi, nhưng chưa phải tốt nhất; dưới đây là các phương pháp khác.
 
 ### Phương pháp 2: Dùng HashMap
 
-Tuy tổng số chuỗi khá lớn, nhưng sau khi loại trùng không quá 300w; do đó có thể lưu tất cả chuỗi cùng số lần xuất hiện vào một HashMap. Dung lượng cần dùng là 300w\*(255+4)≈777M (trong đó 4 là số byte một số nguyên chiếm dụng). Như vậy có thể thấy bộ nhớ 1G hoàn toàn đủ.
+Tuy tổng số chuỗi khá lớn, nhưng sau khi loại trùng không quá 300w; do đó có thể lưu tất cả chuỗi cùng số lần xuất hiện vào một HashMap. Dung lượng cần dùng là 300w\*(255+4)≈777M (trong đó 4 là 4 byte mà một số nguyên chiếm dụng). Như vậy có thể thấy bộ nhớ 1G hoàn toàn đủ.
 
 **Ý tưởng như sau**:
 
@@ -36,7 +36,7 @@ Phương pháp hai dùng HashMap để thống kê số lần xuất hiện. Khi
 
 **Ý tưởng như sau**:
 
-Khi duyệt các chuỗi, hãy tìm trong cây tiền tố; nếu tìm thấy thì tăng số lần xuất hiện của chuỗi được lưu tại nút lên 1, nếu không thì tạo các nút mới cho chuỗi này; sau khi tạo xong, đặt số lần xuất hiện của chuỗi tại nút lá thành 1.
+Khi duyệt các chuỗi, hãy tìm trong cây tiền tố; nếu tìm thấy thì tăng số lần xuất hiện của chuỗi được lưu tại nút lên 1, nếu không thì tạo một nút mới cho chuỗi này; sau khi tạo xong, đặt số lần xuất hiện của chuỗi tại nút lá thành 1.
 
 Cuối cùng vẫn dùng heap min để sắp xếp các chuỗi theo số lần xuất hiện.
 

@@ -24,7 +24,7 @@ Thực ra người phỏng vấn chủ yếu muốn xem:
 
     Đừng tự quyết định theo sở thích cá nhân rồi dùng bừa một MQ như Kafka, thậm chí còn chưa từng khảo sát xem trong ngành có những MQ phổ biến nào và mỗi MQ có ưu nhược điểm ra sao. Không MQ nào **tốt hay xấu tuyệt đối**; điều quan trọng là dùng vào tình huống nào để **phát huy ưu điểm và tránh nhược điểm**.
 
-    Nếu một ứng viên không cân nhắc chọn lựa công nghệ được tuyển vào team, leader giao thiết kế một hệ thống nào đó, bạn ấy dùng một số công nghệ nhưng có thể chưa từng cân nhắc lựa chọn; cuối cùng công nghệ được chọn có thể không phù hợp và tiếp tục để lại vấn đề.
+    Nếu một ứng viên không cân nhắc việc chọn công nghệ mà được tuyển vào team, leader giao thiết kế một hệ thống nào đó, bạn ấy dùng một số công nghệ nhưng có thể chưa từng cân nhắc lựa chọn; cuối cùng công nghệ được chọn có thể không phù hợp và tiếp tục để lại vấn đề.
 
 ## Phân tích câu hỏi phỏng vấn
 
@@ -34,7 +34,7 @@ Thực ra câu hỏi này muốn hỏi message queue có những tình huống s
 
 Khi người phỏng vấn hỏi câu này, **câu trả lời họ mong đợi** là: công ty có một **tình huống nghiệp vụ** nào đó, tình huống đó có thách thức kỹ thuật ra sao; nếu không dùng MQ thì sẽ rất phiền phức, nhưng sau khi dùng MQ thì có nhiều lợi ích.
 
-Trước tiên nói về các tình huống sử dụng phổ biến của message queue. Thực ra có nhiều tình huống, nhưng 3 tình huống cốt lõi hơn cả là: **tách rời**, **bất đồng bộ**, **làm phẳng đỉnh tải**.
+Trước tiên nói về các tình huống sử dụng phổ biến của message queue. Thực ra có nhiều tình huống, nhưng 3 tình huống cốt lõi hơn cả là: **tách rời**, **bất đồng bộ**, **san bằng đỉnh**.
 
 #### Tách rời
 
@@ -44,7 +44,7 @@ Hãy xem tình huống sau. Hệ thống A gửi dữ liệu đến ba hệ th�
 
 Trong tình huống này, hệ thống A bị coupling chặt với đủ loại hệ thống khác. A tạo ra một dữ liệu quan trọng và nhiều hệ thống đều cần A gửi dữ liệu đó. A phải luôn cân nhắc phải làm gì nếu một trong các hệ thống BCDE bị sập: có nên gửi lại không, có nên lưu message không? Đau đầu quá!
 
-Nếu dùng MQ, hệ thống A tạo một dữ liệu rồi gửi vào MQ; hệ thống nào cần dữ liệu thì tự lấy từ MQ. Nếu có hệ thống mới cần dữ liệu thì chỉ việc lấy từ MQ; nếu hệ thống nào đó không cần dữ liệu nữa thì hủy đăng ký nhận message MQ là xong. Như vậy, hệ thống A hoàn toàn không cần cân nhắc phải gửi dữ liệu cho ai, không cần duy trì đoạn code này, cũng không cần quan tâm hệ thống kia gọi thành công hay thất bại, timeout, v.v.
+Nếu dùng MQ, hệ thống A tạo một dữ liệu rồi gửi vào MQ; hệ thống nào cần dữ liệu thì tự lấy từ MQ. Nếu có hệ thống mới cần dữ liệu thì chỉ việc lấy từ MQ; nếu hệ thống nào đó không cần dữ liệu nữa thì dừng tiêu thụ message từ MQ là xong. Như vậy, hệ thống A hoàn toàn không cần cân nhắc phải gửi dữ liệu cho ai, không cần duy trì đoạn code này, cũng không cần quan tâm hệ thống kia gọi thành công hay thất bại, timeout, v.v.
 
 ![mq-2](../../high-concurrency/images/mq-2.png)
 
@@ -64,7 +64,7 @@ Nếu **dùng MQ**, hệ thống A liên tục gửi 3 message vào hàng đợi
 
 ![mq-4](../../high-concurrency/images/mq-4.png)
 
-#### Làm phẳng đỉnh tải
+#### San bằng đỉnh
 
 Mỗi ngày từ 0:00 đến 12:00, hệ thống A rất yên ắng, số request đồng thời mỗi giây chỉ có 50. Nhưng cứ đến 12:00–13:00, số request đồng thời mỗi giây đột nhiên tăng vọt lên hơn 5.000. Hệ thống lại truy cập MySQL trực tiếp nên rất nhiều request đổ vào MySQL, mỗi giây thực thi khoảng 5.000 câu SQL.
 
@@ -80,9 +80,9 @@ Nếu dùng MQ, mỗi giây có 5.000 request được ghi vào MQ; hệ thống
 
 Lượng request bị dồn trong thời gian cao điểm ngắn này vẫn ổn. Sau giờ cao điểm, mỗi giây chỉ có 50 request vào MQ nhưng hệ thống A vẫn xử lý với tốc độ 2.000 request mỗi giây. Vì vậy, ngay sau khi giờ cao điểm qua đi, hệ thống A sẽ nhanh chóng xử lý hết các message còn tồn đọng.
 
-### Message queue có ưu nhược điểm gì?
+### Message queue có ưu điểm và nhược điểm gì?
 
-Ưu điểm đã nói ở trên: **trong một số tình huống cụ thể, MQ mang lại lợi ích tương ứng**, gồm **tách rời**, **bất đồng bộ** và **làm phẳng đỉnh tải**.
+Ưu điểm đã nói ở trên: **trong những tình huống đặc biệt, MQ mang lại lợi ích tương ứng**, gồm **tách rời**, **bất đồng bộ** và **san bằng đỉnh**.
 
 Nhược điểm gồm:
 
@@ -92,21 +92,21 @@ Nhược điểm gồm:
 
 -   Tăng độ phức tạp của hệ thống
 
-    Cứng nhắc thêm MQ vào thì làm sao [đảm bảo message không bị tiêu thụ lặp](./how-to-ensure-that-messages-are-not-repeatedly-consumed)? Làm sao [xử lý trường hợp mất message](./how-to-ensure-the-reliable-transmission-of-messages)? Làm sao đảm bảo thứ tự truyền message? Thật nhức đầu, hàng đống vấn đề, rất khó xử lý.
+    Cứng nhắc thêm MQ vào thì làm sao [đảm bảo message không bị tiêu thụ lặp](./how-to-ensure-that-messages-are-not-repeatedly-consumed.md)? Làm sao [xử lý trường hợp mất message](./how-to-ensure-the-reliable-transmission-of-messages.md)? Làm sao đảm bảo thứ tự truyền message? Thật nhức đầu, hàng đống vấn đề, rất khó xử lý.
 
 -   Vấn đề nhất quán
 
-    Hệ thống A xử lý xong và trả về thành công, mọi người đều nghĩ request này đã thành công. Nhưng vấn đề là nếu hai trong ba hệ thống B, C, D — chẳng hạn B và D — ghi database thành công còn hệ thống C ghi database thất bại thì sao? Dữ liệu của bạn sẽ không nhất quán.
+    Hệ thống A xử lý xong và trả về thành công, mọi người đều nghĩ request này đã thành công. Nhưng vấn đề là nếu hai trong ba hệ thống B, C, D — B và D — ghi database thành công còn hệ thống C ghi database thất bại thì sao? Dữ liệu của bạn sẽ không nhất quán.
 
-    Vì vậy message queue thực ra là một kiến trúc rất phức tạp. Đưa MQ vào có nhiều lợi ích, nhưng cũng cần triển khai nhiều giải pháp kỹ thuật và kiến trúc bổ sung để tránh các nhược điểm nó mang lại. Sau khi làm xong, bạn sẽ thấy độ phức tạp hệ thống tăng lên cả một cấp độ, có thể phức tạp hơn gấp 10 lần. Nhưng đến lúc cần thì vẫn phải dùng.
+    Vì vậy message queue thực ra là một kiến trúc rất phức tạp. Đưa MQ vào có nhiều lợi ích, nhưng cũng cần triển khai nhiều giải pháp kỹ thuật và kiến trúc bổ sung để tránh các nhược điểm nó mang lại. Sau khi làm xong, bạn sẽ thấy độ phức tạp hệ thống tăng lên một bậc độ lớn, có thể phức tạp hơn gấp 10 lần. Nhưng đến lúc cần thì vẫn phải dùng.
 
-### Kafka, ActiveMQ, RabbitMQ và RocketMQ có ưu nhược điểm gì?
+### Kafka, ActiveMQ, RabbitMQ và RocketMQ có ưu điểm và nhược điểm gì?
 
 | Đặc tính | ActiveMQ | RabbitMQ | RocketMQ | Kafka |
 | ------------------------ | ------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Throughput đơn máy | Cấp hàng chục nghìn, thấp hơn RocketMQ và Kafka một bậc độ lớn | Tương tự ActiveMQ | Cấp 100 nghìn, hỗ trợ throughput cao | Cấp 100 nghìn, throughput cao; thường kết hợp với hệ thống big data để tính toán dữ liệu thời gian thực, thu thập log và các tình huống tương tự |
+| Throughput trên một máy | Mức hàng chục nghìn, thấp hơn RocketMQ và Kafka một bậc độ lớn | Tương tự ActiveMQ | Mức 100 nghìn, hỗ trợ throughput cao | Mức 100 nghìn, throughput cao; thường kết hợp với hệ thống big data để tính toán dữ liệu thời gian thực, thu thập log và các tình huống tương tự |
 | Ảnh hưởng của số lượng topic lên throughput |  |  | Topic có thể lên đến hàng trăm/hàng nghìn; throughput giảm nhẹ. Đây là một ưu điểm lớn của RocketMQ: với cùng cấu hình máy, có thể hỗ trợ số lượng topic lớn | Khi số lượng topic từ vài chục đến vài trăm, throughput giảm mạnh. Với cùng cấu hình máy, Kafka nên giữ số topic ở mức không quá nhiều; nếu cần hỗ trợ lượng topic lớn thì phải tăng thêm tài nguyên máy |
-| Độ trễ | Cấp ms | Cấp microsecond, đây là ưu điểm lớn của RabbitMQ và có độ trễ thấp nhất | Cấp ms | Độ trễ dưới cấp ms |
+| Độ trễ | Cấp ms | Cấp micro giây, đây là ưu điểm lớn của RabbitMQ và có độ trễ thấp nhất | Cấp ms | Độ trễ ở cấp ms |
 | Tính khả dụng | Cao, high availability được triển khai dựa trên kiến trúc primary-replica | Tương tự ActiveMQ | Rất cao, kiến trúc phân tán | Rất cao, phân tán; một dữ liệu có nhiều bản sao, một số ít máy bị sập cũng không làm mất dữ liệu hay khiến hệ thống không khả dụng |
 | Độ tin cậy của message | Có xác suất thấp bị mất dữ liệu | Về cơ bản không mất | Có thể đạt mức không mất dữ liệu nếu tối ưu cấu hình tham số | Tương tự RocketMQ |
 | Hỗ trợ chức năng | Chức năng trong lĩnh vực MQ rất đầy đủ | Phát triển dựa trên erlang, có khả năng xử lý đồng thời mạnh, hiệu năng rất tốt, độ trễ thấp | Chức năng MQ khá đầy đủ, có tính phân tán và khả năng mở rộng tốt | Chức năng khá đơn giản, chủ yếu hỗ trợ các chức năng MQ cơ bản; được sử dụng rộng rãi trong lĩnh vực big data để tính toán thời gian thực và thu thập log |

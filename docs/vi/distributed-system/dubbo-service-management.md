@@ -10,7 +10,7 @@ Nếu được hỏi về quản trị dịch vụ thì thực ra người phỏ
 
 **Hạ cấp dịch vụ** là chủ đề thiết yếu trong hệ thống phân tán phức tạp. Các hệ thống phân tán gọi lẫn nhau; nếu bất kỳ hệ thống nào gặp lỗi mà bạn không hạ cấp thì toàn bộ hệ thống sụp đổ sao? Như vậy thật tai hại.
 
-**Thử lại khi thất bại**: yêu cầu mạng trong hệ thống phân tán diễn ra thường xuyên như vậy; nếu vô tình thất bại một lần do vấn đề mạng thì có nên thử lại không?
+**Thử lại khi thất bại**: các yêu cầu mạng trong hệ thống phân tán diễn ra dày đặc như vậy; nếu vô tình thất bại một lần do vấn đề mạng thì có nên thử lại không?
 
 **Thử lại khi timeout**: cũng tương tự như trên, nếu mạng chậm một chút và bị timeout thì thử lại như thế nào?
 
@@ -26,11 +26,11 @@ Vì vậy, trong hệ thống phân tán dựa trên Dubbo cần tự động gh
 
 ![dubbo-service-invoke-road](../../distributed-system/images/dubbo-service-invoke-road.png)
 
-#### 2. Thống kê áp lực truy cập và thời gian xử lý dịch vụ
+#### 2. Thống kê tải truy cập dịch vụ và thời gian truy cập
 
 Cần tự động thống kê **số lần gọi và độ trễ truy cập giữa từng giao diện và dịch vụ**, đồng thời chia thành hai cấp độ.
 
--   Cấp độ thứ nhất là chi tiết giao diện: mỗi giao diện của mỗi dịch vụ được gọi bao nhiêu lần mỗi ngày, độ trễ yêu cầu ở các mốc TP50/TP90/TP99 là bao nhiêu;
+-   Cấp độ thứ nhất là cấp độ giao diện: mỗi giao diện của mỗi dịch vụ được gọi bao nhiêu lần mỗi ngày, độ trễ yêu cầu ở các mốc TP50/TP90/TP99 là bao nhiêu;
 -   Cấp độ thứ hai bắt đầu từ điểm vào ban đầu: sau khi một chuỗi yêu cầu hoàn chỉnh đi qua hàng chục dịch vụ và xử lý xong yêu cầu, mỗi ngày toàn chuỗi chạy bao nhiêu lần, độ trễ yêu cầu toàn chuỗi ở các mốc TP50/TP90/TP99 lần lượt là bao nhiêu.
 
 Sau khi giải quyết những việc này thì mới có thể xem áp lực chính của hệ thống hiện ở đâu, cần mở rộng và tối ưu như thế nào.
@@ -93,12 +93,12 @@ public class HelloServiceImpl implements HelloService {
 
 Khi gọi giao diện thất bại, có thể dùng `mock` để thống nhất trả về null.
 
-Giá trị `mock` cũng có thể đổi thành true; sau đó triển khai một lớp Mock trong cùng đường dẫn với giao diện, đặt tên theo quy tắc “tên giao diện + hậu tố `Mock`”. Rồi triển khai logic hạ cấp riêng trong lớp Mock.
+Giá trị mock cũng có thể đổi thành true; sau đó triển khai một lớp Mock trong cùng đường dẫn với giao diện, đặt tên theo quy tắc “tên giao diện + hậu tố `Mock`”. Rồi triển khai logic hạ cấp riêng trong lớp Mock.
 
 ```java
 public class HelloServiceMock implements HelloService {
     public void sayHello() {
-        // 降级逻辑
+        // Logic hạ cấp
     }
 }
 ```
@@ -113,7 +113,7 @@ Thử lại khi thất bại nghĩa là nếu consumer gọi provider thất b�
 
 Lấy một ví dụ.
 
-Một giao diện của dịch vụ cần 5 giây để xử lý; bạn không thể cứ ngồi chờ. Sau khi cấu hình timeout, bạn chờ 2 giây; nếu chưa có kết quả thì dừng chờ, không thể đợi mãi.
+Một giao diện của dịch vụ cần 5s để xử lý; bạn không thể cứ ngồi chờ. Sau khi cấu hình timeout, bạn chờ 2s; nếu chưa có kết quả thì dừng chờ, không thể đợi mãi.
 
 Có thể trình bày cách đặt các tham số này theo tình huống cụ thể ở công ty bạn:
 

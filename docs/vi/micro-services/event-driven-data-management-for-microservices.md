@@ -13,7 +13,7 @@ Nhờ những đặc tính trên, có thể đơn giản hóa ứng dụng như 
 
 Một lợi ích khác của cơ sở dữ liệu quan hệ là hỗ trợ SQL (ngôn ngữ truy vấn mạnh, khai báo và dựa trên phép biến đổi bảng). Người dùng có thể dễ dàng kết hợp dữ liệu từ nhiều bảng bằng truy vấn; bộ lập lịch truy vấn RDBMS sẽ quyết định cách triển khai tối ưu. Người dùng không cần lo về các vấn đề tầng thấp như cách truy cập cơ sở dữ liệu. Ngoài ra, vì toàn bộ dữ liệu ứng dụng nằm trong một cơ sở dữ liệu nên rất dễ truy vấn.
 
-Tuy nhiên, với kiến trúc microservice, việc truy cập dữ liệu trở nên phức tạp vì dữ liệu thuộc quyền riêng của từng microservice và chỉ có thể truy cập thông qua API. Đóng gói quyền truy cập dữ liệu theo cách này giúp các microservice liên kết lỏng và độc lập với nhau. Nếu nhiều dịch vụ cùng truy cập một dữ liệu thì schema sẽ ghi nhận thời gian truy cập và cần phối hợp giữa tất cả các dịch vụ.
+Tuy nhiên, với kiến trúc microservice, việc truy cập dữ liệu trở nên phức tạp vì dữ liệu thuộc quyền riêng của từng microservice và chỉ có thể truy cập thông qua API. Đóng gói quyền truy cập dữ liệu theo cách này giúp các microservice liên kết lỏng và độc lập với nhau. Nếu nhiều dịch vụ cùng truy cập một dữ liệu thì schema sẽ ghi nhận thời gian truy cập và cần được phối hợp giữa tất cả các dịch vụ.
 
 Hơn nữa, các microservice khác nhau thường dùng cơ sở dữ liệu khác nhau. Ứng dụng có thể tạo ra nhiều loại dữ liệu khác nhau; cơ sở dữ liệu quan hệ không phải lúc nào cũng là lựa chọn tốt nhất. Trong một số trường hợp, cơ sở dữ liệu NoSQL có thể cung cấp mô hình dữ liệu tiện dụng hơn, hiệu năng và khả năng mở rộng tốt hơn. Ví dụ, ứng dụng tạo và truy vấn chuỗi có thể dùng công cụ tìm kiếm ký tự như Elasticsearch. Tương tự, ứng dụng tạo dữ liệu đồ thị xã hội có thể dùng cơ sở dữ liệu đồ thị như Neo4j. Vì vậy, ứng dụng dựa trên microservice thường kết hợp cơ sở dữ liệu SQL và NoSQL; phương pháp này được gọi là polyglot persistence.
 
@@ -31,9 +31,9 @@ Thách thức thứ hai là làm thế nào tìm kiếm dữ liệu từ nhiều
 
 ## 1.2 Kiến trúc hướng sự kiện
 
-Với nhiều ứng dụng, giải pháp là dùng kiến trúc hướng sự kiện (event-driven architecture). Trong kiến trúc này, khi xảy ra một việc quan trọng, microservice sẽ phát một sự kiện, chẳng hạn cập nhật một thực thể nghiệp vụ. Khi microservice đăng ký nhận sự kiện nhận được sự kiện đó, nó có thể cập nhật thực thể nghiệp vụ của mình và có thể phát sinh thêm sự kiện.
+Với nhiều ứng dụng, giải pháp là dùng kiến trúc hướng sự kiện (event-driven architecture). Trong kiến trúc này, khi xảy ra một việc quan trọng, microservice sẽ phát một sự kiện, chẳng hạn cập nhật một thực thể nghiệp vụ. Khi microservice đăng ký các sự kiện nhận được một sự kiện, nó có thể cập nhật thực thể nghiệp vụ của mình và có thể phát sinh thêm sự kiện.
 
-Có thể dùng sự kiện để triển khai giao dịch nghiệp vụ xuyên nhiều dịch vụ. Giao dịch thường gồm một chuỗi bước; mỗi bước do một microservice cập nhật thực thể nghiệp vụ và phát sự kiện kích hoạt bước tiếp theo thực hiện. Hình dưới đây minh họa cách dùng hướng sự kiện để kiểm tra tín dụng khả dụng khi tạo đơn hàng; các microservice trao đổi sự kiện thông qua message broker.
+Có thể dùng sự kiện để triển khai giao dịch nghiệp vụ xuyên nhiều dịch vụ. Giao dịch thường gồm một chuỗi bước; mỗi bước do một microservice cập nhật thực thể nghiệp vụ và phát một sự kiện để kích hoạt bước tiếp theo. Hình dưới đây minh họa cách dùng hướng sự kiện để kiểm tra tín dụng khả dụng khi tạo đơn hàng; các microservice trao đổi sự kiện thông qua message broker.
 
 1. Dịch vụ đơn hàng tạo một Order ở trạng thái NEW và phát sự kiện “Order Created Event” (Sự kiện tạo đơn hàng).
 
@@ -49,9 +49,9 @@ Có thể dùng sự kiện để triển khai giao dịch nghiệp vụ xuyên 
 
 Trong tình huống phức tạp hơn có thể có thêm nhiều bước, chẳng hạn giữ chỗ tồn kho đồng thời với kiểm tra tín dụng khách hàng.
 
-Xét đến (a) mỗi dịch vụ cập nhật cơ sở dữ liệu của mình một cách nguyên tử và phát sự kiện, sau đó (b) message broker bảo đảm sự kiện được gửi ít nhất một lần, giao dịch nghiệp vụ có thể được thực hiện xuyên nhiều dịch vụ (giao dịch này không phải giao dịch ACID). Mô hình này cung cấp tính nhất quán yếu hơn, chẳng hạn tính nhất quán cuối cùng (eventual consistency). Loại giao dịch này được gọi là mô hình BASE.
+Căn cứ vào việc (a) mỗi dịch vụ cập nhật cơ sở dữ liệu của mình một cách nguyên tử và phát sự kiện, sau đó (b) message broker bảo đảm sự kiện được gửi ít nhất một lần, giao dịch nghiệp vụ có thể được thực hiện xuyên nhiều dịch vụ (giao dịch này không phải giao dịch ACID). Mô hình này cung cấp tính nhất quán yếu, chẳng hạn tính nhất quán cuối cùng (eventual consistency). Loại giao dịch này được gọi là mô hình BASE.
 
-Cũng có thể dùng sự kiện để duy trì các khung nhìn hiện thực đã join trước (pre-join) dữ liệu thuộc nhiều microservice. Dịch vụ duy trì khung nhìn này đăng ký các sự kiện liên quan rồi cập nhật khung nhìn. Ví dụ, dịch vụ cập nhật khung nhìn đơn hàng khách hàng (duy trì khung nhìn đơn hàng của khách hàng) sẽ đăng ký sự kiện do dịch vụ khách hàng và dịch vụ đơn hàng phát ra.
+Cũng có thể dùng sự kiện để duy trì các materialized view chứa dữ liệu đã pre-join (pre-join) của nhiều microservice. Dịch vụ duy trì view này đăng ký các sự kiện liên quan rồi cập nhật view. Ví dụ, dịch vụ cập nhật view đơn hàng khách hàng (duy trì view đơn hàng của khách hàng) sẽ đăng ký sự kiện do dịch vụ khách hàng và dịch vụ đơn hàng phát ra.
 
 ![pre-join](../../micro-services/images/pre-join.png)
 
@@ -59,7 +59,7 @@ Khi dịch vụ cập nhật khung nhìn đơn hàng khách hàng nhận đượ
 
 Kiến trúc hướng sự kiện có cả ưu điểm lẫn nhược điểm. Kiến trúc này cho phép giao dịch trải dài qua nhiều dịch vụ và cung cấp tính nhất quán cuối cùng; đồng thời giúp ứng dụng duy trì một khung nhìn tổng hợp cuối cùng. Nhược điểm là mô hình lập trình phức tạp hơn mô hình giao dịch ACID: để khôi phục khi tầng ứng dụng thất bại, cần triển khai giao dịch bù trừ, chẳng hạn nếu kiểm tra tín dụng không thành công thì phải hủy đơn hàng. Ngoài ra, ứng dụng phải xử lý dữ liệu không nhất quán vì thay đổi do giao dịch đang chạy tạm thời (in-flight) có thể nhìn thấy được; dữ liệu cũng có thể không nhất quán khi ứng dụng đọc khung nhìn cuối cùng chưa được cập nhật. Một nhược điểm khác là bên đăng ký phải phát hiện và bỏ qua sự kiện dư thừa.
 
-## 1.3 Đạt được tính nguyên tử
+## 1.3 Thao tác nguyên tử (Achieving Atomicity)
 
 Kiến trúc hướng sự kiện còn gặp vấn đề về tính nguyên tử giữa thao tác cập nhật cơ sở dữ liệu và phát sự kiện. Ví dụ, dịch vụ đơn hàng phải chèn một hàng vào bảng ORDER rồi phát sự kiện Order Created; hai thao tác này cần có tính nguyên tử. Nếu dịch vụ gặp sự cố sau khi cập nhật cơ sở dữ liệu nhưng trước khi phát sự kiện thì hệ thống sẽ ở trạng thái không nhất quán. Cách tiêu chuẩn để bảo đảm tính nguyên tử là dùng giao dịch phân tán gồm cơ sở dữ liệu và message broker. Tuy nhiên, theo lý thuyết CAP đã mô tả ở trên, đây không phải điều chúng ta muốn dùng.
 
@@ -83,7 +83,7 @@ Một cách khác để đạt tính nguyên tử khi luồng hoặc tiến trì
 
 Một ví dụ về phương pháp này là dự án LinkedIn Databus. Databus khai thác nhật ký giao dịch Oracle và phát sự kiện dựa trên những thay đổi; LinkedIn dùng Databus để bảo đảm tính nhất quán giữa các bản ghi trong hệ thống.
 
-Một ví dụ khác là cơ chế streams của AWS DynamoDB, một cơ sở dữ liệu NoSQL được quản lý. Luồng DynamoDB gồm những thay đổi của bảng cơ sở dữ liệu trong 24 giờ trước theo thứ tự thời gian (thao tác tạo, cập nhật và xóa). Ứng dụng có thể đọc các thay đổi này từ luồng rồi phát chúng dưới dạng sự kiện.
+Một ví dụ khác là cơ chế streams của AWS DynamoDB, một cơ sở dữ liệu NoSQL được quản lý. Luồng DynamoDB gồm những thay đổi của bảng cơ sở dữ liệu trong 24 giờ qua theo thứ tự thời gian (thao tác tạo, cập nhật và xóa). Ứng dụng có thể đọc các thay đổi này từ luồng rồi phát chúng dưới dạng sự kiện.
 
 Khai thác nhật ký giao dịch cũng có cả ưu và nhược điểm. Ưu điểm là bảo đảm mỗi lần cập nhật đều phát sự kiện mà không phụ thuộc vào 2PC. Việc khai thác nhật ký giao dịch có thể được đơn giản hóa bằng cách tách việc phát sự kiện khỏi logic nghiệp vụ ứng dụng. Nhược điểm chính là nhật ký giao dịch có định dạng khác nhau tùy cơ sở dữ liệu, thậm chí khác nhau giữa các phiên bản của cùng một cơ sở dữ liệu; ngoài ra, rất khó chuyển các bản ghi cập nhật ở tầng thấp trong nhật ký giao dịch thành sự kiện nghiệp vụ ở tầng cao.
 
@@ -101,12 +101,12 @@ Sự kiện được lưu lâu dài trong kho sự kiện, nơi cung cấp API �
 
 Phương pháp event sourcing có nhiều ưu điểm: giải quyết vấn đề then chốt của kiến trúc hướng sự kiện, cho phép phát sự kiện đáng tin cậy mỗi khi trạng thái thay đổi, nhờ đó giải quyết vấn đề nhất quán dữ liệu trong kiến trúc microservice. Ngoài ra, vì lưu sự kiện thay vì đối tượng nên tránh được vấn đề không tương thích giữa mô hình đối tượng và mô hình quan hệ.
 
-Phương pháp nguồn dữ liệu cung cấp nhật ký thay đổi thực thể nghiệp vụ đáng tin cậy 100%, cho phép truy xuất trạng thái thực thể tại bất kỳ thời điểm nào. Ngoài ra, event sourcing cho phép xây dựng logic nghiệp vụ từ các thực thể nghiệp vụ liên kết lỏng lẻo và trao đổi sự kiện. Những ưu điểm này giúp việc chuyển ứng dụng đơn khối sang kiến trúc microservice tương đối dễ dàng.
+Phương pháp event sourcing cung cấp nhật ký thay đổi thực thể nghiệp vụ đáng tin cậy 100%, cho phép truy xuất trạng thái thực thể tại bất kỳ thời điểm nào. Ngoài ra, event sourcing cho phép xây dựng logic nghiệp vụ từ các thực thể nghiệp vụ liên kết lỏng lẻo và trao đổi sự kiện với nhau. Những ưu điểm này giúp việc chuyển ứng dụng đơn khối sang kiến trúc microservice tương đối dễ dàng.
 
-Event sourcing cũng có không ít nhược điểm vì đây là mô hình lập trình khác, ít quen thuộc nên không dễ học lại. Kho sự kiện chỉ hỗ trợ truy vấn thực thể nghiệp vụ bằng khóa chính; cần dùng Command Query Responsibility Segregation (CQRS) để triển khai truy vấn nghiệp vụ. Vì vậy, ứng dụng phải xử lý dữ liệu nhất quán cuối cùng.
+Event sourcing cũng có không ít nhược điểm vì đây là mô hình lập trình khác, ít quen thuộc nên không dễ học lại. Kho sự kiện chỉ hỗ trợ truy vấn thực thể nghiệp vụ bằng khóa chính; cần dùng Command Query Responsibility Segregation (CQRS) để triển khai truy vấn nghiệp vụ. Vì vậy, ứng dụng phải xử lý dữ liệu theo mô hình eventual consistency.
 
 ## 1.4 Tổng kết
 
 Trong kiến trúc microservice, mỗi microservice có tập dữ liệu riêng. Các microservice khác nhau có thể dùng cơ sở dữ liệu SQL hoặc NoSQL khác nhau. Dù kiến trúc cơ sở dữ liệu có nhiều ưu điểm, nó cũng tạo ra thách thức trong quản lý dữ liệu phân tán. Thách thức thứ nhất là làm thế nào duy trì tính nhất quán của giao dịch nghiệp vụ giữa nhiều dịch vụ; thách thức thứ hai là làm thế nào lấy dữ liệu nhất quán từ môi trường nhiều dịch vụ.
 
-Giải pháp tốt nhất là dùng kiến trúc hướng sự kiện. Một thách thức ở đây là làm thế nào cập nhật trạng thái và phát sự kiện một cách nguyên tử. Có một số cách giải quyết vấn đề này, gồm xem cơ sở dữ liệu như hàng đợi thông điệp, khai thác nhật ký giao dịch và event sourcing.
+Giải pháp tốt nhất là dùng kiến trúc hướng sự kiện. Một thách thức ở đây là làm thế nào cập nhật trạng thái và phát sự kiện một cách nguyên tử. Có một số cách giải quyết vấn đề này, bao gồm việc xem cơ sở dữ liệu như một message queue, khai thác nhật ký giao dịch và event sourcing.

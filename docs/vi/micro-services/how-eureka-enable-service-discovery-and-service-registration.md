@@ -1,9 +1,8 @@
-# Các quy trình gọi chính của Eureka, thành phần khám phá dịch vụ
+# Các quy trình gọi chính của thành phần khám phá dịch vụ Eureka
 
 ## Lời nói đầu
 
-Kiến trúc microservice phổ biến hiện nay đang thay đổi cách chúng ta xây dựng ứng dụng: chuyển từ một dịch vụ đơn khối duy nhất sang ngày càng nhiều dịch vụ nhỏ hơn, có thể triển khai độc lập (gọi là `microservice`), cùng nhau tạo thành ứng dụng. Khi xử lý một nghiệp vụ, việc nhiều dịch vụ gọi lẫn nhau là khó tránh khỏi. Giả sử dịch vụ A cần truy cập dịch vụ B được triển khai trên máy chủ khác; trước hết A phải biết địa chỉ IP của máy chạy B và cổng tương ứng với dịch vụ đó. Cách đơn giản nhất là để A tự duy trì cấu hình của B (bao gồm địa chỉ IP, cổng, v.v.), nhưng cách này có một số nhược điểm rõ ràng: khi số lượng dịch vụ được gọi tăng lên thì phải duy trì tệp cấu hình như thế nào; thiếu linh hoạt — nếu địa chỉ IP hoặc cổng của B thay đổi thì A cũng phải sửa cấu hình tương ứng; và việc tự động mở rộng hoặc thu hẹp dịch vụ cũng bất tiện.
-
+Kiến trúc microservice phổ biến hiện nay đang thay đổi cách chúng ta xây dựng ứng dụng: chuyển từ một dịch vụ đơn khối duy nhất sang các dịch vụ ngày càng nhỏ hơn, có thể triển khai độc lập (gọi là `microservice`), cùng nhau tạo thành ứng dụng. Khi xử lý một nghiệp vụ, việc nhiều dịch vụ gọi lẫn nhau là khó tránh khỏi. Giả sử dịch vụ A cần truy cập dịch vụ B được triển khai trên máy chủ khác; trước hết A phải biết địa chỉ IP của máy chạy B và cổng tương ứng với dịch vụ đó. Cách đơn giản nhất là để A tự duy trì cấu hình của B (bao gồm địa chỉ IP, cổng, v.v.), nhưng cách này có một số nhược điểm rõ ràng: khi số lượng dịch vụ được gọi tăng lên thì phải duy trì tệp cấu hình như thế nào; thiếu linh hoạt — nếu địa chỉ IP hoặc cổng của B thay đổi thì A cũng phải sửa cấu hình tương ứng; và việc tự động mở rộng hoặc thu hẹp dịch vụ cũng bất tiện.
 Một giải pháp tốt hơn là `khám phá dịch vụ (Service Discovery)`. Giải pháp này tạo ra một trung tâm đăng ký. Khi dịch vụ mới khởi chạy, nó đăng ký IP và cổng của mình với trung tâm đăng ký, đồng thời trung tâm định kỳ kiểm tra heartbeat của các dịch vụ đã đăng ký và gỡ dịch vụ khỏi trung tâm nếu phát hiện trạng thái bất thường. Dịch vụ A chỉ cần lấy thông tin của B từ trung tâm đăng ký; ngay cả khi IP hoặc cổng của B thay đổi, A cũng không cần sửa đổi, nhờ đó giảm sự phụ thuộc giữa hai dịch vụ. Hiện nay có nhiều triển khai mã nguồn mở về khám phá dịch vụ trong ngành, chẳng hạn [zookeeper](https://github.com/apache/zookeeper) của `apache`, [eureka](https://github.com/Netflix/eureka) của `Netflix`, [consul](https://github.com/hashicorp/consul) của `hashicorp`, và [etcd](https://github.com/etcd-io/etcd) của `CoreOS`.
 
 ## Eureka là gì?
@@ -11,22 +10,22 @@ Một giải pháp tốt hơn là `khám phá dịch vụ (Service Discovery)`. 
 Định nghĩa về `Eureka` trên [GitHub](https://github.com/Netflix/eureka):
 
 > Eureka is a REST (Representational State Transfer) based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers.
->
-> At Netflix, Eureka is used for the following purposes apart from playing a critical part in mid-tier load balancing.
 
-`Eureka` là thành phần đăng ký và khám phá dịch vụ do [Netflix](https://www.netflix.com) phát hành mã nguồn mở, được thiết kế theo mô hình Client / Server, phát triển dựa trên giao thức HTTP và Restful API. Thành phần này cung cấp đầy đủ chức năng đăng ký và khám phá dịch vụ, đồng thời tích hợp liền mạch với `Spring Cloud`. Server đóng vai trò trung tâm đăng ký dịch vụ, chủ yếu cung cấp cho Client các chức năng đăng ký và khám phá, duy trì thông tin đăng ký dịch vụ của Client, định kỳ kiểm tra heartbeat của các dịch vụ đã đăng ký và gỡ các dịch vụ không khả dụng. Client có thể lấy thông tin đăng ký của các dịch vụ phụ thuộc từ Server để gọi lẫn nhau. Đáng tiếc là theo [GitHub wiki](https://github.com/Netflix/eureka) chính thức, phiên bản 2.0 không còn là mã nguồn mở. Tuy nhiên, điều đó không ảnh hưởng đến việc tìm hiểu sâu về Eureka, vì đăng ký và khám phá dịch vụ vẫn là những khái niệm cơ bản, phổ biến; các framework mã nguồn mở khác cũng có tư tưởng tương tự.
+At Netflix, Eureka is used for the following purposes apart from playing a critical part in mid-tier load balancing.
+
+`Eureka` là thành phần đăng ký và khám phá dịch vụ do [Netflix](https://www.netflix.com) phát hành mã nguồn mở, được thiết kế theo mô hình Client / Server, phát triển dựa trên giao thức HTTP và Restful API. Thành phần này cung cấp đầy đủ chức năng đăng ký và khám phá dịch vụ, đồng thời tích hợp liền mạch với `Spring Cloud`. Server đóng vai trò trung tâm đăng ký dịch vụ, chủ yếu cung cấp cho Client các chức năng đăng ký và khám phá, duy trì thông tin đăng ký dịch vụ của Client, định kỳ kiểm tra heartbeat của các dịch vụ đã đăng ký và gỡ các dịch vụ không khả dụng. Client có thể lấy thông tin đăng ký của các dịch vụ phụ thuộc từ Server để gọi lẫn nhau. Đáng tiếc là theo [GitHub wiki](https://github.com/Netflix/eureka/wiki) chính thức, phiên bản 2.0 không còn là mã nguồn mở. Tuy nhiên, điều đó không ảnh hưởng đến việc tìm hiểu sâu về Eureka, vì đăng ký và khám phá dịch vụ vẫn là những khái niệm cơ bản, phổ biến; các framework mã nguồn mở khác cũng có tư tưởng tương tự.
 
 ## Trung tâm đăng ký dịch vụ (Eureka Server)
 
-Thêm các dependency liên quan đến `Eureka Server` vào dự án, rồi thêm chú thích `@EnableEurekaServer` vào lớp khởi chạy để dùng dự án làm trung tâm đăng ký. Sau khi khởi động dịch vụ, truy cập trang như sau:
+Thêm các dependency liên quan đến `Eureka Server` vào dự án, rồi thêm annotation `@EnableEurekaServer` vào lớp khởi chạy để dùng dự án làm trung tâm đăng ký. Sau khi khởi động dịch vụ, truy cập trang như sau:
 
 ![eureka-server-homepage.png](../../micro-services/images/eureka-server-homepage.png)
 
-Tiếp tục thêm hai mô-đun `service-provider` và `service-consumer`, thêm chú thích `@EnableEurekaClient` vào lớp khởi chạy và chỉ định địa chỉ trung tâm đăng ký là `Eureka Server` vừa khởi động. Khi truy cập lại, có thể thấy hai dịch vụ đã được đăng ký.
+Tiếp tục thêm hai mô-đun `service-provider` và `service-consumer`, thêm annotation `@EnableEurekaClient` vào lớp khởi chạy và chỉ định địa chỉ trung tâm đăng ký là `Eureka Server` vừa khởi động. Khi truy cập lại, có thể thấy hai dịch vụ đã được đăng ký.
 
 ![eureka-instance-registered-currently.png](../../micro-services/images/eureka-instance-registered-currently.png)
 
-Có thể thấy sử dụng `Eureka` rất đơn giản: chỉ cần thêm một vài chú thích và cấu hình là có thể đăng ký và khám phá dịch vụ. Tiếp theo, hãy xem các chức năng này được triển khai như thế nào.
+Có thể thấy sử dụng `Eureka` rất đơn giản: chỉ cần thêm một vài annotation và cấu hình là có thể đăng ký và khám phá dịch vụ. Tiếp theo, hãy xem các chức năng này được triển khai như thế nào.
 
 ### Đăng ký dịch vụ (Register)
 
@@ -63,7 +62,7 @@ Khi nhà cung cấp dịch vụ (chẳng hạn `service-provider` trong `Demo`) 
 
 ![eureka-server-instanceresource-cancellease.png](../../micro-services/images/eureka-server-instanceresource-cancellease.png)
 
-Trong phương thức `cancel` của `PeerAwareInstanceRegistryImpl`, có thể thấy các bước gỡ dịch vụ nhìn chung giống với gia hạn dịch vụ: trước tiên gỡ dịch vụ khỏi nút `Eureka Server` hiện tại; sau khi gỡ thành công, đồng bộ trạng thái sang các nút `Eureka Server` khác theo cách bất đồng bộ. Quy trình gọi chính như sơ đồ dưới đây:
+Trong phương thức `cancel` của `PeerAwareInstanceRegistryImpl`, có thể thấy các bước gia hạn dịch vụ nhìn chung giống với đăng ký dịch vụ: trước tiên gỡ dịch vụ khỏi nút `Eureka Server` hiện tại; sau khi gỡ thành công, đồng bộ trạng thái sang các nút `Eureka Server` khác theo cách bất đồng bộ. Quy trình gọi chính như sơ đồ dưới đây:
 
 ![eureka-server-cancellease-sequence-chart.png](../../micro-services/images/eureka-server-cancellease-sequence-chart.png)
 
@@ -91,13 +90,13 @@ Phía nhà cung cấp dịch vụ định kỳ gửi heartbeat (mặc định `3
 
 ### Gỡ dịch vụ (Cancel)
 
-Khi dịch vụ ở phía nhà cung cấp dừng, nó phải gửi yêu cầu `DELETE` để thông báo với trung tâm đăng ký `Eureka Server` rằng mình đã dừng, để trung tâm đăng ký gỡ dịch vụ và tránh cho phía consumer lấy dịch vụ không khả dụng từ trung tâm đăng ký. Quy trình này được triển khai khá đơn giản: phương thức `shutdown` trong lớp `DiscoveryClient` được gắn chú thích `@PreDestroy`; khi dịch vụ dừng, thao tác gỡ dịch vụ sẽ tự động được kích hoạt. Quy trình gọi chính như sơ đồ dưới đây:
+Khi dịch vụ ở phía nhà cung cấp dừng, nó phải gửi yêu cầu `DELETE` để thông báo với trung tâm đăng ký `Eureka Server` rằng mình đã ngừng hoạt động, để trung tâm đăng ký gỡ dịch vụ và tránh cho phía consumer lấy dịch vụ không khả dụng từ trung tâm đăng ký. Quy trình này được triển khai khá đơn giản: phương thức `shutdown` trong lớp `DiscoveryClient` được gắn annotation `@PreDestroy`; khi dịch vụ dừng, thao tác gỡ dịch vụ sẽ tự động được kích hoạt. Quy trình gọi chính như sơ đồ dưới đây:
 
 ![eureka-service-provider-cancel-sequence-chart.png](../../micro-services/images/eureka-service-provider-cancel-sequence-chart.png)
 
 ## Consumer dịch vụ (Service Consumer)
 
-Nếu consumer dịch vụ ở đây không cần được dịch vụ khác gọi thì chỉ liên quan đến hai thao tác: `lấy danh sách dịch vụ (Fetch)` từ trung tâm đăng ký và `cập nhật danh sách dịch vụ (Update)`. Nếu đồng thời cần đăng ký với trung tâm đăng ký để cung cấp dịch vụ ra bên ngoài thì các bước còn lại giống với phía nhà cung cấp dịch vụ đã nói ở trên, không trình bày lại ở đây. Tiếp theo, hãy xem cách triển khai hai thao tác này.
+Nếu consumer dịch vụ này không cần được các dịch vụ khác gọi đến thì chỉ liên quan đến hai thao tác: `lấy danh sách dịch vụ (Fetch)` từ trung tâm đăng ký và `cập nhật danh sách dịch vụ (Update)`. Nếu đồng thời cần đăng ký với trung tâm đăng ký để cung cấp dịch vụ ra bên ngoài thì các bước còn lại giống với phía nhà cung cấp dịch vụ đã nói ở trên, không trình bày lại ở đây. Tiếp theo, hãy xem cách triển khai hai thao tác này.
 
 ### Lấy danh sách dịch vụ (Fetch)
 
@@ -117,7 +116,7 @@ Như đã thấy trong quy trình `lấy danh sách dịch vụ (Fetch)` ở tr�
 
 ## Tổng kết
 
-Trong công việc, dự án sử dụng stack công nghệ `Spring Cloud`, có bộ mã nguồn mở rất hoàn chỉnh để tích hợp `Eureka` nên sử dụng rất tiện lợi. Trước đây chỉ cần thêm chú thích và sửa một vài thuộc tính cấu hình là xong; tôi chưa tìm hiểu sâu cách triển khai trong mã nguồn. Bài viết này chủ yếu trình bày các quy trình liên quan như đăng ký và khám phá dịch vụ cùng cách triển khai, giúp hiểu sâu hơn về thành phần khám phá dịch vụ `Eureka`.
+Trong công việc, dự án sử dụng stack công nghệ `Spring Cloud`, có bộ mã nguồn mở rất hoàn chỉnh để tích hợp `Eureka` nên sử dụng rất tiện lợi. Trước đây chỉ cần thêm annotation và sửa một vài thuộc tính cấu hình là xong; tôi chưa tìm hiểu sâu cách triển khai trong mã nguồn. Bài viết này chủ yếu trình bày các quy trình liên quan như đăng ký và khám phá dịch vụ cùng cách triển khai, giúp hiểu sâu hơn về thành phần khám phá dịch vụ `Eureka`.
 
 ---
 

@@ -27,11 +27,11 @@ Phương án XA chính là commit hai giai đoạn. Trong đó có khái niệm 
 
 Phương án giao dịch phân tán này phù hợp hơn với ứng dụng đơn khối cần giao dịch phân tán trên nhiều cơ sở dữ liệu. Do phụ thuộc nghiêm trọng vào tầng cơ sở dữ liệu để xử lý các giao dịch phức tạp nên hiệu suất thấp, tuyệt đối không phù hợp với tình huống đồng thời cao. Nếu muốn sử dụng, có thể dùng `Spring + JTA`; chỉ cần tìm một ví dụ demo là sẽ hiểu cách làm.
 
-Chúng tôi ít dùng phương án này. Nói chung, một thao tác **trong nội bộ một hệ thống mà truy cập nhiều cơ sở dữ liệu** là **không phù hợp**. Tôi xin giải thích: hiện nay, trong kiến trúc microservice, một hệ thống lớn được chia thành hàng chục hoặc thậm chí hàng trăm dịch vụ. Thông thường quy định và tiêu chuẩn của chúng tôi yêu cầu **mỗi dịch vụ chỉ được thao tác trên một cơ sở dữ liệu tương ứng của nó**.
+Chúng tôi ít dùng phương án này. Nói chung, một thao tác **trong nội bộ một hệ thống mà truy cập nhiều cơ sở dữ liệu** là **không tuân thủ quy định**. Tôi xin giải thích: hiện nay, trong kiến trúc microservice, một hệ thống lớn được chia thành hàng chục hoặc thậm chí hàng trăm dịch vụ. Thông thường quy định và tiêu chuẩn của chúng tôi yêu cầu **mỗi dịch vụ chỉ được thao tác trên một cơ sở dữ liệu tương ứng của nó**.
 
 Nếu cần thao tác trên cơ sở dữ liệu thuộc dịch vụ khác, không được kết nối trực tiếp đến cơ sở dữ liệu của dịch vụ đó. Làm vậy vi phạm tiêu chuẩn kiến trúc microservice. Nếu tùy tiện truy cập chéo giữa hàng trăm dịch vụ thì mọi thứ sẽ rối tung, không thể quản lý hay quản trị được; có thể xảy ra tình trạng người khác sửa sai dữ liệu hoặc ghi hỏng cơ sở dữ liệu của bạn.
 
-Nếu muốn thao tác trên cơ sở dữ liệu của dịch vụ khác, bắt buộc phải thực hiện thông qua **gọi giao diện của dịch vụ đó**; tuyệt đối không được truy cập chéo cơ sở dữ liệu của dịch vụ khác.
+Nếu muốn thao tác trên cơ sở dữ liệu của dịch vụ khác, bắt buộc phải thực hiện thông qua gọi giao diện của dịch vụ đó; tuyệt đối không được truy cập chéo cơ sở dữ liệu của dịch vụ khác.
 
 ![distributed-transacion-XA](../../distributed-system/images/distributed-transaction-XA.png)
 
@@ -67,11 +67,11 @@ Mỗi bên tham gia trong quy trình nghiệp vụ commit giao dịch cục bộ
 
 Với tình huống yêu cầu tính nhất quán cao, quy trình ngắn và đồng thời cao, chẳng hạn hệ thống tài chính cốt lõi, thường ưu tiên phương án TCC. Trong một số tình huống khác, không cần tính nhất quán mạnh đến vậy mà chỉ cần bảo đảm tính nhất quán cuối cùng.
 
-Ví dụ, nhiều nghiệp vụ nằm phía trên hệ thống tài chính cốt lõi (tầng kênh, tầng sản phẩm, tầng tích hợp hệ thống) chỉ cần nhất quán cuối cùng; chúng có nhiều bước, quy trình dài và có thể cần gọi dịch vụ của công ty khác. Nếu chọn TCC để phát triển trong tình huống này thì thứ nhất chi phí cao, thứ hai không thể yêu cầu dịch vụ của công ty khác cũng tuân theo mô hình TCC. Đồng thời, quy trình dài khiến ranh giới giao dịch quá rộng, thời gian khóa dài và ảnh hưởng đến hiệu năng đồng thời.
+Ví dụ, nhiều nghiệp vụ nằm phía trên hệ thống tài chính cốt lõi (tầng kênh, tầng sản phẩm, tầng tích hợp hệ thống) chỉ cần nhất quán cuối cùng; chúng có nhiều quy trình, các quy trình kéo dài và có thể cần gọi dịch vụ của công ty khác. Nếu chọn TCC để phát triển trong tình huống này thì thứ nhất chi phí cao, thứ hai không thể yêu cầu dịch vụ của công ty khác cũng tuân theo mô hình TCC. Đồng thời, quy trình dài khiến ranh giới giao dịch quá dài, thời gian khóa dài và ảnh hưởng đến hiệu năng đồng thời.
 
 Vì vậy, Saga phù hợp với các tình huống:
 
--   Quy trình nghiệp vụ dài và có nhiều bước;
+-   Quy trình nghiệp vụ dài, số lượng quy trình nhiều;
 -   Bên tham gia gồm dịch vụ của công ty khác hoặc hệ thống cũ, không thể cung cấp ba giao diện theo yêu cầu của mô hình TCC.
 
 #### Ưu điểm
@@ -93,7 +93,7 @@ Bảng thông điệp cục bộ là ý tưởng do eBay ở nước ngoài đ�
 1. Trong cùng một giao dịch cục bộ, hệ thống A vừa thao tác dữ liệu của mình vừa chèn một bản ghi vào bảng thông điệp;
 2. Tiếp đó, hệ thống A gửi thông điệp này đến MQ;
 3. Sau khi nhận thông điệp, hệ thống B chèn một bản ghi vào bảng thông điệp cục bộ của mình trong một giao dịch, đồng thời thực hiện các thao tác nghiệp vụ khác. Nếu thông điệp đã được xử lý thì giao dịch rollback, nhờ vậy **bảo đảm thông điệp không bị xử lý trùng lặp**;
-4. Sau khi hệ thống B thực thi thành công, hệ thống sẽ cập nhật trạng thái trong bảng thông điệp cục bộ của mình và trạng thái trong bảng thông điệp của hệ thống A;
+4. Sau khi hệ thống B thực thi thành công, hệ thống B sẽ cập nhật trạng thái trong bảng thông điệp cục bộ của mình và trạng thái trong bảng thông điệp của hệ thống A;
 5. Nếu hệ thống B xử lý thất bại thì trạng thái bảng thông điệp không được cập nhật. Khi đó, hệ thống A sẽ quét bảng thông điệp của mình theo lịch; nếu có thông điệp chưa xử lý thì gửi lại đến MQ để hệ thống B xử lý lần nữa;
 6. Phương án này bảo đảm tính nhất quán cuối cùng. Dù giao dịch của B thất bại, A vẫn liên tục gửi lại thông điệp cho đến khi B xử lý thành công.
 
@@ -103,7 +103,7 @@ Thành thật mà nói, vấn đề lớn nhất của phương án này là **p
 
 ### Phương án nhất quán cuối cùng bằng thông điệp tin cậy
 
-Ý tưởng là không dùng bảng thông điệp cục bộ nữa mà triển khai giao dịch trực tiếp dựa trên MQ. Ví dụ, RocketMQ của Alibaba hỗ trợ giao dịch bằng thông điệp.
+Ý tưởng là không dùng bảng thông điệp cục bộ nữa mà triển khai giao dịch trực tiếp dựa trên MQ. Ví dụ, RocketMQ của Alibaba hỗ trợ transaction message.
 
 Ý tưởng đại khái như sau:
 

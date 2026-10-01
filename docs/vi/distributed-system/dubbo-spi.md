@@ -18,7 +18,7 @@ Nói đơn giản, SPI là viết tắt của `service provider interface`. Ý n
 
 Lấy một ví dụ.
 
-Bạn có giao diện A. A1/A2/A3 lần lượt là các lớp triển khai khác nhau của giao diện A. Bạn cấu hình `giao diện A = triển khai A2`; khi hệ thống thực sự chạy, nó sẽ nạp cấu hình của bạn, khởi tạo đối tượng bằng triển khai A2 và dùng đối tượng đó để cung cấp dịch vụ.
+Bạn có giao diện A. A1/A2/A3 lần lượt là các lớp triển khai khác nhau của giao diện A. Bạn cấu hình `接口 A = 实现 A2`; khi hệ thống thực sự chạy, nó sẽ nạp cấu hình của bạn, khởi tạo đối tượng bằng triển khai A2 và dùng đối tượng đó để cung cấp dịch vụ.
 
 Cơ chế SPI thường được dùng ở đâu? **Trong tình huống mở rộng bằng plugin**. Ví dụ, bạn phát triển một framework mã nguồn mở cho người khác sử dụng và muốn họ có thể tự viết plugin để cắm vào framework, qua đó mở rộng một chức năng; lúc này có thể dùng tư tưởng SPI.
 
@@ -73,7 +73,7 @@ hessian=com.alibaba.dubbo.rpc.protocol.hessian.HessianProtocol
 
 Như vậy có thể thấy cách cơ chế SPI mặc định của Dubbo hoạt động: với giao diện Protocol, `@SPI("dubbo")` cho biết lớp triển khai được cung cấp thông qua cơ chế SPI; lớp triển khai được tìm trong tệp cấu hình theo khóa mặc định là dubbo. Tên tệp cấu hình giống tên đầy đủ của giao diện; dùng khóa dubbo sẽ tìm được lớp triển khai mặc định là `com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol`.
 
-Nếu muốn thay thế linh hoạt lớp triển khai mặc định thì cần dùng giao diện `@Adaptive`. Trong giao diện Protocol, có hai phương thức được gắn chú thích `@Adaptive`, nghĩa là hai giao diện đó sẽ được triển khai bằng proxy.
+Nếu muốn thay thế linh hoạt lớp triển khai mặc định thì cần dùng `@Adaptive`. Trong giao diện Protocol, có hai phương thức được gắn chú thích `@Adaptive`, nghĩa là hai phương thức đó sẽ được triển khai bằng proxy.
 
 Ý nghĩa là gì?
 
@@ -95,6 +95,6 @@ Khi provider khởi động, cấu hình `my=com.bingo.MyProtocol` trong JAR c�
 
 ![dubbo-spi](../../distributed-system/images/dubbo-spi.png)
 
-Dubbo cung cấp nhiều điểm mở rộng tương tự như trên. Muốn mở rộng một chức năng, chỉ cần tự viết một JAR, thêm JAR đó làm dependency cho dự án consumer hoặc provider, rồi đặt tệp có tên tương ứng với giao diện vào đúng thư mục trong JAR và khai báo `key=class triển khai`.
+Dubbo cung cấp nhiều điểm mở rộng tương tự như trên. Muốn mở rộng một chức năng, chỉ cần tự viết một JAR, thêm JAR đó làm dependency cho dự án consumer hoặc provider, rồi đặt tệp có tên tương ứng với giao diện vào đúng thư mục trong JAR và khai báo `key=实现类`.
 
 Sau đó, với thành phần tương ứng, chẳng hạn `<dubbo:protocol>`, hãy dùng lớp triển khai ứng với key của bạn để triển khai một giao diện. Bạn có thể tự mở rộng nhiều chức năng của Dubbo và cung cấp phần triển khai riêng.

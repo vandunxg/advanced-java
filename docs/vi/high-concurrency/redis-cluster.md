@@ -2,7 +2,7 @@
 
 ## Câu hỏi phỏng vấn
 
-Bạn có thể trình bày nguyên lý hoạt động của Redis cluster không? Trong chế độ cluster, Redis định tuyến key như thế nào? Có những thuật toán định tuyến phân tán nào? Bạn có biết consistent hash không?
+Bạn có thể trình bày nguyên lý hoạt động của Redis cluster không? Trong chế độ cluster, Redis định địa chỉ key như thế nào? Có những thuật toán định địa chỉ phân tán nào? Bạn có biết consistent hash không?
 
 ## Phân tích suy nghĩ của người phỏng vấn
 
@@ -12,7 +12,7 @@ Trong vài năm gần đây, Redis liên tục phát triển và phát hành cá
 
 Với phiên bản Redis mới, mọi người đều dùng Redis cluster, tức chế độ cluster được Redis hỗ trợ nguyên bản. Vì vậy người phỏng vấn chắc chắn sẽ hỏi liên tiếp về Redis cluster. Nếu bạn chưa từng dùng Redis cluster thì cũng bình thường; trước đây nhiều người dùng client như codis để hỗ trợ cluster, nhưng ít nhất bạn nên tìm hiểu Redis cluster.
 
-Nếu lượng dữ liệu ít và chủ yếu cần chịu high concurrency, high performance — chẳng hạn cache của bạn thường chỉ vài GB — thì một máy là đủ. Có thể dùng replication: một master và nhiều slave. Số slave cần có phụ thuộc vào throughput đọc bạn yêu cầu; sau đó tự dựng một cụm sentinel để đảm bảo high availability cho kiến trúc Redis primary-replica.
+Nếu lượng dữ liệu ít và chủ yếu cần chịu high concurrency, high performance — chẳng hạn cache của bạn thường chỉ vài GB — thì một máy là đủ. Có thể dùng replication: một master và nhiều slave. Số slave cần có phụ thuộc vào throughput đọc bạn yêu cầu; sau đó tự dựng một cụm sentinel để đảm bảo high availability cho kiến trúc master-slave của Redis.
 
 Redis cluster chủ yếu dành cho tình huống **lượng dữ liệu lớn + high concurrency + high availability**. Redis cluster hỗ trợ N Redis master node, mỗi master node có thể gắn nhiều slave node. Nhờ vậy toàn bộ Redis có thể mở rộng theo chiều ngang. Nếu cần hỗ trợ cache có lượng dữ liệu lớn hơn thì mở rộng theo chiều ngang bằng cách thêm master node; mỗi master node sẽ lưu được thêm dữ liệu.
 
@@ -73,7 +73,7 @@ Mỗi node gửi ping 10 lần mỗi giây; mỗi lần chọn 5 node khác có 
 
 Mỗi lần ping, node gửi thông tin của chính mình và thông tin của 1/10 số node khác để trao đổi. Message chứa thông tin của ít nhất `3` node khác và nhiều nhất `tổng số node trừ 2` node khác.
 
-### Thuật toán định tuyến phân tán
+### Thuật toán định địa chỉ phân tán
 
 -   Thuật toán hash (tái tạo lượng lớn cache)
 -   Consistent hash (tự động migration cache) + virtual node (tự động cân bằng tải)
@@ -129,7 +129,7 @@ Kiểm tra thời gian từng slave node bị mất kết nối với master nod
 
 Mỗi slave node đặt thời gian bầu chọn dựa trên offset của dữ liệu nó đã replication từ master; offset càng lớn (replication được nhiều dữ liệu hơn) thì thời điểm bầu chọn càng sớm, được ưu tiên bầu chọn.
 
-Tất cả master node bắt đầu bỏ phiếu bầu slave; chúng bỏ phiếu cho slave đang được bầu. Nếu đa số master node `(N/2 + 1)` bỏ phiếu cho một slave node thì cuộc bầu chọn thành công và slave node đó có thể chuyển thành master.
+Tất cả master node bắt đầu bỏ phiếu bầu slave; chúng bỏ phiếu cho slave đang được bầu. Nếu đa số master node `（N/2 + 1）` bỏ phiếu cho một slave node thì cuộc bầu chọn thành công và slave node đó có thể chuyển thành master.
 
 Slave node thực hiện chuyển đổi primary/standby và chuyển thành primary node.
 

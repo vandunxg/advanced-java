@@ -36,7 +36,7 @@ Trước hết, đề bài nêu kích thước 64B; nếu tính mỗi ký tự l
 
 - **Số nút con của một nút**: Vì đây là URL nên ngoài chữ số và chữ cái còn có `%`, `/`, `:`v.v. Để đơn giản hóa phép tính và dễ hiểu, ở đây chỉ dùng tổng số chữ cái tiếng Anh và chữ số = 62+10=72. Nghĩa là một nút có tối đa 72 nút con, tức chiếm 72B.
 
-- **Tổng kích thước các nút**: Vì tập dữ liệu 320G đủ lớn nên xét trường hợp xấu nhất, cây cuối cùng cao 64 tầng và là cây đầy đủ có 72 nhánh. Bộ nhớ cuối cùng cần dùng bằng số lượng nút * kích thước mỗi nút:
+- **Tổng kích thước các nút**: Vì tập dữ liệu 320G đủ lớn nên xét trường hợp xấu nhất, cây cuối cùng cao 64 tầng và là cây đầy đủ có 72 nhánh. Bộ nhớ cuối cùng cần dùng bằng số lượng nút \* kích thước mỗi nút:
 
   - Số lượng nút: cây đầy đủ có N = 64 tầng, K = 72 nhánh; công thức tính số nút của cây (tổng cấp số nhân) là: `1 * (1-72^64)/ (1 - 72) = (72^64 - 1)/ (71)`, ước tính là `71^63` nút.
 
@@ -58,7 +58,7 @@ Do đó, trong phỏng vấn có thể đề cập đến phương án trie. Tro
 
 - Phương án một nêu kích thước mỗi tệp đơn là hơn 300MB; sau khi dùng cây trie, kích thước hơn 300MB này có thể được nén, chẳng hạn còn hơn 200MB. Xét đến mức sử dụng tài nguyên máy, trong một số tình huống có đủ CPU, có thể cân nhắc chạy song song: do tỷ lệ nén là 1/3, phần dung lượng còn lại có thể dùng để nạp thêm tệp và tăng tốc độ xử lý bằng xử lý đồng thời.
 
-- Nếu không đủ CPU, chẳng hạn chỉ có một lõi, có thể cân nhắc tăng kích thước tệp chia nhỏ: giảm số tệp từ 1000 xuống 200, tức kích thước tệp tăng gấp năm lần; từ 300MB trước đó thành 300*5 = 1.5G. Trên máy 4G có thể tận dụng gần hết bộ nhớ, giảm số lần I/O và giảm số lần sao chép từ kernel mode sang user mode; cũng có thể nhắc đến DMA.
+- Nếu không đủ CPU, chẳng hạn chỉ có một lõi, có thể cân nhắc tăng kích thước tệp chia nhỏ: giảm số tệp từ 1000 xuống 200, tức kích thước tệp tăng lên hai lần; từ 300MB trước đó thành 300\*5 = 1.5G. Trên máy 4G có thể tận dụng gần hết bộ nhớ, giảm số lần I/O và giảm số lần sao chép từ kernel mode sang user mode; cũng có thể nhắc đến DMA.
 
 ## Tổng kết phương pháp
 

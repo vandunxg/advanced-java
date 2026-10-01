@@ -1,4 +1,4 @@
-# Redis và Zookeeper triển khai khóa phân tán
+# Triển khai khóa phân tán: Redis so với ZooKeeper
 
 ## Câu hỏi phỏng vấn
 
@@ -20,9 +20,9 @@ Khóa phân tán này có 3 điểm quan trọng cần cân nhắc:
 -   Không bị deadlock
 -   Khả năng chịu lỗi (chỉ cần phần lớn các nút Redis tạo được khóa này là đủ)
 
-#### Khóa phân tán Redis đơn giản nhất
+#### Khóa phân tán Redis cơ bản nhất
 
-Cách triển khai đơn giản nhất là dùng `SET key value [EX seconds] [PX milliseconds] NX` trong Redis để tạo một key, như vậy là đã khóa. Trong đó:
+Đầu tiên, cách triển khai cơ bản nhất là dùng `SET key value [EX seconds] [PX milliseconds] NX` trong Redis để tạo một key, như vậy là đã khóa. Trong đó:
 
 -   `NX`: chỉ đặt thành công khi `key` chưa tồn tại; nếu lúc này Redis đã có `key` thì thao tác đặt thất bại và trả về `nil`.
 -   `EX seconds`: đặt thời gian hết hạn của `key`, chính xác đến giây. Nghĩa là khóa tự động được giải phóng sau `seconds` giây; nếu người khác thấy khóa đã tồn tại thì không thể khóa được.
@@ -37,7 +37,7 @@ SET resource_name my_random_value PX 30000 NX
 Để giải phóng khóa, ta xóa key; thông thường có thể dùng script `lua` để xóa và chỉ xóa khi value giống nhau:
 
 ```lua
--- 删除锁的时候，找到 key 对应的 value，跟自己传过去的 value 做比较，如果是一样的才删除。
+-- Khi xóa lock, tìm value tương ứng với key và so sánh với value đã truyền; chỉ xóa nếu chúng giống nhau.
 if redis.call("get",KEYS[1]) == ARGV[1] then
     return redis.call("del",KEYS[1])
 else
@@ -47,14 +47,14 @@ end
 
 Vì sao cần giá trị ngẫu nhiên `random_value`? Vì nếu một client lấy được khóa nhưng bị chặn trong thời gian dài mới thực thi xong, chẳng hạn hơn 30 giây, thì khóa có thể đã tự động được giải phóng và client khác có thể đã lấy được khóa. Nếu lúc này bạn xóa key trực tiếp thì sẽ gây ra vấn đề. Vì vậy cần dùng giá trị ngẫu nhiên cùng script `lua` ở trên để giải phóng khóa.
 
-Tuy nhiên, cách này chắc chắn không đủ. Nếu chỉ dùng một Redis instance thông thường thì sẽ có lỗi đơn điểm. Hoặc nếu dùng Redis master-slave thông thường, Redis sao chép bất đồng bộ giữa master và slave; nếu nút master bị lỗi (key sẽ mất) trước khi key được đồng bộ sang slave, rồi slave được chuyển thành master, người khác có thể đặt key và lấy khóa.
+Tuy nhiên, cách này chắc chắn không đủ. Nếu chỉ dùng một Redis instance thông thường thì sẽ có một điểm lỗi duy nhất. Hoặc nếu dùng Redis master-slave thông thường, Redis sao chép bất đồng bộ giữa master và slave; nếu nút master bị lỗi (key sẽ mất) trước khi key được đồng bộ sang slave, rồi slave được chuyển thành master, người khác có thể đặt key và lấy khóa.
 
 #### Thuật toán RedLock
 
 Giả sử có một Redis cluster gồm 5 Redis master instance. Sau đó thực hiện các bước sau để lấy khóa:
 
 1. Lấy dấu thời gian hiện tại, đơn vị mili giây;
-2. Tương tự như trên, lần lượt thử tạo khóa trên từng nút master, với thời gian chờ ngắn, thường chỉ vài chục mili giây (thời gian chờ client dùng để lấy khóa nhỏ hơn tổng thời gian tự động giải phóng khóa. Ví dụ, nếu thời gian tự động giải phóng là 10 giây thì thời gian chờ có thể trong khoảng `5~50` mili giây);
+2. Tương tự như trên, lần lượt thử tạo khóa trên từng nút master, với thời gian chờ ngắn, thường chỉ vài chục mili giây (thời gian chờ mà client dùng để lấy khóa phải nhỏ hơn tổng thời gian khóa tự động được giải phóng. Ví dụ, nếu thời gian tự động giải phóng là 10 giây thì thời gian chờ có thể trong khoảng `5~50` mili giây);
 3. Thử tạo khóa trên **phần lớn các nút**, chẳng hạn với 5 nút thì yêu cầu 3 nút `n / 2 + 1`;
 4. Client tính thời gian tạo khóa; nếu thời gian tạo khóa nhỏ hơn thời gian chờ thì coi như tạo thành công;
 5. Nếu tạo khóa thất bại thì lần lượt xóa các khóa đã tạo trước đó;
@@ -62,7 +62,7 @@ Giả sử có một Redis cluster gồm 5 Redis master instance. Sau đó thự
 
 ![redis-redlock](../../distributed-system/images/redis-redlock.png)
 
-[Redis chính thức](https://redis.io/) đưa ra hai cách triển khai khóa phân tán dựa trên Redis ở trên; xem mô tả chi tiết tại https://redis.io/topics/distlock .
+[Trang chính thức của Redis](https://redis.io/) đưa ra hai cách triển khai khóa phân tán dựa trên Redis ở trên; xem mô tả chi tiết tại https://redis.io/topics/distlock .
 
 ### Khóa phân tán zk
 
@@ -95,7 +95,7 @@ public class ZooKeeperSession {
     }
 
     /**
-     * 获取分布式锁
+     * Lấy distributed lock
      *
      * @param productId
      */
@@ -108,7 +108,7 @@ public class ZooKeeperSession {
         } catch (Exception e) {
             while (true) {
                 try {
-                    // 相当于是给node注册一个监听器，去看看这个监听器是否存在
+                    // Tương đương với việc đăng ký một listener cho node để kiểm tra listener này có tồn tại hay không
                     Stat stat = zk.exists(path, true);
 
                     if (stat != null) {
@@ -128,7 +128,7 @@ public class ZooKeeperSession {
     }
 
     /**
-     * 释放掉一个分布式锁
+     * Giải phóng một distributed lock
      *
      * @param productId
      */
@@ -143,7 +143,7 @@ public class ZooKeeperSession {
     }
 
     /**
-     * 建立 zk session 的 watcher
+     * Tạo watcher cho zk session
      */
     private class ZooKeeperWatcher implements Watcher {
 
@@ -162,7 +162,7 @@ public class ZooKeeperSession {
     }
 
     /**
-     * 封装单例的静态内部类
+     * Đóng gói lớp bên trong static của singleton
      */
     private static class Singleton {
 
@@ -179,7 +179,7 @@ public class ZooKeeperSession {
     }
 
     /**
-     * 获取单例
+     * Lấy singleton
      *
      * @return
      */
@@ -188,7 +188,7 @@ public class ZooKeeperSession {
     }
 
     /**
-     * 初始化单例的便捷方法
+     * Phương thức tiện lợi để khởi tạo singleton
      */
     public static void init() {
         getInstance();
@@ -255,23 +255,23 @@ public class ZooKeeperDistributedLock implements Watcher {
 
     public boolean tryLock() {
         try {
-            // 传入进去的locksRoot + “/” + productId
-            // 假设productId代表了一个商品id，比如说1
+            // locksRoot + “/” + productId được truyền vào
+            // Giả sử productId đại diện cho một product id, ví dụ là 1
             // locksRoot = locks
             // /locks/10000000000，/locks/10000000001，/locks/10000000002
             lockNode = zk.create(locksRoot + "/" + productId, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 
-            // 看看刚创建的节点是不是最小的节点
+            // Kiểm tra node vừa tạo có phải là node nhỏ nhất hay không
             // locks：10000000000，10000000001，10000000002
             List<String> locks = zk.getChildren(locksRoot, false);
             Collections.sort(locks);
 
             if (lockNode.equals(locksRoot + "/" + locks.get(0))) {
-                // 如果是最小的节点,则表示取得锁
+                // Nếu là node nhỏ nhất thì nghĩa là đã lấy được lock
                 return true;
             }
 
-            // 如果不是最小的节点，找到比自己小1的节点
+            // Nếu không phải node nhỏ nhất thì tìm node nhỏ hơn nó 1 bậc
             int previousLockIndex = -1;
             for (int i = 0; i < locks.size(); i++) {
                 if (lockNode.equals(locksRoot + "/" +locks.get(i))){
@@ -301,8 +301,8 @@ public class ZooKeeperDistributedLock implements Watcher {
 
     public void unlock() {
         try {
-            // 删除/locks/10000000000节点
-            // 删除/locks/10000000001节点
+            // Xóa node /locks/10000000000
+            // Xóa node /locks/10000000001
             System.out.println("unlock " + lockNode);
             zk.delete(lockNode, -1);
             lockNode = null;
@@ -334,11 +334,11 @@ Tuy nhiên, dùng ephemeral node của zk còn có một vấn đề khác: zk d
 
 ### So sánh khóa phân tán Redis và zk
 
--   Khóa phân tán Redis thực ra **đòi hỏi tự liên tục thử lấy khóa**, khá tốn hiệu năng.
+-   Khóa phân tán Redis thực ra **phải tự mình liên tục thử lấy khóa**, khá tốn hiệu năng.
 -   Với khóa phân tán zk, nếu không lấy được khóa thì chỉ cần đăng ký listener, không cần chủ động liên tục thử lấy khóa, nên chi phí hiệu năng thấp hơn.
 
 Một điểm khác là nếu client lấy khóa Redis gặp lỗi rồi dừng hoạt động thì phải đợi đến khi hết thời gian chờ mới giải phóng được khóa; còn với zk, vì tạo ephemeral znode nên khi client dừng thì znode biến mất và khóa tự động được giải phóng.
 
-Mọi người không thấy khóa phân tán Redis khá rắc rối sao? Duyệt để khóa, tính thời gian, v.v... Ngữ nghĩa khóa phân tán của zk rõ ràng và cách triển khai đơn giản.
+Mọi người không thấy khóa phân tán Redis khá rắc rối sao? Phải lần lượt thử lấy khóa, tính thời gian, v.v... Ngữ nghĩa khóa phân tán của zk rõ ràng và cách triển khai đơn giản.
 
 Vì vậy, tạm thời không phân tích quá nhiều khía cạnh; chỉ xét hai điểm này, theo kinh nghiệm thực tế của tôi, khóa phân tán zk đáng tin cậy hơn khóa phân tán Redis, đồng thời mô hình đơn giản và dễ dùng.

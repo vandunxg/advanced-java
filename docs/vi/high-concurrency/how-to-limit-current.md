@@ -1,10 +1,10 @@
 # Làm thế nào giới hạn lưu lượng? Bạn làm thế nào trong công việc? Hãy trình bày cách triển khai cụ thể.
 
-## Rate limit là gì?
+## Rate limiting là gì?
 
-> Có thể xem rate limit là một dạng degradation của service; rate limit nghĩa là giới hạn lưu lượng đầu vào và đầu ra của hệ thống để bảo vệ hệ thống. Thông thường có thể đo được throughput của hệ thống. Để đảm bảo hệ thống hoạt động ổn định, khi đạt đến ngưỡng cần giới hạn thì phải giới hạn lưu lượng và áp dụng một số biện pháp để đạt mục đích đó, chẳng hạn xử lý trễ, từ chối xử lý hoặc chỉ từ chối một phần, v.v.
+> Có thể xem rate limiting là một dạng service degradation; rate limiting nghĩa là giới hạn lưu lượng đầu vào và đầu ra của hệ thống để bảo vệ hệ thống. Thông thường có thể đo được throughput của hệ thống. Để đảm bảo hệ thống hoạt động ổn định, khi đạt đến ngưỡng cần giới hạn thì phải giới hạn lưu lượng và áp dụng một số biện pháp để đạt mục đích đó, chẳng hạn xử lý trễ, từ chối xử lý hoặc chỉ từ chối một phần, v.v.
 
-## Phương pháp rate limit
+## Phương pháp rate limiting
 
 ### Counter
 
@@ -18,30 +18,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Counter {
     /**
-     * 最大访问数量
+     * Số lượt truy cập tối đa
      */
     private final int limit = 10;
     /**
-     * 访问时间差
+     * Độ chênh lệch thời gian truy cập
      */
     private final long timeout = 1000;
     /**
-     * 请求时间
+     * Thời gian request
      */
     private long time;
     /**
-     * 当前计数器
+     * Bộ đếm hiện tại
      */
     private AtomicInteger reqCount = new AtomicInteger(0);
 
     public boolean limit() {
         long now = System.currentTimeMillis();
         if (now < time + timeout) {
-            // 单位时间内
+            // Trong một đơn vị thời gian
             reqCount.addAndGet(1);
             return reqCount.get() <= limit;
         } else {
-            // 超出单位时间
+            // Vượt quá một đơn vị thời gian
             time = now;
             reqCount = new AtomicInteger(0);
             return true;
@@ -53,7 +53,7 @@ public class Counter {
 
 Nhược điểm:
 
-Giả sử có một request lúc 00:01, sau đó không có request nào từ 00:01 đến 00:58, rồi lúc 00:59 gửi tất cả các request còn lại `n-1` (n là số lượng request bị rate limit). Đến 00:01 của phút kế tiếp lại gửi n request. Như vậy trong vòng 2 giây có tổng cộng `2n - 1` request.
+Giả sử có một request lúc 00:01, sau đó không có request nào từ 00:01 đến 00:58, rồi lúc 00:59 gửi tất cả các request còn lại `n-1` (n là số lượng request bị giới hạn). Đến 00:01 của phút kế tiếp lại gửi n request. Như vậy trong vòng 2 giây có tổng cộng `2n - 1` request.
 
 Giả sử số request mỗi phút là 60, mỗi giây có thể xử lý 1 request. Người dùng gửi 60 request lúc 00:59 và 60 request lúc 01:00; khi đó trong 2 giây có 120 request (60 request mỗi giây), cao hơn rất nhiều so với ngưỡng xử lý 1 request mỗi giây.
 
@@ -61,7 +61,7 @@ Giả sử số request mỗi phút là 60, mỗi giây có thể xử lý 1 req
 
 #### Cách triển khai
 
-Sliding window cải tiến phương pháp counter bằng cách thêm một đơn vị đo lường theo độ hạt thời gian; chia một phút thành một số phần bằng nhau (6 phần, mỗi phần 10 giây) và đặt counter riêng cho mỗi phần. Nếu request xảy ra trong khoảng 00:00–00:09 thì counter tăng 1. Số phần bằng nhau càng lớn thì thống kê rate limit càng chi tiết.
+Sliding window cải tiến phương pháp counter bằng cách thêm một đơn vị đo lường về độ phân giải thời gian; chia một phút thành một số phần bằng nhau (6 phần, mỗi phần 10 giây) và đặt counter riêng cho mỗi phần. Nếu request xảy ra trong khoảng 00:00–00:09 thì counter tăng 1. Số phần bằng nhau càng lớn thì thống kê rate limiting càng chi tiết.
 
 ```java
 package com.example.demo1.service;
@@ -75,12 +75,12 @@ public class TimeWindow {
     private ConcurrentLinkedQueue<Long> queue = new ConcurrentLinkedQueue<Long>();
 
     /**
-     * 间隔秒数
+     * Số giây của khoảng thời gian
      */
     private int seconds;
 
     /**
-     * 最大限流
+     * Mức rate limiting tối đa
      */
     private int max;
 
@@ -89,12 +89,12 @@ public class TimeWindow {
         this.max = max;
 
         /**
-         * 永续线程执行清理queue 任务
+         * Thread chạy liên tục để thực hiện tác vụ dọn dẹp queue
          */
         new Thread(() -> {
             while (true) {
                 try {
-                    // 等待 间隔秒数-1 执行清理操作
+                    // Chờ (số giây của khoảng thời gian - 1) rồi thực hiện thao tác dọn dẹp
                     Thread.sleep((seconds - 1) * 1000L);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -109,7 +109,7 @@ public class TimeWindow {
 
         final TimeWindow timeWindow = new TimeWindow(10， 1);
 
-        // 测试3个线程
+        // Kiểm thử 3 thread
         IntStream.range(0， 3).forEach((i) -> {
             new Thread(() -> {
 
@@ -130,7 +130,7 @@ public class TimeWindow {
     }
 
     /**
-     * 获取令牌，并且添加时间
+     * Lấy token và thêm thời gian
      */
     public void take() {
 
@@ -162,7 +162,7 @@ public class TimeWindow {
         while (it.hasNext()) {
             long t = it.next();
             if (t > ms) {
-                // 在当前的统计时间范围内
+                // Trong phạm vi thời gian thống kê hiện tại
                 count++;
             }
         }
@@ -171,7 +171,7 @@ public class TimeWindow {
     }
 
     /**
-     * 清理过期的时间
+     * Dọn dẹp các mốc thời gian đã hết hạn
      */
     public void clean() {
         Long c = System.currentTimeMillis() - seconds * 1000;
@@ -187,7 +187,7 @@ public class TimeWindow {
 
 ```
 
-### Leaky Bucket
+### Leaky Bucket (bucket rò rỉ)
 
 #### Cách triển khai
 
@@ -196,19 +196,19 @@ Quy định một bucket có dung lượng cố định; nước chảy vào và
 ```java
 public class LeakBucket {
     /**
-     * 时间
+     * Thời gian
      */
     private long time;
     /**
-     * 总量
+     * Tổng lượng
      */
     private Double total;
     /**
-     * 水流出去的速度
+     * Tốc độ nước chảy ra
      */
     private Double rate;
     /**
-     * 当前总量
+     * Tổng lượng hiện tại
      */
     private Double nowSize;
 
@@ -227,7 +227,7 @@ public class LeakBucket {
 }
 ```
 
-### Token Bucket
+### Token Bucket (bucket token)
 
 #### Cách triển khai
 
@@ -236,19 +236,19 @@ Quy định một bucket có dung lượng cố định; token được nạp v�
 ```java
 public class TokenBucket {
     /**
-     * 时间
+     * Thời gian
      */
     private long time;
     /**
-     * 总量
+     * Tổng lượng
      */
     private Double total;
     /**
-     * token 放入速度
+     * Tốc độ nạp token
      */
     private Double rate;
     /**
-     * 当前总量
+     * Tổng lượng hiện tại
      */
     private Double nowSize;
 
@@ -257,10 +257,10 @@ public class TokenBucket {
         nowSize = Math.min(total， nowSize + (now - time) * rate);
         time = now;
         if (nowSize < 1) {
-            // 桶里没有token
+            // Bucket không có token
             return false;
         } else {
-            // 存在token
+            // Có token
             nowSize -= 1;
             return true;
         }
@@ -271,9 +271,9 @@ public class TokenBucket {
 
 ## Cách sử dụng trong công việc
 
-### spring cloud gateway
+### Spring Cloud Gateway
 
--   spring cloud gateway mặc định dùng redis để rate limit. Thông thường tôi chỉ sửa một số tham số để dùng ngay, chứ không tự triển khai lại từ đầu các thuật toán trên.
+-   Spring Cloud Gateway mặc định dùng Redis để rate limiting. Thông thường tôi chỉ sửa một số tham số để dùng ngay, chứ không tự triển khai lại từ đầu các thuật toán trên.
 
 ```xml
 <dependency>
@@ -302,9 +302,9 @@ spring:
                       - name: RequestRateLimiter
 
                         args:
-                            redis-rate-limiter.replenishRate: 1 # 令牌桶的容积
-                            redis-rate-limiter.burstCapacity: 3 # 流速 每秒
-                            key-resolver: '#{@remoteAddrKeyResolver}' #SPEL表达式去的对应的bean
+                            redis-rate-limiter.replenishRate: 1 # Dung lượng token bucket
+                            redis-rate-limiter.burstCapacity: 3 # Tốc độ dòng chảy mỗi giây
+                            key-resolver: '#{@remoteAddrKeyResolver}' # Biểu thức SpEL để lấy bean tương ứng
 
                       - StripPrefix=1
 ```
@@ -316,9 +316,9 @@ KeyResolver remoteAddrKeyResolver() {
 }
 ```
 
-### sentinel
+### Sentinel
 
--   Dùng cấu hình để kiểm soát lưu lượng của từng url
+-   Dùng cấu hình để kiểm soát lưu lượng của từng URL
 
 ```xml
 <dependency>
@@ -347,7 +347,7 @@ spring:
                         namespace: xxxxxxxx
 ```
 
--   Chỉnh sửa nội dung cấu hình trên nacos
+-   Chỉnh sửa nội dung cấu hình trên Nacos
 
 ```json
 [
@@ -363,14 +363,14 @@ spring:
 ]
 ```
 
--   resource: tên resource, tức đối tượng áp dụng rule rate limit.
+-   resource: tên resource, tức đối tượng áp dụng rule rate limiting.
 -   limitApp: nguồn gọi bị áp dụng flow control; nếu là default thì không phân biệt nguồn gọi.
--   grade: loại ngưỡng rate limit, chế độ QPS hoặc số thread; 0 là rate limit theo số lượng đồng thời, 1 là flow control theo QPS.
--   count: ngưỡng rate limit
+-   grade: loại ngưỡng rate limiting, chế độ QPS hoặc số thread; 0 là rate limiting theo số lượng đồng thời, 1 là flow control theo QPS.
+-   count: ngưỡng rate limiting
 -   strategy: căn cứ đánh giá là chính resource, resource liên quan khác (refResource), hay entry point của call chain
--   controlBehavior: hiệu quả flow control (từ chối trực tiếp / chờ xếp hàng / chế độ khởi động chậm)
+-   controlBehavior: hành vi flow control (từ chối trực tiếp / chờ xếp hàng / chế độ khởi động chậm)
 -   clusterMode: có phải chế độ cluster hay không
 
 ### Tổng kết
 
-> sentinel và spring cloud gateway đều là các framework rate limit tốt. Tuy nhiên, trong quá trình sử dụng tôi vẫn chưa tích hợp [spring-cloud-alibaba](https://github.com/alibaba/spring-cloud-alibaba) vào dự án, nên tôi sẽ chọn **spring cloud gateway**. Khi tích hợp đầy đủ hoặc khi tích hợp dự án Nacos thì dùng setinel sẽ có trải nghiệm tốt hơn.
+> Sentinel và Spring Cloud Gateway đều là các framework rate limiting tốt. Tuy nhiên, trong quá trình sử dụng tôi vẫn chưa tích hợp [spring-cloud-alibaba](https://github.com/alibaba/spring-cloud-alibaba) vào dự án, nên tôi sẽ chọn **Spring Cloud Gateway**. Khi tích hợp đầy đủ hoặc khi tích hợp vào dự án Nacos thì dùng setinel sẽ có trải nghiệm tốt hơn.

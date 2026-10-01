@@ -1,11 +1,11 @@
 # Kiểm soát chi tiết các chiến lược isolation của Hystrix
 
-Hystrix có hai chiến lược isolation tài nguyên:
+Hystrix thực hiện isolation tài nguyên bằng hai chiến lược:
 
 -   Isolation bằng thread pool
 -   Isolation bằng semaphore
 
-Có thể kiểm soát khá chi tiết phần isolation tài nguyên.
+Với isolation tài nguyên, thực tế có thể thực hiện một số kiểm soát khá chi tiết.
 
 ## execution.isolation.strategy
 
@@ -27,7 +27,7 @@ Nên chọn thread pool hay semaphore?
 
 **Ưu điểm lớn nhất của thread pool** là với các request truy cập mạng, nếu xảy ra timeout thì có thể tránh để thread gọi bị block.
 
-Semaphore thường được dùng trong các tình huống có concurrency cực lớn, chẳng hạn mỗi service instance có vài trăm `QPS` mỗi giây. Khi đó thread pool có thể không chịu nổi mức concurrency cao nếu số thread không nhiều; nếu tăng đủ để chịu tải thì có thể tốn rất nhiều tài nguyên thread. Vì vậy có thể dùng semaphore để bảo vệ bằng rate limit. Semaphore thường được dùng cho các service xử lý nghiệp vụ thuần túy trong bộ nhớ, không liên quan đến request truy cập mạng.
+Semaphore thường được dùng trong các tình huống có concurrency cực lớn, chẳng hạn mỗi service instance có `QPS` vài trăm. Khi đó thread pool có thể không chịu nổi mức concurrency cao nếu số thread không nhiều; nếu tăng đủ để chịu tải thì có thể tốn rất nhiều tài nguyên thread. Vì vậy có thể dùng semaphore để rate limit nhằm bảo vệ. Semaphore thường được dùng cho các service xử lý nghiệp vụ thuần túy trong bộ nhớ, không liên quan đến request truy cập mạng.
 
 ## command key & command group
 
@@ -86,7 +86,7 @@ Nói đơn giản, nếu command key cần dùng thread pool riêng thì chỉ c
 
 ## coreSize
 
-Đặt kích thước thread pool; mặc định là 10. Thông thường, kích thước mặc định gồm 10 thread là đủ.
+Đặt kích thước thread pool; mặc định là 10. Thông thường, 10 thread mặc định là đủ.
 
 ```java
 HystrixThreadPoolProperties.Setter().withCoreSize(int value);
@@ -106,7 +106,7 @@ HystrixThreadPoolProperties.Setter().withQueueSizeRejectionThreshold(int value);
 
 ## execution.isolation.semaphore.maxConcurrentRequests
 
-Đặt số lượng concurrency tối đa được phép truy cập khi dùng chiến lược isolation SEMAPHORE. Khi vượt giới hạn concurrency này, request sẽ bị reject ngay.
+Đặt mức concurrency tối đa được phép khi truy cập bằng chiến lược isolation SEMAPHORE. Khi vượt mức concurrency này, request sẽ bị reject ngay.
 
 Giá trị concurrency này nên được đặt tương tự như kích thước thread pool. Tuy nhiên, dùng semaphore sẽ có hiệu năng tốt hơn và overhead của chính framework Hystrix cũng thấp hơn nhiều.
 

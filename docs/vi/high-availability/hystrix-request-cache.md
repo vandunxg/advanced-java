@@ -1,32 +1,32 @@
 # Tối ưu API truy vấn hàng loạt dữ liệu sản phẩm bằng request cache
 
-Bước thứ ba trong 8 bước thực thi Hystrix command là kiểm tra Request cache có dữ liệu cache hay không.
+Bước thứ ba trong 8 bước thực thi Hystrix command là kiểm tra xem Request cache có dữ liệu hay không.
 
-Trước hết, có một khái niệm gọi là Request Context (request context). Thông thường, trong một ứng dụng web có dùng Hystrix, ta áp dụng một request context cho mỗi request bên trong một filter. Nói cách khác, mỗi request tương ứng với một request context. Sau đó, trong request context này, ta thực thi nhiều đoạn code và gọi nhiều dịch vụ phụ thuộc; một số dịch vụ phụ thuộc có thể được gọi nhiều lần.
+Trước hết, có một khái niệm gọi là Request Context (request context). Thông thường, trong một ứng dụng web có dùng Hystrix, ta tạo một request context cho mỗi request trong một filter. Nói cách khác, mỗi request tương ứng với một request context. Sau đó, trong request context này, ta thực thi nhiều đoạn code và gọi nhiều dịch vụ phụ thuộc; một số dịch vụ phụ thuộc có thể được gọi nhiều lần.
 
-Trong cùng một request context, nếu có nhiều command với cùng tham số và gọi cùng một API, đồng thời có thể xem kết quả là giống nhau, ta có thể lưu kết quả trả về của command đầu tiên trong bộ nhớ. Các lời gọi tiếp theo trong request context đó đến cùng dependency có thể lấy kết quả cache từ bộ nhớ.
+Trong cùng một request context, nếu có nhiều command với cùng tham số, gọi cùng một API và có thể xem kết quả là giống nhau, ta có thể lưu kết quả trả về của command đầu tiên trong bộ nhớ. Các lần gọi tiếp theo đến dịch vụ phụ thuộc đó trong cùng request context có thể lấy kết quả từ cache trong bộ nhớ.
 
-Ưu điểm là không phải thực thi lặp lại cùng một command nhiều lần trong một request context, **tránh gửi request mạng trùng lặp và cải thiện hiệu năng của toàn bộ request**.
+Ưu điểm là không phải thực thi lặp lại cùng một command nhiều lần trong một request context, **tránh thực hiện các request mạng trùng lặp và cải thiện hiệu năng của toàn bộ request**.
 
-Lấy một ví dụ. Trong một request context, ta yêu cầu lấy dữ liệu có productId bằng 1. Lần đầu cache chưa có dữ liệu nên hệ thống lấy dữ liệu từ dịch vụ sản phẩm, trả về kết quả mới nhất đồng thời lưu dữ liệu vào bộ nhớ. Nếu sau đó trong cùng request context vẫn có yêu cầu lấy dữ liệu có productId bằng 1, chỉ cần lấy trực tiếp từ cache.
+Ví dụ, trong một request context, ta yêu cầu lấy dữ liệu với productId bằng 1. Lần đầu cache chưa có dữ liệu nên hệ thống lấy dữ liệu từ dịch vụ sản phẩm, trả về kết quả mới nhất đồng thời lưu dữ liệu vào bộ nhớ. Nếu sau đó trong cùng request context vẫn có yêu cầu lấy dữ liệu với productId bằng 1, chỉ cần lấy trực tiếp từ cache.
 
 ![hystrix-request-cache](../../high-availability/images/hystrix-request-cache.png)
 
-Cả HystrixCommand và HystrixObservableCommand đều có thể chỉ định một cache key; Hystrix sẽ tự động cache. Sau đó, nếu truy cập lại trong cùng request context, hệ thống sẽ lấy trực tiếp dữ liệu cache.
+Cả HystrixCommand và HystrixObservableCommand đều có thể chỉ định một cache key; Hystrix sẽ tự động cache. Sau đó, nếu truy cập lại trong cùng request context, hệ thống sẽ lấy trực tiếp từ cache.
 
-Sau đây, chúng ta sẽ xét một **tình huống nghiệp vụ** cụ thể để xem cách dùng request cache. Dĩ nhiên, code bên dưới chỉ là một Demo cơ bản.
+Sau đây, chúng ta sẽ xét một **tình huống nghiệp vụ** cụ thể để xem cách sử dụng request cache. Dĩ nhiên, code bên dưới chỉ là một Demo cơ bản.
 
-Giả sử ta cần xây dựng API **truy vấn hàng loạt dữ liệu sản phẩm**. API này dùng HystrixCommand để truy vấn dữ liệu của nhiều product id cùng lúc. Tuy nhiên có một vấn đề: nếu cache cục bộ của Nginx hết hạn và cần lấy lại một lô cache, productIds được truyền đến không được loại bỏ trùng lặp, chẳng hạn `productIds=1,1,1,2,2`, thì id sản phẩm có thể bị lặp. Theo logic nghiệp vụ trước đây, có thể sẽ truy vấn sản phẩm có productId=1 ba lần và sản phẩm có productId=2 hai lần.
+Giả sử ta cần xây dựng API **truy vấn hàng loạt dữ liệu sản phẩm**. API này dùng HystrixCommand để truy vấn dữ liệu của nhiều product id cùng lúc. Tuy nhiên có một vấn đề: nếu cache cục bộ của Nginx hết hạn và cần lấy lại một lô cache, productIds được truyền vào chưa được loại bỏ trùng lặp, chẳng hạn `productIds=1,1,1,2,2`, thì id sản phẩm có thể bị lặp. Theo logic nghiệp vụ trước đây, có thể sẽ truy vấn sản phẩm có productId=1 ba lần và sản phẩm có productId=2 hai lần.
 
 Có thể tối ưu API truy vấn hàng loạt dữ liệu sản phẩm bằng request cache: mỗi request tương ứng với một request context; mỗi sản phẩm trùng lặp chỉ được truy vấn một lần, còn các lần lặp lại sẽ dùng request cache.
 
-## Triển khai và đăng ký filter cho Hystrix request context
+## Triển khai và đăng ký filter request context của Hystrix
 
 Định nghĩa lớp HystrixRequestContextFilter để triển khai interface Filter.
 
 ```java
 /**
- * Hystrix 请求上下文过滤器
+ * Filter request context của Hystrix
  */
 public class HystrixRequestContextFilter implements Filter {
 
@@ -54,7 +54,7 @@ public class HystrixRequestContextFilter implements Filter {
 }
 ```
 
-Sau đó đăng ký đối tượng filter này vào SpringBoot Application.
+Sau đó đăng ký filter này vào SpringBoot Application.
 
 ```java
 @SpringBootApplication
@@ -73,9 +73,9 @@ public class EshopApplication {
 }
 ```
 
-## Override phương thức getCacheKey() của command
+## Ghi đè phương thức getCacheKey() của command
 
-Trong GetProductInfoCommand, override phương thức getCacheKey(); như vậy kết quả của mỗi request sẽ được lưu trong Hystrix request context. Lần tiếp theo có request lấy dữ liệu cùng productId, hệ thống lấy cache trực tiếp mà không cần gọi phương thức run() nữa.
+Trong GetProductInfoCommand, ghi đè phương thức getCacheKey(); như vậy kết quả của mỗi request sẽ được lưu trong Hystrix request context. Ở request tiếp theo truy vấn dữ liệu với cùng productId, hệ thống sẽ lấy trực tiếp từ cache mà không cần gọi lại phương thức run().
 
 ```java
 public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
@@ -99,9 +99,9 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
     }
 
     /**
-     * 每次请求的结果，都会放在Hystrix绑定的请求上下文上
+     * Kết quả của mỗi request sẽ được đặt vào request context liên kết với Hystrix
      *
-     * @return cacheKey 缓存key
+     * @return cacheKey, khóa cache
      */
     @Override
     public String getCacheKey() {
@@ -109,9 +109,9 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
     }
 
     /**
-     * 将某个商品id的缓存清空
+     * Xóa cache của productId
      *
-     * @param productId 商品id
+     * @param productId id sản phẩm
      */
     public static void flushCache(Long productId) {
         HystrixRequestCache.getInstance(KEY,
@@ -120,11 +120,11 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
 }
 ```
 
-Ở đây có phương thức flushCache() để chúng ta chủ động xóa cache trong quá trình phát triển.
+Phương thức flushCache() này dùng để xóa cache thủ công trong quá trình phát triển.
 
 ## controller gọi command để truy vấn thông tin sản phẩm
 
-Trong một web request context, truyền vào danh sách product id để truy vấn dữ liệu của nhiều sản phẩm. Với mỗi productId, tạo một command.
+Trong một web request context, ta truyền danh sách product id vào để truy vấn dữ liệu của nhiều sản phẩm. Với mỗi productId, ta tạo một command.
 
 Nếu danh sách id chưa được loại bỏ trùng lặp, các id lặp lại sẽ dùng cache ngay từ lần truy vấn thứ hai.
 
@@ -133,16 +133,16 @@ Nếu danh sách id chưa được loại bỏ trùng lặp, các id lặp lại
 public class CacheController {
 
     /**
-     * 一次性批量查询多条商品数据的请求
+     * Request truy vấn dữ liệu của nhiều sản phẩm trong một lần
      *
-     * @param productIds 以,分隔的商品id列表
-     * @return 响应状态
+     * @param productIds danh sách productId được phân tách bằng dấu phẩy
+     * @return trạng thái phản hồi
      */
     @RequestMapping("/getProductInfos")
     @ResponseBody
     public String getProductInfos(String productIds) {
         for (String productId : productIds.split(",")) {
-            // 对每个productId，都创建一个command
+            // Tạo một command cho mỗi productId
             GetProductInfoCommand getProductInfoCommand = new GetProductInfoCommand(Long.valueOf(productId));
             ProductInfo productInfo = getProductInfoCommand.execute();
             System.out.println("是否是从缓存中取的结果：" + getProductInfoCommand.isResponseFromCache());
@@ -179,7 +179,7 @@ Lần đầu truy vấn dữ liệu có productId=1, hệ thống gọi API đ�
 
 ## Xóa cache
 
-Ta viết một UpdateProductInfoCommand; sau khi cập nhật thông tin sản phẩm, gọi thủ công phương thức flushCache() đã viết trước đó để xóa cache.
+Ta viết một UpdateProductInfoCommand; sau khi cập nhật thông tin sản phẩm, ta gọi thủ công phương thức flushCache() đã viết trước đó để xóa cache.
 
 ```java
 public class UpdateProductInfoCommand extends HystrixCommand<Boolean> {
@@ -193,14 +193,14 @@ public class UpdateProductInfoCommand extends HystrixCommand<Boolean> {
 
     @Override
     protected Boolean run() throws Exception {
-        // 这里执行一次商品信息的更新
+        // Thực hiện việc cập nhật thông tin sản phẩm một lần tại đây
         // ...
 
-        // 然后清空缓存
+        // Sau đó xóa cache
         GetProductInfoCommand.flushCache(productId);
         return true;
     }
 }
 ```
 
-Như vậy, lần đầu truy vấn sản phẩm này sau đó sẽ gọi API để lấy thông tin sản phẩm mới nhất.
+Như vậy, lần truy vấn tiếp theo đối với sản phẩm này sẽ gọi API để lấy thông tin sản phẩm mới nhất.

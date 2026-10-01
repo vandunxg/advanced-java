@@ -1,10 +1,10 @@
 # Kiến trúc Redis primary–replica
 
-Một Redis instance đơn lẻ có thể xử lý khoảng vài chục nghìn QPS. Cache thường được dùng để hỗ trợ **đọc với high concurrency**. Vì vậy kiến trúc được triển khai theo mô hình primary-replica (master-slave): một primary và nhiều replica; primary phụ trách ghi và sao chép dữ liệu sang các replica khác, còn các node replica phụ trách đọc. **Toàn bộ request đọc đều đi qua các replica**. Cách này cũng giúp mở rộng theo chiều ngang dễ dàng, **hỗ trợ đọc với high concurrency**.
+Một Redis instance đơn lẻ có thể xử lý khoảng từ hơn mười nghìn đến vài chục nghìn QPS. Cache thường được dùng để hỗ trợ **đọc với high concurrency**. Vì vậy kiến trúc được triển khai theo mô hình primary-replica (master-slave): một primary và nhiều replica; primary phụ trách ghi và sao chép dữ liệu sang các replica khác, còn các node replica phụ trách đọc. **Toàn bộ request đọc đều đi qua các replica**. Cách này cũng giúp mở rộng theo chiều ngang dễ dàng, **hỗ trợ đọc với high concurrency**.
 
 ![Redis-master-slave](../../high-concurrency/images/redis-master-slave.png)
 
-Redis replication -> kiến trúc primary-replica -> tách đọc ghi -> mở rộng theo chiều ngang để hỗ trợ đọc với high concurrency
+Redis replication -> kiến trúc primary-replica -> tách biệt đọc/ghi -> mở rộng theo chiều ngang để hỗ trợ đọc với high concurrency
 
 ## Cơ chế cốt lõi của Redis replication
 
@@ -13,7 +13,7 @@ Redis replication -> kiến trúc primary-replica -> tách đọc ghi -> mở r�
 -   Slave node cũng có thể kết nối với các slave node khác;
 -   Khi slave node sao chép dữ liệu, nó không block hoạt động bình thường của master node;
 -   Trong lúc sao chép, slave node cũng không block các truy vấn gửi đến chính nó; nó dùng tập dữ liệu cũ để phục vụ. Nhưng khi sao chép hoàn tất, cần xóa tập dữ liệu cũ và nạp tập dữ liệu mới; lúc đó dịch vụ sẽ tạm dừng;
--   Slave node chủ yếu dùng để mở rộng theo chiều ngang và tách đọc ghi; thêm slave node có thể tăng throughput đọc.
+-   Slave node chủ yếu dùng để mở rộng theo chiều ngang và tách biệt đọc/ghi; thêm slave node có thể tăng throughput đọc.
 
 Lưu ý, nếu dùng kiến trúc primary-replica thì nên **bật** [persistence](./redis-persistence.md) trên master node. Không nên dùng slave node làm bản sao lưu nóng dữ liệu của master node, vì nếu tắt persistence trên master thì khi master bị sập và khởi động lại, dữ liệu có thể trống; sau đó khi replication diễn ra, dữ liệu của các slave node cũng có thể bị mất.
 
@@ -23,7 +23,7 @@ Ngoài ra cũng cần triển khai các phương án sao lưu khác nhau cho mas
 
 Khi khởi động slave node, nó gửi lệnh `PSYNC` đến master node.
 
-Nếu đây là lần đầu slave node kết nối với master node thì sẽ kích hoạt `full resynchronization` — sao chép toàn bộ dữ liệu. Lúc này master khởi động một luồng nền để tạo file snapshot `RDB`, đồng thời lưu vào bộ nhớ mọi lệnh ghi mới nhận từ client. Sau khi tạo xong file `RDB`, master gửi file này cho slave; slave **ghi file vào đĩa cục bộ trước rồi mới nạp vào bộ nhớ**. Tiếp theo, master gửi các lệnh ghi đang được lưu trong bộ nhớ cho slave để slave đồng bộ dữ liệu. Nếu slave node gặp sự cố mạng với master node và mất kết nối, nó sẽ tự động kết nối lại. Sau khi kết nối, master node chỉ sao chép cho slave phần dữ liệu còn thiếu.
+Nếu đây là lần đầu slave node kết nối với master node thì sẽ kích hoạt `full resynchronization` — sao chép toàn bộ dữ liệu. Lúc này master khởi động một luồng nền để tạo file snapshot `RDB`, đồng thời lưu vào bộ nhớ mọi lệnh ghi mới nhận từ client. Sau khi tạo xong file `RDB`, master gửi file `RDB` này cho slave; slave **ghi file vào đĩa cục bộ trước rồi mới nạp vào bộ nhớ**. Tiếp theo, master gửi các lệnh ghi đang được lưu trong bộ nhớ cho slave để slave đồng bộ dữ liệu. Nếu slave node gặp sự cố mạng với master node và mất kết nối, nó sẽ tự động kết nối lại. Sau khi kết nối, master node chỉ sao chép cho slave phần dữ liệu còn thiếu.
 
 ![Redis-master-slave-replication](../../high-concurrency/images/redis-master-slave-replication.png)
 
@@ -42,7 +42,7 @@ Master tạo `RDB` trực tiếp trong bộ nhớ rồi gửi cho slave, không 
 ```bash
 repl-diskless-sync yes
 
-# 等待 5s 后再开始复制，因为要等更多 slave 重新连接过来
+# Chờ 5s rồi mới bắt đầu replication vì cần đợi thêm slave kết nối lại
 repl-diskless-sync-delay 5
 ```
 
@@ -94,7 +94,7 @@ Nếu trong 365 ngày, hệ thống có thể phục vụ bên ngoài 99,99% th�
 
 Một slave bị sập không ảnh hưởng đến tính khả dụng; các slave khác vẫn cung cấp dịch vụ truy vấn với cùng dữ liệu.
 
-Nhưng nếu master node chết thì sao? Không thể ghi dữ liệu; mọi thao tác ghi cache đều thất bại. Các slave node còn tác dụng gì khi không có master để replication dữ liệu cho chúng? Khi đó hệ thống gần như không khả dụng.
+Nhưng nếu master node chết thì sao? Không thể ghi dữ liệu; mọi thao tác ghi cache đều thất bại. Các slave node còn tác dụng gì khi không có master để replication dữ liệu cho chúng? Khi đó hệ thống coi như không khả dụng.
 
 Kiến trúc high availability của Redis được gọi là `failover` (**chuyển đổi dự phòng**), cũng có thể gọi là chuyển đổi primary/standby.
 

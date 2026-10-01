@@ -2,25 +2,25 @@
 
 ## Câu hỏi phỏng vấn
 
-Khi triển khai theo cụm, Session phân tán được triển khai như thế nào?
+Khi triển khai theo cụm, làm thế nào để Session hoạt động phân tán?
 
 ## Phân tích góc nhìn của người phỏng vấn
 
-Người phỏng vấn đã hỏi bạn rất nhiều về cách dùng Dubbo. Nếu biết dùng Dubbo, bạn có thể chuyển hệ thống đơn khối thành hệ thống phân tán; sau đó sẽ lần lượt xuất hiện hàng loạt vấn đề, lớn nhất là **giao dịch phân tán**, **tính idempotency của giao diện**, **khóa phân tán**, và vấn đề cuối cùng là **Session phân tán**.
+Người phỏng vấn đã hỏi bạn rất nhiều về cách dùng Dubbo. Nếu biết dùng Dubbo, bạn có thể chuyển hệ thống đơn khối thành hệ thống phân tán; sau đó sẽ lần lượt xuất hiện hàng loạt vấn đề, lớn nhất là **giao dịch phân tán**, **tính idempotent của interface**, **khóa phân tán**, và vấn đề cuối cùng là **Session phân tán**.
 
 Tất nhiên, các vấn đề trong hệ thống phân tán còn nhiều hơn thế, rất đa dạng và phức tạp. Ở đây chỉ nói đến một số vấn đề thường gặp, cũng là những vấn đề thường được hỏi khi phỏng vấn.
 
 ## Phân tích câu hỏi phỏng vấn
 
-Session là gì? Trình duyệt có Cookie; Cookie này tồn tại trong một khoảng thời gian. Mỗi lần gửi yêu cầu, trình duyệt đều gửi kèm một `jsessionid cookie` đặc biệt. Dựa vào đó, máy chủ duy trì một vùng Session tương ứng để lưu một số dữ liệu.
+Session là gì? Trình duyệt có Cookie; Cookie này tồn tại trong một khoảng thời gian. Mỗi lần gửi yêu cầu, trình duyệt đều gửi kèm một `jsessionid cookie` đặc biệt. Dựa vào đó, máy chủ duy trì một phạm vi Session tương ứng để lưu một số dữ liệu.
 
 Thông thường, nếu bạn chưa đóng trình duyệt và Cookie vẫn còn thì Session tương ứng cũng còn; nếu Cookie mất thì Session cũng mất. Session thường được dùng cho những thứ như giỏ hàng và lưu trạng thái đăng nhập.
 
-Không nói nhiều về điều này; ai biết Java cũng nên hiểu.
+Không nói nhiều về điều này; ai biết Java cũng đều phải biết.
 
 Session hoạt động như vậy không có vấn đề gì trong hệ thống đơn khối, nhưng còn hệ thống phân tán với nhiều dịch vụ thì sao? Trạng thái Session được duy trì ở đâu?
 
-Thực ra có nhiều cách, nhưng những cách thường gặp và được dùng phổ biến gồm:
+Thực ra có nhiều cách, nhưng một số cách thường gặp và được sử dụng phổ biến gồm:
 
 ### Hoàn toàn không dùng Session
 
@@ -28,7 +28,7 @@ Dùng JWT Token để lưu danh tính người dùng, sau đó lấy thông tin 
 
 ### Tomcat + Redis
 
-Cách này khá thuận tiện: mã sử dụng Session vẫn giống như trước, tiếp tục dùng hỗ trợ Session gốc của Tomcat; sau đó dùng thành phần có tên `Tomcat RedisSessionManager` để tất cả Tomcat được triển khai lưu dữ liệu Session vào Redis.
+Cách này khá thuận tiện: mã sử dụng Session vẫn giống như trước, tiếp tục dựa trên cơ chế hỗ trợ Session nguyên bản của Tomcat; sau đó dùng thành phần có tên `Tomcat RedisSessionManager` để mọi Tomcat được triển khai đều lưu dữ liệu Session vào Redis.
 
 Cấu hình trong tệp cấu hình Tomcat:
 
@@ -52,15 +52,15 @@ Sau đó chỉ cần chỉ định host và port của Redis là được.
 	 maxInactiveInterval="60"/>
 ```
 
-Cũng có thể dùng cách trên để lưu dữ liệu Session dựa trên cụm Redis khả dụng cao được Redis Sentinel hỗ trợ; đều được.
+Cũng có thể dùng cách trên để lưu dữ liệu Session dựa trên cụm Redis high availability được Redis Sentinel hỗ trợ; đều được.
 
 ### Spring Session + Redis
 
 Cách thứ hai nói ở trên gắn chặt với container Tomcat. Nếu muốn chuyển container Web sang Jetty thì chẳng lẽ phải cấu hình lại toàn bộ Jetty?
 
-Cách Tomcat + Redis ở trên dễ dùng nhưng **phụ thuộc nghiêm trọng vào container Web**, khiến việc chuyển mã sang các container Web khác trở nên khó khăn. Đặc biệt, nếu bạn thay đổi stack công nghệ thì sao? Chẳng hạn chuyển sang Spring Cloud hoặc Spring Boot?
+Cách Tomcat + Redis ở trên dễ dùng nhưng **phụ thuộc rất nhiều vào container Web**, khiến việc chuyển mã sang các container Web khác trở nên khó khăn. Đặc biệt, nếu bạn thay đổi stack công nghệ thì sao? Chẳng hạn chuyển sang Spring Cloud hoặc Spring Boot?
 
-Vì vậy, hiện nay lựa chọn tốt hơn là giải pháp tích hợp một cửa cho Java, tức Spring. Spring gần như cung cấp hầu hết framework chúng ta cần: dùng Spring Cloud để xây dựng microservice, Spring Boot làm bộ khung ứng dụng, vì thế Spring Session là một lựa chọn tốt.
+Vì vậy, hiện nay lựa chọn tốt hơn là giải pháp trọn gói cho Java, tức Spring. Spring về cơ bản cung cấp phần lớn các framework chúng ta cần dùng: dùng Spring Cloud để xây dựng microservice, dùng Spring Boot làm bộ khung ứng dụng, vì thế Spring Session là một lựa chọn tốt.
 
 Cấu hình trong pom.xml:
 
@@ -135,6 +135,6 @@ public class TestController {
 }
 ```
 
-Mã trên là được: cấu hình Spring Session lưu dữ liệu Session dựa trên Redis, rồi cấu hình một filter của Spring Session để mọi thao tác liên quan đến Session do Spring Session quản lý. Sau đó, trong mã vẫn dùng các thao tác Session gốc; dữ liệu được lấy từ Redis thông qua Spring Session.
+Đoạn mã trên là ổn: cấu hình Spring Session dựa trên Redis để lưu dữ liệu Session, rồi cấu hình một filter của Spring Session để mọi thao tác liên quan đến Session do Spring Session quản lý. Sau đó, trong mã vẫn dùng các thao tác Session nguyên bản; dữ liệu được lấy từ Redis thông qua Spring Session.
 
-Có nhiều cách triển khai phiên làm việc phân tán. Tôi chỉ nêu một số cách phổ biến: Tomcat + Redis thường được dùng trước đây nhưng gắn chặt với Tomcat; những năm gần đây, người ta triển khai thông qua Spring Session.
+Có nhiều cách triển khai Session phân tán. Tôi chỉ nêu một số cách tương đối phổ biến: Tomcat + Redis trước đây thường được sử dụng nhưng gắn chặt với Tomcat; những năm gần đây, người ta triển khai thông qua Spring Session.

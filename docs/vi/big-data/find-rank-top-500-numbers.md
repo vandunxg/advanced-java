@@ -10,7 +10,7 @@ Với bài toán TopK, phương pháp thường dùng nhất là heap sort. Vớ
 
 Trước tiên, tạo một heap max có kích thước bằng số lượng mảng, tức 20, rồi đưa giá trị lớn nhất của mỗi mảng vào heap.
 
-Tiếp theo, xóa phần tử ở đỉnh heap và lưu vào một mảng khác có kích thước 500, sau đó chèn vào heap max phần tử kế tiếp trong mảng chứa phần tử vừa xóa.
+Tiếp theo, xóa phần tử ở đỉnh heap và lưu vào một mảng khác có kích thước 500, sau đó chèn vào heap max phần tử kế tiếp trong mảng chứa phần tử vừa bị xóa.
 
 Lặp lại các bước trên cho đến khi xóa phần tử thứ 500; khi đó đã tìm được 500 số lớn nhất.
 
@@ -28,17 +28,17 @@ import java.util.PriorityQueue;
 @Data
 public class DataWithSource implements Comparable<DataWithSource> {
     /**
-     * 数值
+     * Giá trị
      */
     private int value;
 
     /**
-     * 记录数值来源的数组
+     * Mảng ghi lại nguồn của giá trị
      */
     private int source;
 
     /**
-     * 记录数值在数组中的索引
+     * Chỉ số của giá trị trong mảng
      */
     private int index;
 
@@ -50,8 +50,8 @@ public class DataWithSource implements Comparable<DataWithSource> {
 
     /**
      *
-     * 由于 PriorityQueue 使用小顶堆来实现，这里通过修改
-     * 两个整数的比较逻辑来让 PriorityQueue 变成大顶堆
+     * Vì PriorityQueue được triển khai bằng min-heap, ở đây sửa đổi
+     * logic so sánh giữa hai số nguyên để biến PriorityQueue thành max-heap
      */
     @Override
     public int compareTo(DataWithSource o) {
@@ -64,19 +64,19 @@ class Test {
         int rowSize = data.length;
         int columnSize = data[0].length;
 
-        // 创建一个columnSize大小的数组，存放结果
+        // Tạo một mảng có kích thước columnSize để lưu kết quả
         int[] result = new int[columnSize];
 
         PriorityQueue<DataWithSource> maxHeap = new PriorityQueue<>();
         for (int i = 0; i < rowSize; ++i) {
-            // 将每个数组的最大一个元素放入堆中
+            // Đưa phần tử lớn nhất trong mỗi mảng vào heap
             DataWithSource d = new DataWithSource(data[i][0], i, 0);
             maxHeap.add(d);
         }
 
         int num = 0;
         while (num < columnSize) {
-            // 删除堆顶元素
+            // Xóa phần tử ở đỉnh heap
             DataWithSource d = maxHeap.poll();
             result[num++] = d.getValue();
             if (num >= columnSize) {

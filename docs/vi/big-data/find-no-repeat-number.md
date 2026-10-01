@@ -12,7 +12,7 @@ Tương tự các bài trước, trước tiên chia 250 triệu số thành nhi
 
 ### Phương pháp 2: Phương pháp bitmap
 
-**Bitmap** là cách dùng một hoặc nhiều bit để đánh dấu giá trị tương ứng với một phần tử; khóa chính là phần tử đó. Lưu dữ liệu theo đơn vị bit có thể tiết kiệm đáng kể dung lượng lưu trữ.
+**Bitmap** là cách dùng một hoặc nhiều bit để đánh dấu giá trị tương ứng với một phần tử; phần tử đó chính là khóa. Lưu dữ liệu theo đơn vị bit có thể tiết kiệm đáng kể dung lượng lưu trữ.
 
 Bitmap dùng mảng bit để biểu diễn một số phần tử có tồn tại hay không. Có thể dùng nó để tìm kiếm nhanh, loại trùng, sắp xếp, v.v. Chưa rõ lắm? Trước tiên, xem một ví dụ nhỏ.
 

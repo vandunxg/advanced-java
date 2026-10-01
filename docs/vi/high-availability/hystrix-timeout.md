@@ -1,6 +1,6 @@
-# Bảo vệ an toàn trước timeout khi gọi API dịch vụ bằng cơ chế timeout
+# Bảo vệ an toàn cho lời gọi API dịch vụ bị timeout bằng cơ chế timeout
 
-Thông thường, một vấn đề khá phổ biến khi gọi API của dịch vụ phụ thuộc là **timeout**. Trong hệ thống phân tán phức tạp, timeout có thể khiến hệ thống mất ổn định hoặc chập chờn. Nếu xảy ra nhiều timeout, thread resource sẽ bị treo, làm throughput giảm mạnh và thậm chí khiến service sập.
+Thông thường, một vấn đề khá phổ biến khi gọi API của dịch vụ phụ thuộc là **timeout**. Trong hệ thống phân tán phức tạp, timeout có thể khiến hệ thống mất ổn định hoặc chập chờn. Nếu xảy ra nhiều timeout, tài nguyên thread sẽ bị treo, làm throughput giảm mạnh và thậm chí khiến service sập.
 
 Bạn gọi nhiều loại dịch vụ phụ thuộc khác nhau; đặc biệt ở các công ty lớn, thậm chí bạn không biết người phát triển một service là ai, cũng không biết trình độ kỹ thuật của người đó ra sao.
 
@@ -14,7 +14,7 @@ Nếu không kiểm soát timeout cho các lời gọi đến nhiều API của 
 
 ## TimeoutMilliseconds
 
-Trong Hystrix, ta có thể tự đặt thời lượng timeout. Nếu command chạy lâu hơn thời lượng đã đặt, Hystrix xem đó là timeout, đánh dấu Hystrix command đã timeout và thực thi logic fallback degradation.
+Trong Hystrix, ta có thể tự đặt thời lượng timeout. Nếu command chạy lâu hơn thời lượng đã đặt, Hystrix xem đó là timeout, đánh dấu Hystrix command là timeout và đồng thời thực thi logic fallback/degradation.
 
 Giá trị mặc định của `TimeoutMilliseconds` là 1000, tức 1000ms.
 
@@ -32,9 +32,9 @@ HystrixCommandProperties.Setter()
     .withExecutionTimeoutEnabled(boolean)
 ```
 
-## Ví dụ Demo
+## Demo minh họa
 
-Trong command, ta đặt thời gian timeout là 500ms, sau đó đặt thời gian ngủ trong phương thức run() là 1 giây. Như vậy, khi request đến, phương thức ngủ 1 giây và kết quả sẽ là logic degradation được thực thi do timeout.
+Trong command, ta đặt timeout là 500ms, sau đó đặt thời gian sleep trong phương thức run() là 1 giây. Vì vậy, khi có request, phương thức sẽ sleep 1 giây và logic degradation sẽ được thực thi do timeout.
 
 ```java
 public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
@@ -55,9 +55,9 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
                         .withCircuitBreakerRequestVolumeThreshold(20)
                         .withCircuitBreakerErrorThresholdPercentage(40)
                         .withCircuitBreakerSleepWindowInMilliseconds(3000)
-                        // 设置是否打开超时，默认是true
+                        // Thiết lập có bật timeout hay không, mặc định là true
                         .withExecutionTimeoutEnabled(true)
-                        // 设置超时时间，默认1000(ms)
+                        // Thiết lập thời gian timeout, mặc định là 1000(ms)
                         .withExecutionTimeoutInMilliseconds(500)
                         .withFallbackIsolationSemaphoreMaxConcurrentRequests(30)));
         this.productId = productId;
@@ -67,7 +67,7 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
     protected ProductInfo run() throws Exception {
         System.out.println("调用接口查询商品数据，productId=" + productId);
 
-        // 休眠1s
+        // Tạm dừng 1s
         TimeUtils.sleep(1);
 
         String url = "http://localhost:8081/getProductInfo?productId=" + productId;
@@ -99,7 +99,7 @@ public class TimeoutTest {
 }
 ```
 
-Trong kết quả, có thể thấy thông tin liên quan đến sản phẩm degradation đã được in ra.
+Trong kết quả, có thể thấy thông tin liên quan đến sản phẩm fallback đã được in ra.
 
 ```c
 ProductInfo(id=null, name=降级商品, price=null, pictureList=null, specification=null, service=null, color=null, size=null, shopId=null, modifiedTime=null, cityId=null, cityName=null, brandId=null, brandName=null)

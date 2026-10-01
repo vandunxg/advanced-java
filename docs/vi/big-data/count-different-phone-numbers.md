@@ -2,13 +2,13 @@
 
 ## Mô tả bài toán
 
-Một tệp có chứa một số số điện thoại, mỗi số gồm 8 chữ số. Hãy đếm số lượng số điện thoại khác nhau.
+Một tệp có chứa một vài số điện thoại, mỗi số gồm 8 chữ số. Hãy đếm số lượng số điện thoại khác nhau.
 
 ## Hướng giải quyết
 
 Về bản chất, bài toán này vẫn là bài toán **dữ liệu trùng lặp**. Với dạng bài toán này, thông thường trước tiên nên cân nhắc phương pháp bitmap.
 
-Trong bài toán này, số điện thoại gồm 8 chữ số có thể biểu diễn 10<sup>8</sup> số, tức là 100 triệu số. Ta dùng một bit để biểu diễn mỗi số, vậy tổng cộng cần 100 triệu bit, chiếm khoảng 12M bộ nhớ.
+Trong bài toán này, số điện thoại gồm 8 chữ số có thể biểu diễn 10<sup>8</sup> số, tức là 100 triệu số. Ta dùng một bit để biểu diễn mỗi số điện thoại, vậy tổng cộng cần 100 triệu bit, chiếm khoảng 12M dung lượng bộ nhớ.
 
 **Ý tưởng như sau**:
 

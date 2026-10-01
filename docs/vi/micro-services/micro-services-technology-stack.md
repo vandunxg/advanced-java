@@ -1,4 +1,4 @@
-# Công nghệ cho microservice
+# Stack công nghệ microservice
 
 ## Stack công nghệ
 
@@ -22,15 +22,15 @@ Tác dụng: khám phá, đăng ký và quản lý tập trung dịch vụ.
 -   Eureka Client: đơn giản hóa thao tác tương tác với Eureka Server.
 -   Spring Cloud Netflix: [GitHub](https://github.com/spring-cloud/spring-cloud-netflix), [tài liệu](https://cloud.spring.io/spring-cloud-netflix/reference/html/)
 
-#### Zookeeper
+#### ZooKeeper
 
 > ZooKeeper là dịch vụ tập trung để duy trì thông tin cấu hình, đặt tên, cung cấp đồng bộ hóa phân tán và cung cấp dịch vụ nhóm.
 
-[Zookeeper](https://github.com/apache/zookeeper) là dịch vụ tập trung dùng để duy trì thông tin cấu hình, đặt tên, cung cấp đồng bộ hóa phân tán và dịch vụ nhóm.
+[ZooKeeper](https://github.com/apache/zookeeper) là dịch vụ tập trung dùng để duy trì thông tin cấu hình, đặt tên, cung cấp đồng bộ hóa phân tán và dịch vụ nhóm.
 
-#### Khác biệt giữa Zookeeper và Eureka
+#### Khác biệt giữa ZooKeeper và Eureka
 
-Zookeeper bảo đảm CP, Eureka bảo đảm AP:
+ZooKeeper bảo đảm CP, Eureka bảo đảm AP:
 
 -   C: tính nhất quán dữ liệu;
 -   A: tính sẵn sàng của dịch vụ;
@@ -42,27 +42,27 @@ Tác dụng: quản lý tập trung thông tin cấu hình của một hoặc nh
 
 #### [Disconf](https://github.com/knightliao/disconf)
 
-Nền tảng Quản lý Cấu hình Phân tán (Distributed Configuration Management Platform) là thành phần/nền tảng dùng chung, tập trung vào quản lý cấu hình cho nhiều hệ thống phân tán, cung cấp dịch vụ quản lý cấu hình thống nhất và là giải pháp thống nhất hoàn chỉnh dựa trên Zookeeper.
+Distributed Configuration Management Platform (nền tảng quản lý cấu hình phân tán) là một thành phần/nền tảng dùng chung, tập trung vào quản lý cấu hình cho nhiều hệ thống phân tán, cung cấp dịch vụ quản lý cấu hình thống nhất và là giải pháp thống nhất hoàn chỉnh dựa trên ZooKeeper.
 
-#### [SpringCloudConfig](https://github.com/spring-cloud/spring-cloud-config)
+#### [Spring Cloud Config](https://github.com/spring-cloud/spring-cloud-config)
 
 #### [Apollo](https://github.com/ctripcorp/apollo)
 
-Apollo (阿波罗) là trung tâm cấu hình phân tán do bộ phận framework của Ctrip phát triển. Công cụ này có thể quản lý tập trung cấu hình cho ứng dụng ở các môi trường và cụm khác nhau; sau khi sửa đổi cấu hình, nó có thể đẩy cấu hình đến ứng dụng theo thời gian thực, đồng thời có các tính năng quản lý quy trình và quyền hạn chuẩn hóa, phù hợp cho quản lý cấu hình microservice.
+Apollo (阿波罗) là trung tâm cấu hình phân tán do bộ phận framework của Ctrip phát triển. Công cụ này có thể quản lý tập trung cấu hình cho ứng dụng ở các môi trường và cụm khác nhau; sau khi sửa đổi cấu hình, nó có thể đẩy cấu hình đến ứng dụng theo thời gian thực, đồng thời có các tính năng về quyền hạn chuẩn hóa và quản trị quy trình, phù hợp cho quản lý cấu hình microservice.
 
 ### Xác thực và phân quyền
 
-Tác dụng: dựa trên quy tắc hoặc chính sách bảo mật được hệ thống thiết lập, người dùng chỉ có thể truy cập đúng những tài nguyên họ được cấp quyền.
+Tác dụng: dựa trên quy tắc hoặc chính sách bảo mật được hệ thống thiết lập, người dùng chỉ có thể truy cập những tài nguyên họ được cấp quyền, không nhiều hơn cũng không ít hơn.
 
 #### [Spring Security](https://spring.io/projects/spring-security)
 
 #### [Apache Shiro](http://shiro.apache.org/)
 
-> Apache Shiro™ là framework bảo mật Java mạnh mẽ, dễ sử dụng, cung cấp xác thực, phân quyền, mật mã học và quản lý session. Với API dễ hiểu của Shiro, bạn có thể bảo vệ mọi ứng dụng một cách nhanh chóng, dễ dàng — từ ứng dụng di động nhỏ nhất đến ứng dụng web và doanh nghiệp lớn nhất.
+> Apache Shiro™ là framework bảo mật Java mạnh mẽ, dễ sử dụng, cung cấp xác thực, phân quyền, mật mã học và quản lý session. Với API dễ hiểu của Shiro, bạn có thể bảo vệ mọi ứng dụng một cách nhanh chóng, dễ dàng, từ ứng dụng di động nhỏ nhất đến ứng dụng web và doanh nghiệp lớn nhất.
 
 ### Xử lý hàng loạt
 
-Tác dụng: xử lý hàng loạt dữ liệu hoặc giao dịch cùng loại.
+Tác dụng: xử lý hàng loạt dữ liệu hoặc các đối tượng cùng loại.
 
 #### [Spring Batch](https://spring.io/projects/spring-batch)
 
@@ -74,11 +74,11 @@ Tác dụng: xử lý hàng loạt dữ liệu hoặc giao dịch cùng loại.
 
 ### Lời gọi microservice (giao thức)
 
-> Giao thức giao tiếp
+> Giao thức truyền thông
 
-#### Rest
+#### REST
 
--   Gửi yêu cầu Rest qua HTTP/HTTPS để trao đổi dữ liệu.
+-   Gửi yêu cầu REST qua HTTP/HTTPS để trao đổi dữ liệu.
 
 #### RPC
 
@@ -94,7 +94,7 @@ Framework RPC (remote procedure call, lời gọi thủ tục từ xa) thực ch
 #### RMI
 
 -   Gọi phương thức từ xa (Remote Method Invocation)
--   Chỉ gọi Java
+-   Gọi thuần Java
 
 ### Gọi giao diện dịch vụ
 
@@ -110,11 +110,11 @@ Các microservice của Spring Cloud Netflix cung cấp giao diện dưới dạ
 
 #### [Hystrix](https://github.com/Netflix/Hystrix)
 
-> Hystrix là thư viện độ trễ và chịu lỗi, được thiết kế để cô lập điểm truy cập đến hệ thống từ xa, dịch vụ và thư viện bên thứ ba; ngăn lỗi dây chuyền và tăng khả năng phục hồi trong hệ thống phân tán phức tạp, nơi lỗi là điều không thể tránh khỏi.
+> Hystrix là thư viện về độ trễ và khả năng chịu lỗi, được thiết kế để cô lập điểm truy cập đến hệ thống từ xa, dịch vụ và thư viện bên thứ ba; ngăn lỗi dây chuyền và tăng khả năng phục hồi trong hệ thống phân tán phức tạp, nơi lỗi là điều không thể tránh khỏi.
 
 #### [Sentinel](https://github.com/alibaba/Sentinel)
 
-> Thành phần kiểm soát lưu lượng nhẹ, mạnh mẽ, cung cấp độ tin cậy và giám sát cho microservice. (Thư viện Java nhẹ để kiểm soát lưu lượng, ngắt mạch và hạ cấp.)
+> Thành phần kiểm soát lưu lượng nhẹ nhưng mạnh mẽ, cung cấp độ tin cậy và giám sát cho microservice. (Thư viện Java nhẹ để kiểm soát lưu lượng, ngắt mạch và hạ cấp.)
 
 ### Cân bằng tải dịch vụ
 
@@ -142,9 +142,9 @@ Nginx cân bằng tải phía server, còn Ribbon cân bằng tải phía client
 
 #### [RocketMQ](http://rocketmq.apache.org/)
 
-#### [activeMQ](http://activemq.apache.org/)
+#### [ActiveMQ](http://activemq.apache.org/)
 
-### Thu thập nhật ký (elk)
+### Thu thập nhật ký (ELK)
 
 > Tác dụng: thu thập nhật ký từ các dịch vụ để phân tích log, xây dựng chân dung người dùng, v.v.
 
@@ -172,7 +172,7 @@ Nginx cân bằng tải phía server, còn Ribbon cân bằng tải phía client
 
 #### [Metrics](https://metrics.dropwizard.io)
 
-### Theo dõi chuỗi gọi dịch vụ
+### Truy vết chuỗi gọi dịch vụ
 
 > Tác dụng: làm rõ quan hệ gọi giữa các dịch vụ.
 
@@ -186,17 +186,17 @@ Nginx cân bằng tải phía server, còn Ribbon cân bằng tải phía client
 
 #### Cơ sở dữ liệu quan hệ
 
-##### [MySql](https://www.mysql.com/)
+##### [MySQL](https://www.mysql.com/)
 
 ##### [Oracle](https://www.oracle.com/index.html)
 
-##### [MsSQL](https://docs.microsoft.com/zh-cn/sql/?view=sql-server-ver15)
+##### [MS SQL](https://docs.microsoft.com/zh-cn/sql/?view=sql-server-ver15)
 
-##### [PostgreSql](https://www.postgresql.org/)
+##### [PostgreSQL](https://www.postgresql.org/)
 
 #### Cơ sở dữ liệu phi quan hệ
 
-##### [Mongodb](https://www.mongodb.com/)
+##### [MongoDB](https://www.mongodb.com/)
 
 ##### [Elasticsearch](https://github.com/elastic/elasticsearch)
 
@@ -204,11 +204,11 @@ Nginx cân bằng tải phía server, còn Ribbon cân bằng tải phía client
 
 > Tác dụng: lưu trữ dữ liệu.
 
-#### [redis](https://redis.io/)
+#### [Redis](https://redis.io/)
 
 ### Chia database và bảng
 
-> Tác dụng: giải pháp phân chia database và bảng.
+> Tác dụng: giải pháp tách database và bảng.
 
 #### [ShardingSphere](http://shardingsphere.apache.org/)
 
@@ -216,7 +216,7 @@ Nginx cân bằng tải phía server, còn Ribbon cân bằng tải phía client
 
 ### Triển khai dịch vụ
 
-> Tác dụng: triển khai dự án nhanh chóng, đưa lên môi trường và tích hợp liên tục.
+> Tác dụng: triển khai dự án nhanh chóng, đưa vào vận hành và tích hợp liên tục.
 
 #### [Docker](http://www.docker.com/)
 

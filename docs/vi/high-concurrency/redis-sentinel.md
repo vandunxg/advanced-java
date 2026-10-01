@@ -2,7 +2,7 @@
 
 ## Giới thiệu Sentinel
 
-sentinel, tiếng Trung là 哨兵 (sentinel). Sentinel là một thành phần rất quan trọng trong kiến trúc cụm Redis, chủ yếu có các chức năng sau:
+sentinel, tên tiếng Trung là 哨兵. Sentinel là một thành phần rất quan trọng trong kiến trúc cụm Redis, chủ yếu có các chức năng sau:
 
 -   Giám sát cluster: chịu trách nhiệm giám sát tiến trình Redis master và slave có hoạt động bình thường hay không.
 -   Thông báo message: nếu một Redis instance gặp sự cố thì Sentinel gửi message cảnh báo cho quản trị viên.
@@ -103,7 +103,7 @@ Nếu master bị split-brain và mất kết nối với các slave khác thì 
 -   sdown là sập chủ quan: nếu một Sentinel tự cho rằng một master bị sập thì đó là sập chủ quan.
 -   odown là sập khách quan: nếu số lượng Sentinel bằng quorum đều cho rằng một master bị sập thì đó là sập khách quan.
 
-Điều kiện đạt sdown rất đơn giản: nếu một Sentinel ping master quá số millisecond được chỉ định bởi `is-master-down-after-milliseconds` thì Sentinel chủ quan cho rằng master bị sập. Nếu trong thời gian chỉ định, một Sentinel nhận được thông tin từ số Sentinel khác bằng quorum rằng master đó đang sdown thì xem như đã odown.
+Điều kiện đạt sdown rất đơn giản: nếu một Sentinel ping master vượt quá số mili giây được chỉ định bởi `is-master-down-after-milliseconds` thì Sentinel chủ quan cho rằng master bị sập. Nếu trong thời gian chỉ định, một Sentinel nhận được thông tin từ số Sentinel khác bằng quorum rằng master đó đang sdown thì xem như đã odown.
 
 ## Cơ chế tự động phát hiện của cụm Sentinel
 
@@ -117,7 +117,7 @@ Từng Sentinel còn trao đổi cấu hình giám sát `master` với các Sent
 
 ## Tự động hiệu chỉnh cấu hình slave
 
-Sentinel chịu trách nhiệm tự động hiệu chỉnh một số cấu hình của slave. Ví dụ, nếu slave sẽ trở thành ứng viên master tiềm năng, Sentinel đảm bảo slave replication dữ liệu của master hiện tại. Nếu slave kết nối với một master sai, chẳng hạn sau khi failover, Sentinel đảm bảo các slave kết nối đúng master.
+Sentinel chịu trách nhiệm tự động hiệu chỉnh một số cấu hình của slave. Ví dụ, nếu slave sẽ trở thành ứng viên master tiềm năng, Sentinel đảm bảo slave thực hiện replication dữ liệu từ master hiện tại. Nếu slave kết nối với một master sai, chẳng hạn sau khi failover, Sentinel đảm bảo các slave kết nối đúng master.
 
 ## Thuật toán bầu chọn slave->master
 
@@ -125,7 +125,7 @@ Nếu một master được xem là odown và số Sentinel bằng majority đ�
 
 -   Thời gian mất kết nối với master
 -   Độ ưu tiên của slave
--   Offset replication
+-   Replication offset
 -   Run id
 
 Nếu thời gian slave mất kết nối với master vượt quá 10 lần `down-after-milliseconds` cộng với thời gian master bị sập thì slave được xem là không phù hợp để bầu làm master.
@@ -156,7 +156,7 @@ Sentinel thực hiện chuyển đổi sẽ lấy một configuration epoch từ
 
 Nếu Sentinel đầu tiên được bầu thất bại khi chuyển đổi thì các Sentinel khác sẽ chờ hết thời gian failover-timeout rồi tiếp tục thực hiện chuyển đổi. Lúc này chúng lấy một configuration epoch mới để làm version mới.
 
-## Phát tán configuration
+## Lan truyền cấu hình
 
 Sau khi hoàn tất chuyển đổi, Sentinel cập nhật cấu hình master mới nhất tại máy cục bộ rồi đồng bộ cấu hình này cho các Sentinel khác thông qua cơ chế message `pub/sub` đã nói ở trên.
 

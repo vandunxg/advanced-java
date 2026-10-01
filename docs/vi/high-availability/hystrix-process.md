@@ -1,6 +1,6 @@
 # Tìm hiểu sâu quy trình thực thi bên trong Hystrix
 
-Trước đó, chúng ta đã tìm hiểu kỹ thuật cơ bản nhất mà Hystrix hỗ trợ để đảm bảo high availability: **isolation tài nguyên** + **rate limit**.
+Trước đó, chúng ta đã tìm hiểu kỹ thuật cơ bản nhất mà Hystrix hỗ trợ để đảm bảo high availability: **resource isolation** + **rate limiting**.
 
 -   Tạo command;
 -   Thực thi command này;
@@ -10,7 +10,7 @@ Trước đó, chúng ta đã tìm hiểu kỹ thuật cơ bản nhất mà Hyst
 
 Trong khi giải thích quy trình này, tôi cũng sẽ giới thiệu một số chức năng cốt lõi và quan trọng khác của Hystrix.
 
-Đây là sơ đồ quy trình gồm 8 bước; tôi sẽ giải thích chi tiết từng bước. Trong lúc học, hãy đối chiếu với sơ đồ quy trình này để theo dõi sẽ dễ hình dung hơn.
+Đây là sơ đồ quy trình gồm 8 bước; tôi sẽ giải thích chi tiết từng bước. Trong lúc học, hãy đối chiếu với sơ đồ quy trình này để mạch tư duy rõ ràng hơn.
 
 ![hystrix-process](../../high-availability/images/new-hystrix-process.jpg)
 
@@ -22,10 +22,10 @@ Một đối tượng HystrixCommand hoặc HystrixObservableCommand đại di�
 -   HystrixObservableCommand chủ yếu dùng cho lời gọi có thể trả về nhiều kết quả.
 
 ```java
-// 创建 HystrixCommand
+// Tạo HystrixCommand
 HystrixCommand hystrixCommand = new HystrixCommand(arg1, arg2);
 
-// 创建 HystrixObservableCommand
+// Tạo HystrixObservableCommand
 HystrixObservableCommand hystrixObservableCommand = new HystrixObservableCommand(arg1, arg2);
 ```
 
@@ -37,10 +37,10 @@ Thực thi command sẽ bắt đầu một lời gọi đến dịch vụ phụ 
 
 Trong đó, các phương thức execute() và queue() chỉ áp dụng cho HystrixCommand.
 
--   execute(): Sau khi gọi, phương thức block trực tiếp; đây là lời gọi đồng bộ, chờ cho đến khi dịch vụ phụ thuộc trả về một kết quả hoặc ném exception.
--   queue(): Trả về một Future; đây là lời gọi bất đồng bộ và sau đó có thể lấy một kết quả thông qua Future.
--   observe(): Đăng ký một đối tượng Observable. Observable đại diện cho kết quả do dịch vụ phụ thuộc trả về; phương thức lấy một bản sao của đối tượng Observable đại diện cho kết quả đó.
--   toObservable(): Trả về một đối tượng Observable. Nếu đăng ký đối tượng này, command sẽ được thực thi và kết quả trả về sẽ được lấy.
+-   execute(): Sau khi gọi, phương thức block trực tiếp; đây là lời gọi đồng bộ, chờ cho đến khi dịch vụ phụ thuộc trả về một kết quả đơn lẻ hoặc ném exception.
+-   queue(): Trả về một Future; đây là lời gọi bất đồng bộ và sau đó có thể lấy một kết quả đơn lẻ thông qua Future.
+-   observe(): Đăng ký một đối tượng Observable. Observable đại diện cho kết quả do dịch vụ phụ thuộc trả về; phương thức này lấy một bản sao của đối tượng Observable đại diện cho kết quả đó.
+-   toObservable(): Trả về một đối tượng Observable. Nếu đăng ký đối tượng này, command sẽ được thực thi và nhận được kết quả trả về.
 
 ```java
 K             value    = hystrixCommand.execute();
@@ -61,7 +61,7 @@ public R execute() {
 }
 ```
 
-Còn trong phương thức queue(), lời gọi sẽ gọi toObservable().toBlocking().toFuture().
+Còn trong phương thức queue(), phương thức này sẽ gọi toObservable().toBlocking().toFuture().
 
 ```java
 final Future<R> delegate = toObservable().toBlocking().toFuture();
@@ -81,16 +81,16 @@ Kiểm tra dịch vụ phụ thuộc tương ứng với command này có bật 
 
 ## Bước 5: Kiểm tra thread pool/queue/semaphore có đầy hay không
 
-Nếu thread pool và queue của command đã đầy, hoặc semaphore đã hết dung lượng, command cũng sẽ không được thực thi. Thay vào đó, hệ thống gọi thẳng cơ chế fallback degradation và gửi thông tin reject cho circuit breaker để thống kê.
+Nếu thread pool và queue của command đã đầy, hoặc semaphore đã đầy, command cũng sẽ không được thực thi. Thay vào đó, hệ thống gọi thẳng cơ chế fallback degradation và gửi thông tin reject cho circuit breaker để thống kê.
 
 ## Bước 6: Thực thi command
 
-Gọi phương thức construct() của đối tượng HystrixObservableCommand hoặc phương thức run() của HystrixCommand để thực thi command thực sự.
+Gọi phương thức construct() của đối tượng HystrixObservableCommand hoặc phương thức run() của HystrixCommand để thực sự thực thi command.
 
--   HystrixCommand.run() trả về một kết quả hoặc ném exception.
+-   HystrixCommand.run() trả về một kết quả đơn lẻ hoặc ném exception.
 
 ```java
-// 通过command执行，获取最新一条商品数据
+// Thực thi thông qua command, lấy dữ liệu mới nhất của một sản phẩm
 ProductInfo productInfo = getProductInfoCommand.execute();
 ```
 
@@ -99,7 +99,7 @@ ProductInfo productInfo = getProductInfoCommand.execute();
 ```java
 Observable<ProductInfo> observable = getProductInfosCommand.observe();
 
-// 订阅获取多条结果
+// Đăng ký để lấy nhiều kết quả
 observable.subscribe(new Observer<ProductInfo>() {
     @Override
     public void onCompleted() {
@@ -112,9 +112,9 @@ observable.subscribe(new Observer<ProductInfo>() {
     }
 
     /**
-     * 获取完一条数据，就回调一次这个方法
+     * Mỗi khi lấy xong một mục dữ liệu, phương thức này sẽ được gọi lại một lần
      *
-     * @param productInfo 商品信息
+     * @param productInfo thông tin sản phẩm
      */
     @Override
     public void onNext(ProductInfo productInfo) {
@@ -123,15 +123,15 @@ observable.subscribe(new Observer<ProductInfo>() {
 });
 ```
 
-Nếu dùng thread pool và thời gian thực thi HystrixCommand.run() hoặc HystrixObservableCommand.construct() vượt quá timeout, thread chứa command sẽ ném TimeoutException. Khi đó, cơ chế fallback degradation được thực thi; giá trị trả về của run() hoặc construct() sẽ không được sử dụng. Một trường hợp khác là command thực thi lỗi và ném exception khác; lúc đó cũng chuyển sang fallback degradation. Trong cả hai trường hợp, Hystrix đều gửi sự kiện exception cho circuit breaker để thống kê.
+Nếu dùng thread pool và thời gian thực thi HystrixCommand.run() hoặc HystrixObservableCommand.construct() vượt quá thời gian timeout, thread chứa command sẽ ném TimeoutException. Khi đó, cơ chế fallback degradation được thực thi; giá trị trả về của run() hoặc construct() sẽ không được sử dụng. Một trường hợp khác là command thực thi lỗi và ném exception khác; lúc đó cũng chuyển sang fallback degradation. Trong cả hai trường hợp, Hystrix đều gửi sự kiện exception cho circuit breaker để thống kê.
 
 **Lưu ý**, chúng ta không thể chấm dứt thread đang gọi một dịch vụ phụ thuộc bị trễ nghiêm trọng; chỉ có thể để nó ném ra TimeoutException.
 
-Nếu không xảy ra timeout và command thực thi bình thường, thread gọi sẽ nhận kết quả lấy được từ lời gọi dịch vụ phụ thuộc; Hystrix cũng sẽ ghi log và thống kê metric.
+Nếu không xảy ra timeout và command thực thi bình thường, thread gọi sẽ nhận kết quả từ lời gọi đến dịch vụ phụ thuộc; Hystrix cũng sẽ ghi log và thống kê metric.
 
 ## Bước 7: Kiểm tra sức khỏe circuit breaker
 
-Hystrix gửi mọi sự kiện gọi dịch vụ phụ thuộc thành công, thất bại, Reject, Timeout, v.v. đến circuit breaker. Circuit breaker thống kê số lần xảy ra các sự kiện này và dựa trên tỷ lệ sự kiện exception để quyết định có ngắt mạch (circuit break) hay không. Nếu circuit breaker mở, trong một khoảng thời gian tiếp theo, hệ thống sẽ ngắt mạch trực tiếp và trả về kết quả degradation.
+Hystrix gửi mọi sự kiện thành công, thất bại, Reject, Timeout, v.v. của lời gọi đến dịch vụ phụ thuộc đến circuit breaker. Circuit breaker thống kê số lần xảy ra các sự kiện này và dựa trên tỷ lệ sự kiện exception để quyết định có ngắt mạch (circuit break) hay không. Nếu circuit breaker mở, trong một khoảng thời gian tiếp theo, hệ thống sẽ ngắt mạch trực tiếp và trả về kết quả degradation.
 
 Sau đó, nếu circuit breaker thử thực thi command, lời gọi không gặp lỗi và trả về kết quả bình thường, Hystrix sẽ đóng circuit breaker.
 
@@ -157,12 +157,12 @@ Cách thực thi command khác nhau sẽ cho kết quả khác nhau khi fallback
 
 -   Với execute(), exception được ném trực tiếp.
 -   Với queue(), trả về một Future; khi gọi get(), exception sẽ được ném.
--   Với observe(), trả về một đối tượng Observable; nhưng khi gọi subscribe() để đăng ký, phương thức onError() của phía gọi sẽ được gọi ngay.
--   Với toObservable(), trả về một đối tượng Observable; nhưng khi gọi subscribe() để đăng ký, phương thức onError() của phía gọi sẽ được gọi ngay.
+-   Với observe(), trả về một đối tượng Observable; nhưng khi gọi subscribe() để đăng ký, onError() của phía gọi sẽ được gọi ngay.
+-   Với toObservable(), trả về một đối tượng Observable; nhưng khi gọi subscribe() để đăng ký, onError() của phía gọi sẽ được gọi ngay.
 
 ## Các cách thực thi khác nhau
 
 -   execute(): lấy một Future.get() rồi nhận một kết quả đơn lẻ.
 -   queue(): trả về một Future.
--   observe(): đăng ký Observable ngay lập tức, sau đó khởi chạy 8 bước thực thi và trả về một Observable bản sao; khi đăng ký, kết quả được gọi lại ngay cho bạn.
+-   observe(): đăng ký Observable ngay lập tức, sau đó khởi chạy 8 bước thực thi và trả về một Observable bản sao; khi đăng ký, kết quả sẽ được callback ngay.
 -   toObservable(): trả về một Observable gốc; phải đăng ký thủ công thì 8 bước mới được thực thi.

@@ -16,7 +16,7 @@ Sau khi sharding database và table, xử lý id khóa chính như thế nào?
 
 Mỗi lần hệ thống cần một id, nó sẽ chèn một bản ghi không có nhiều ý nghĩa nghiệp vụ vào một table trong một database rồi lấy id tự tăng do database tạo ra. Sau khi có id này, hệ thống mới ghi dữ liệu vào database/table tương ứng đã sharding.
 
-Ưu điểm của phương án này là đơn giản, tiện dùng; **nhược điểm là id tự tăng được tạo bởi một database đơn lẻ** nên có thể trở thành nút thắt cổ chai nếu concurrency cao. Nếu muốn cải thiện thì có thể tạo riêng một service; mỗi lần service lấy giá trị id lớn nhất hiện tại rồi tự tăng một số id, trả về một lô id cùng lúc, sau đó cập nhật giá trị id lớn nhất hiện tại thành giá trị sau khi tăng. Nhưng **dù thế nào thì phương án vẫn dựa trên một database duy nhất**.
+Ưu điểm của phương án này là đơn giản, tiện lợi, ai cũng biết dùng; **nhược điểm là id tự tăng được tạo bởi một database đơn lẻ** nên có thể trở thành nút thắt cổ chai nếu concurrency cao. Nếu muốn cải thiện thì có thể tạo riêng một service; mỗi lần service lấy giá trị id lớn nhất hiện tại rồi tự tăng thêm một số id, trả về một lô id cùng lúc, sau đó cập nhật giá trị id lớn nhất hiện tại thành giá trị sau khi tăng. Nhưng **dù thế nào thì phương án vẫn dựa trên một database duy nhất**.
 
 **Tình huống phù hợp**: Chỉ có hai lý do để sharding database/table: concurrency của một database quá cao hoặc lượng dữ liệu của một database quá lớn. Chỉ khi sharding để mở rộng vì **concurrency không cao nhưng dữ liệu quá lớn** mới có thể dùng phương án này, vì concurrency tối đa có thể chỉ vài trăm lượt mỗi giây; khi đó có thể dùng riêng một database và table để tạo khóa chính tự tăng.
 
@@ -28,7 +28,7 @@ Ví dụ, hiện có 8 service node; mỗi node dùng một chức năng sequenc
 
 ![database-id-sequence-step](../../high-concurrency/images/database-id-sequence-step.png)
 
-**Tình huống phù hợp**: Phương án này tương đối dễ triển khai và có thể đáp ứng mục tiêu hiệu năng, đồng thời ngăn ID tạo ra bị trùng giữa các node. Tuy nhiên, số service node và bước tăng đều cố định; nếu sau này cần thêm service node thì sẽ khó xử lý.
+**Tình huống phù hợp**: Phương án này tương đối dễ triển khai và có thể đáp ứng mục tiêu hiệu năng, đồng thời tránh tạo ra ID trùng lặp. Tuy nhiên, số service node và bước tăng đều cố định; nếu sau này cần thêm service node thì sẽ khó xử lý.
 
 ### UUID
 
@@ -68,7 +68,7 @@ public class IdWorker {
 
     public IdWorker(long workerId, long datacenterId, long sequence) {
         // sanity check for workerId
-        // 这儿不就检查了一下，要求就是你传递进来的机房id和机器id不能超过32，不能小于0
+        // Ở đây chỉ kiểm tra rằng id trung tâm dữ liệu và id máy được truyền vào không được lớn hơn 32 và không được nhỏ hơn 0
         if (workerId > maxWorkerId || workerId < 0) {
             throw new IllegalArgumentException(
                     String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
@@ -91,10 +91,10 @@ public class IdWorker {
     private long workerIdBits = 5L;
     private long datacenterIdBits = 5L;
 
-    // 这个是二进制运算，就是 5 bit最多只能有31个数字，也就是说机器id最多只能是32以内
+    // Đây là phép toán nhị phân; 5 bit chỉ có thể biểu diễn tối đa 31 số, tức là id máy chỉ có thể nằm trong phạm vi 32
     private long maxWorkerId = -1L ^ (-1L << workerIdBits);
 
-    // 这个是一个意思，就是 5 bit最多只能有31个数字，机房id最多只能是32以内
+    // Ý nghĩa tương tự: 5 bit chỉ có thể biểu diễn tối đa 31 số, id trung tâm dữ liệu chỉ có thể nằm trong phạm vi 32
     private long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
     private long sequenceBits = 12L;
 
@@ -118,7 +118,7 @@ public class IdWorker {
     }
 
     public synchronized long nextId() {
-        // 这儿就是获取当前时间戳，单位是毫秒
+        // Ở đây lấy timestamp hiện tại, đơn vị là mili giây
         long timestamp = timeGen();
 
         if (timestamp < lastTimestamp) {
@@ -128,8 +128,8 @@ public class IdWorker {
         }
 
         if (lastTimestamp == timestamp) {
-            // 这个意思是说一个毫秒内最多只能有4096个数字
-            // 无论你传递多少进来，这个位运算保证始终就是在4096这个范围内，避免你自己传递个sequence超过了4096这个范围
+            // Nghĩa là trong một mili giây chỉ có tối đa 4096 số
+            // Dù truyền vào giá trị bao nhiêu, phép toán bit này vẫn đảm bảo giá trị luôn nằm trong phạm vi 4096, tránh việc tự truyền sequence vượt quá phạm vi này
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 timestamp = tilNextMillis(lastTimestamp);
@@ -138,13 +138,13 @@ public class IdWorker {
             sequence = 0;
         }
 
-        // 这儿记录一下最近一次生成id的时间戳，单位是毫秒
+        // Ở đây ghi lại timestamp của lần tạo id gần nhất, đơn vị là mili giây
         lastTimestamp = timestamp;
 
-        // 这儿就是将时间戳左移，放到 41 bit那儿；
-        // 将机房 id左移放到 5 bit那儿；
-        // 将机器id左移放到5 bit那儿；将序号放最后12 bit；
-        // 最后拼接起来成一个 64 bit的二进制数字，转换成 10 进制就是个 long 型
+        // Ở đây dịch trái timestamp và đặt vào 41 bit;
+        // Dịch trái id trung tâm dữ liệu và đặt vào 5 bit;
+        // Dịch trái id máy và đặt vào 5 bit; đặt số thứ tự vào 12 bit cuối;
+        // Cuối cùng ghép lại thành số nhị phân 64 bit; chuyển sang hệ thập phân sẽ là một giá trị kiểu long
         return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift)
                 | (workerId << workerIdShift) | sequence;
     }
@@ -161,7 +161,7 @@ public class IdWorker {
         return System.currentTimeMillis();
     }
 
-    // ---------------测试---------------
+    // ---------------Kiểm thử---------------
     public static void main(String[] args) {
         IdWorker worker = new IdWorker(1, 1, 1);
         for (int i = 0; i < 30; i++) {

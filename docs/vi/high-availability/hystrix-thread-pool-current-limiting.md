@@ -1,22 +1,22 @@
-# Tìm hiểu sâu về isolation thread pool và rate limit API của Hystrix
+# Tìm hiểu sâu về isolation bằng thread pool và rate limit API của Hystrix
 
-Phần trước đã trình bày request cache, fallback degradation mềm mại và circuit breaker ngắt mạch nhanh của Hystrix. Trong bài này, chúng ta sẽ tìm hiểu chi tiết về isolation thread pool và rate limit API của Hystrix.
+Phần trước đã trình bày request cache, fallback và graceful degradation, cùng circuit breaker ngắt mạch nhanh của Hystrix. Trong bài này, chúng ta sẽ tìm hiểu chi tiết về isolation bằng thread pool và rate limit API của Hystrix.
 
 ![hystrix-process](../../high-availability/images/hystrix-process.png)
 
-Hystrix kiểm tra thread pool hoặc semaphore có đầy hay không; request vượt quá dung lượng sẽ bị Reject và đi vào degradation trực tiếp, nhờ đó thực hiện được rate limit.
+Hystrix kiểm tra thread pool hoặc semaphore đã đầy hay chưa; request vượt quá dung lượng sẽ bị Reject và chuyển trực tiếp sang degradation, nhờ đó thực hiện được rate limit.
 
 Rate limit là giới hạn lưu lượng truy cập vào service backend. Ví dụ, giới hạn việc truy cập tài nguyên của MySQL, Redis, ZooKeeper và nhiều middleware backend khác nhằm tránh để lưu lượng quá lớn đánh sập service backend.
 
-## Thiết kế kỹ thuật isolation thread pool
+## Thiết kế kỹ thuật isolation bằng thread pool
 
-Hystrix sử dụng kỹ thuật Bulkhead Partition (isolation khoang tàu) để cô lập tài nguyên của các dependency bên ngoài, qua đó ngăn sự cố ở bất kỳ dependency bên ngoài nào khiến service hiện tại sập.
+Hystrix sử dụng kỹ thuật Bulkhead Partition (cô lập kiểu khoang tàu) để cô lập tài nguyên của các dependency bên ngoài, qua đó ngăn sự cố ở bất kỳ dependency bên ngoài nào khiến service hiện tại sập.
 
-**Isolation khoang tàu** là việc chia không gian bên trong thân tàu thành nhiều khoang. Nếu một vài khoang bị thủng và nước tràn vào, dòng nước sẽ không chảy qua lại giữa các khoang. Nhờ vậy, khi tàu bị hư hại, tàu vẫn có đủ lực nổi và độ ổn định để giảm nguy cơ chìm ngay lập tức.
+**Cô lập kiểu khoang tàu** là việc chia không gian bên trong thân tàu thành nhiều khoang. Nếu một vài khoang bị thủng và nước tràn vào, dòng nước sẽ không chảy qua lại giữa các khoang. Nhờ vậy, khi tàu bị hư hại, tàu vẫn có đủ lực nổi và độ ổn định để giảm nguy cơ chìm ngay lập tức.
 
 ![bulkhead-partition](../../high-availability/images/bulkhead-partition.jpg)
 
-Hystrix dùng một thread pool riêng cho mỗi dependency bên ngoài. Vì vậy, nếu lời gọi đến dependency đó bị trễ nghiêm trọng thì nhiều nhất chỉ thread pool của dependency đó bị cạn; các lời gọi đến dependency khác không bị ảnh hưởng.
+Hystrix dùng một thread pool riêng cho mỗi dependency bên ngoài. Vì vậy, nếu lời gọi đến dependency đó bị trễ nghiêm trọng thì nhiều nhất chỉ thread pool của dependency đó bị cạn kiệt; các lời gọi đến dependency khác không bị ảnh hưởng.
 
 ## Các tình huống áp dụng thread pool của Hystrix
 
@@ -24,12 +24,12 @@ Hystrix dùng một thread pool riêng cho mỗi dependency bên ngoài. Vì v�
 -   Mỗi dependency backend đều cung cấp thư viện client riêng để gọi, chẳng hạn nếu dùng thrift thì sẽ có dependency thrift tương ứng.
 -   Thư viện client có thể thay đổi bất cứ lúc nào.
 -   Thư viện client có thể thêm logic request mạng mới bất cứ lúc nào.
--   Thư viện client có thể chứa logic như tự động retry, phân tích dữ liệu và cache trong bộ nhớ.
+-   Thư viện client có thể chứa logic như tự động retry, parse dữ liệu và cache trong bộ nhớ.
 -   Thư viện client thường là hộp đen đối với bên gọi, bao gồm chi tiết triển khai, truy cập mạng, cấu hình mặc định, v.v.
 -   Trong môi trường production thực tế, thường xảy ra tình huống bên gọi bất ngờ phát hiện một số thay đổi trong thư viện client.
--   Ngay cả khi thư viện client không thay đổi, bản thân dependency cũng có thể thay đổi logic.
+-   Ngay cả khi thư viện client không thay đổi, bản thân dependency cũng có thể có thay đổi về logic.
 -   Một số thư viện client của dependency có thể kéo theo các thư viện dependency khác; cấu hình của những thư viện đó có thể không chính xác.
--   Phần lớn request mạng đều được gọi đồng bộ.
+-   Phần lớn request mạng đều được thực hiện đồng bộ.
 -   Lỗi và độ trễ khi gọi cũng có thể xảy ra ngay trong code của thư viện client, không nhất thiết nằm ở request mạng.
 
 Nói đơn giản, phải mặc định rằng thư viện client không đáng tin cậy và có thể thay đổi theo nhiều cách bất cứ lúc nào. Vì vậy cần isolation bắt buộc để đảm bảo sự cố của bất kỳ service nào không ảnh hưởng đến service hiện tại.
@@ -38,8 +38,8 @@ Nói đơn giản, phải mặc định rằng thư viện client không đáng 
 
 -   Mỗi dependency có thể được cô lập trong thread pool riêng; kể cả khi thread pool đó đã hết tài nguyên cũng không ảnh hưởng đến lời gọi service nào khác.
 -   Có thể thêm dependency mới vào service bất cứ lúc nào; ngay cả khi dependency mới này có vấn đề, nó cũng không ảnh hưởng đến lời gọi service nào khác.
--   Khi dependency gặp lỗi hoạt động bình thường trở lại, có thể khôi phục lời gọi service ngay lập tức bằng cách dọn thread pool. Nếu thread pool của tomcat đã bị chiếm hết thì việc khôi phục sẽ phức tạp hơn nhiều.
--   Nếu cấu hình thư viện client có vấn đề, tình trạng thread pool sẽ được báo cáo bất cứ lúc nào, chẳng hạn thống kê số lần thành công/thất bại/từ chối/timeout. Sau đó có thể thay đổi nóng cấu hình gọi dependency gần thời gian thực mà không cần dừng service.
+-   Khi một dependency bị lỗi hoạt động bình thường trở lại, có thể khôi phục lời gọi service ngay lập tức bằng cách dọn thread pool. Nếu thread pool của tomcat đã bị chiếm hết thì việc khôi phục sẽ phức tạp hơn nhiều.
+-   Nếu cấu hình thư viện client có vấn đề, trạng thái thread pool sẽ được báo cáo, chẳng hạn bằng thống kê số lần thành công/thất bại/từ chối/timeout. Sau đó có thể thay đổi nóng cấu hình gọi dependency gần thời gian thực mà không cần dừng service.
 -   Dựa trên bản chất bất đồng bộ của thread pool, có thể xây dựng một lớp gọi bất đồng bộ trên nền các lời gọi đồng bộ.
 
 Nói đơn giản, ưu điểm lớn nhất là isolation tài nguyên, đảm bảo sự cố ở bất kỳ dependency nào cũng không kéo sập service hiện tại.
@@ -62,7 +62,7 @@ Nếu đặt `execution.isolation.strategy` thành `SEMAPHORE`, Hystrix sẽ dù
 
 Giả sử kích thước thread pool là 8 và queue chờ có kích thước 10. Ta đặt thời lượng timeout dài hơn, là 20 giây.
 
-Bên trong command, viết code cố định để sleep, chẳng hạn sleep 3 giây.
+Bên trong command, ghi cứng một đoạn code sleep, chẳng hạn sleep 3 giây.
 
 -   withCoreSize: đặt kích thước thread pool.
 -   withMaxQueueSize: đặt kích thước queue chờ.
@@ -80,11 +80,11 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
     public GetProductInfoCommand(Long productId) {
         super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("ProductInfoService"))
                 .andCommandKey(KEY)
-                // 线程池相关配置信息
+                // Thông tin cấu hình liên quan đến thread pool
                 .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
-                        // 设置线程池大小为8
+                        // Đặt kích thước thread pool là 8
                         .withCoreSize(8)
-                        // 设置等待队列大小为10
+                        // Đặt kích thước queue chờ là 10
                         .withMaxQueueSize(10)
                         .withQueueSizeRejectionThreshold(12))
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
@@ -92,9 +92,9 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
                         .withCircuitBreakerRequestVolumeThreshold(20)
                         .withCircuitBreakerErrorThresholdPercentage(40)
                         .withCircuitBreakerSleepWindowInMilliseconds(3000)
-                        // 设置超时时间
+                        // Đặt thời gian timeout
                         .withExecutionTimeoutInMilliseconds(20000)
-                        // 设置fallback最大请求并发数
+                        // Đặt số request đồng thời tối đa cho fallback
                         .withFallbackIsolationSemaphoreMaxConcurrentRequests(30)));
         this.productId = productId;
     }
@@ -107,7 +107,7 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
             throw new Exception();
         }
 
-        // 请求过来，会在这里hang住3秒钟
+        // Request đến sẽ bị treo ở đây trong 3 giây
         if (productId == -2L) {
             TimeUtils.sleep(3);
         }
@@ -139,13 +139,13 @@ public class RejectTest {
         for (int i = 0; i < 25; ++i) {
             new Thread(() -> HttpClientUtils.sendGetRequest("http://localhost:8080/getProductInfo?productId=-2")).start();
         }
-        // 防止主线程提前结束执行
+        // Ngăn main thread kết thúc quá sớm
         TimeUtils.sleep(50);
     }
 }
 ```
 
-Từ kết quả thực thi, có thể thấy rõ tổng cộng 7 sản phẩm degradation được in ra. Đó là kết quả của việc số request vượt quá dung lượng thread pool + queue nên bị reject trực tiếp.
+Từ kết quả thực thi, có thể thấy rõ tổng cộng 7 sản phẩm được in ra từ nhánh degradation. Đó là kết quả của việc số request vượt quá dung lượng thread pool + queue nên bị reject trực tiếp.
 
 ```c
 ProductInfo(id=null, name=降级商品, price=null, pictureList=null, specification=null, service=null, color=null, size=null, shopId=null, modifiedTime=null, cityId=null, cityName=null, brandId=null, brandName=null)
@@ -164,6 +164,6 @@ ProductInfo(id=null, name=降级商品, price=null, pictureList=null, specificat
 调用接口查询商品数据，productId=-2
 ProductInfo(id=null, name=降级商品, price=null, pictureList=null, specification=null, service=null, color=null, size=null, shopId=null, modifiedTime=null, cityId=null, cityName=null, brandId=null, brandName=null)
 {"id": -2, "name": "iphone7手机", "price": 5599, "pictureList":"a.jpg,b.jpg", "specification": "iphone7的规格", "service": "iphone7的售后服务", "color": "红色,白色,黑色", "size": "5.5", "shopId": 1, "modifiedTime": "2017-01-01 12:00:00", "cityId": 1, "brandId": 1}
-// 后面都是一些正常的商品信息，就不贴出来了
+// Phần sau đều là thông tin sản phẩm bình thường nên không liệt kê ở đây
 // ...
 ```

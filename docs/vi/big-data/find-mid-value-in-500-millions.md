@@ -10,9 +10,9 @@ Nếu bài toán này không giới hạn dung lượng bộ nhớ thì có th�
 
 ### Phương pháp 1: Dùng hai heap
 
-Duy trì hai heap, một heap max và một heap min. Số lớn nhất trong heap max **nhỏ hơn hoặc bằng** số nhỏ nhất trong heap min; bảo đảm chênh lệch số phần tử giữa hai heap không quá 1.
+Duy trì hai heap, một max-heap và một min-heap. Số lớn nhất trong max-heap **nhỏ hơn hoặc bằng** số nhỏ nhất trong min-heap; bảo đảm chênh lệch số phần tử giữa hai heap không quá 1.
 
-Nếu tổng số dữ liệu là **chẵn**, sau khi tạo hai heap, **trung vị là trung bình cộng của hai phần tử ở đỉnh heap**. Nếu tổng số dữ liệu là **lẻ**, tùy theo kích thước của hai heap, **trung vị chắc chắn nằm ở đỉnh heap có nhiều dữ liệu hơn**.
+Nếu tổng số dữ liệu là **chẵn**, sau khi tạo hai heap, **trung vị là trung bình cộng của hai phần tử ở đỉnh heap**. Nếu tổng số dữ liệu là **lẻ**, tùy theo kích thước của hai heap, **trung vị chắc chắn nằm ở đỉnh heap chứa nhiều phần tử hơn**.
 
 ```java
 class MedianFinder {
@@ -65,12 +65,12 @@ Với bài toán này, lần lượt đọc 500 triệu số. Với mỗi số n
 
 Sau khi chia, có thể dễ dàng xác định trung vị nằm trong f0 hay f1. Giả sử f1 có 100 triệu số, vậy trung vị chắc chắn nằm trong f0; đó là trung bình cộng của số thứ 150 triệu trong f0 khi sắp xếp tăng dần và số ngay sau nó.
 
-> **Gợi ý**, trung vị của 500 triệu số là trung bình cộng của số thứ 250 triệu và số liền kề bên phải. Nếu f1 có 100 triệu số thì trung vị là trung bình cộng của hai số bắt đầu từ vị trí thứ 150 triệu trong f0.
+> **Gợi ý**, trung vị của 500 triệu số là trung bình cộng của số thứ 250 triệu và số liền kề bên phải. Nếu f1 có 100 triệu số thì trung vị là trung bình cộng của hai số liên tiếp bắt đầu từ vị trí thứ 150 triệu trong f0.
 
-Với f0, có thể tiếp tục dùng bit nhị phân cao thứ hai để chia tệp thành hai phần. Cứ tiếp tục chia như vậy cho đến khi tệp sau khi chia có thể được tải vào bộ nhớ; sau đó tải dữ liệu vào bộ nhớ, sắp xếp trực tiếp và tìm trung vị.
+Với f0, có thể tiếp tục dùng bit cao thứ hai trong biểu diễn nhị phân để chia tệp thành hai phần. Cứ tiếp tục chia như vậy cho đến khi tệp sau khi chia có thể được tải vào bộ nhớ; sau đó tải dữ liệu vào bộ nhớ, sắp xếp trực tiếp và tìm trung vị.
 
-> **Lưu ý**, khi tổng số dữ liệu là số chẵn, nếu sau khi chia hai tệp có cùng số lượng dữ liệu thì trung vị là trung bình cộng của giá trị lớn nhất trong tệp có dữ liệu nhỏ hơn và giá trị nhỏ nhất trong tệp có dữ liệu lớn hơn.
+> **Lưu ý**, khi tổng số dữ liệu là số chẵn, nếu sau khi chia hai tệp có cùng số lượng dữ liệu thì trung vị là trung bình cộng của giá trị lớn nhất trong tệp chứa các số nhỏ hơn và giá trị nhỏ nhất trong tệp chứa các số lớn hơn.
 
 ## Tổng kết phương pháp
 
-Chia để trị, quá hữu ích!
+Chia để trị, đúng là quá hay!

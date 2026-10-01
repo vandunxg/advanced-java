@@ -18,15 +18,15 @@ Trong khoa học máy tính lý thuyết, định lý CAP (CAP theorem), còn đ
 
 Cách đơn giản nhất để hiểu lý thuyết CAP là hình dung hai nút nằm ở hai phía của một phân vùng. Cho phép ít nhất một nút cập nhật trạng thái sẽ khiến dữ liệu không nhất quán, tức mất thuộc tính C. Nếu để bảo đảm tính nhất quán dữ liệu mà đặt nút ở một phía của phân vùng thành không khả dụng thì lại mất thuộc tính A. Chỉ khi hai nút có thể giao tiếp với nhau thì mới có thể vừa bảo đảm C vừa bảo đảm A; điều này đồng nghĩa mất thuộc tính P.
 
--   P là khả năng chịu phân vùng; khi xảy ra phân vùng cần có khả năng chịu lỗi, tức là chọn giữa A và C. Nếu hệ thống phân tán không xảy ra phân vùng (không xuất hiện tình trạng không nhất quán hoặc không khả dụng) thì bản thân nó không bị phân vùng; nếu không có phân vùng thì cũng không cần khả năng chịu phân vùng P.
+-   P là khả năng chịu phân vùng; khi xảy ra phân vùng cần có khả năng chịu lỗi, tức là chọn giữa A và C. Nếu hệ thống phân tán không xảy ra phân vùng (không xuất hiện tình trạng không nhất quán hoặc không khả dụng) thì bản thân nó không bị phân vùng; nếu không có phân vùng thì lại càng không có khả năng chịu phân vùng P.
 -   Dù hệ thống tôi thiết kế là AP hay CP, nếu không xảy ra tình trạng không nhất quán và không khả dụng thì hệ thống đang ở trạng thái CA.
 -   P chỉ thể hiện khi có tình huống phân vùng.
 
 > Nguồn bài viết: [Định lý CAP trên Wikipedia](https://zh.wikipedia.org/wiki/CAP%E5%AE%9A%E7%90%86)
 
-## So sánh một số khung CAP phổ biến
+## So sánh một số framework CAP phổ biến
 
-| Khung      | Thuộc tính |
+| Framework  | Loại |
 | --------- | ---- |
 | Eureka    | AP   |
 | Zookeeper | CP   |
@@ -37,7 +37,7 @@ Cách đơn giản nhất để hiểu lý thuyết CAP là hình dung hai nút 
 > Eureka bảo đảm tính sẵn sàng và đạt được tính nhất quán cuối cùng.
 
 Tất cả các nút Eureka ngang hàng và có cùng dữ liệu; các Eureka cũng có thể đăng ký chéo lẫn nhau.  
-Eureka client dùng bộ cân bằng tải vòng tròn tích hợp sẵn để đăng ký, với một khoảng thời gian kiểm tra: chỉ khi không nhận được heartbeat trong một khoảng thời gian nhất định thì thông tin đăng ký của nút mới bị xóa. Nếu client phát hiện Eureka hiện tại không khả dụng thì sẽ chuyển sang nút khác; nếu tất cả Eureka đều dừng thì Eureka client dùng dữ liệu gần nhất làm cache cục bộ. Vì vậy, mỗi thiết kế trên đều cho thấy nó không có đặc tính `nhất quán`.
+Eureka client dùng bộ cân bằng tải round-robin tích hợp sẵn để đăng ký, với một khoảng thời gian kiểm tra: chỉ khi không nhận được heartbeat trong một khoảng thời gian nhất định thì thông tin đăng ký của nút mới bị xóa. Nếu client phát hiện Eureka hiện tại không khả dụng thì sẽ chuyển sang nút khác; nếu tất cả Eureka đều gặp sự cố thì Eureka client dùng dữ liệu gần nhất làm cache cục bộ. Vì vậy, mỗi thiết kế trên đều cho thấy nó không có đặc tính `一致性`.
 
 Lưu ý: Do đặc tính AP của Eureka và cơ chế đồng bộ theo khoảng thời gian giữa các yêu cầu, khi cập nhật dịch vụ thường cần dùng API của Eureka để đặt trạng thái dịch vụ hiện tại thành `offline`, rồi chờ qua 2 chu kỳ đồng bộ mới khởi động lại. Như vậy có thể bảo đảm nút đang cập nhật không ảnh hưởng đến toàn hệ thống.
 
@@ -51,5 +51,5 @@ Khi bầu leader, Zookeeper sẽ dừng cung cấp dịch vụ; chỉ có thể 
 
 Giống Zookeeper, dữ liệu của Consul theo CP.
 
-Khi đăng ký với Consul, chỉ coi đăng ký là thành công nếu hơn một nửa số nút ghi thành công; khi leader dừng, toàn bộ Consul không khả dụng trong thời gian bầu chọn lại, nhờ đó bảo đảm tính nhất quán mạnh nhưng phải hy sinh tính sẵn sàng.  
+Khi đăng ký với Consul, chỉ coi đăng ký là thành công nếu hơn một nửa số nút ghi thành công; khi leader gặp sự cố, toàn bộ Consul không khả dụng trong thời gian bầu chọn lại, nhờ đó bảo đảm tính nhất quán mạnh nhưng phải hy sinh tính sẵn sàng.  
 Nhiều bài blog nói Consul thuộc AP; tài liệu chính thức đã xác nhận cơ chế của nó là CP. Nguồn chính thức: https://developer.hashicorp.com/consul/docs/concept/consensus

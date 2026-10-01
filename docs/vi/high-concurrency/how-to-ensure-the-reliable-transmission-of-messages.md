@@ -26,23 +26,23 @@ Lúc này có thể chọn dùng chức năng transaction của RabbitMQ: trư�
 
 ```java
 try {
-    // 通过工厂创建连接
+    // Tạo kết nối thông qua factory
     connection = factory.newConnection();
-    // 获取通道
+    // Lấy channel
     channel = connection.createChannel();
-    // 开启事务
+    // Bắt đầu transaction
     channel.txSelect();
 
-    // 这里发送消息
+    // Gửi message ở đây
     channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
-    // 模拟出现异常
+    // Mô phỏng exception
     int result = 1 / 0;
 
-    // 提交事务
+    // Commit transaction
     channel.txCommit();
 } catch (IOException | TimeoutException e) {
-    // 捕捉异常，回滚事务
+    // Bắt exception, rollback transaction
     channel.txRollback();
 }
 ```
@@ -51,7 +51,7 @@ Tuy nhiên, khi dùng cơ chế transaction (đồng bộ) của RabbitMQ thì *
 
 Vì vậy, nếu muốn đảm bảo message ghi vào RabbitMQ không bị mất thì thường bật chế độ `confirm`. Sau khi bật chế độ `confirm` ở producer, mỗi message gửi đi sẽ được gán một id duy nhất. Nếu ghi vào RabbitMQ thành công, RabbitMQ sẽ gửi lại message `ack` để báo message đã ổn. Nếu RabbitMQ không xử lý được message thì sẽ gọi lại interface `nack` để báo nhận thất bại; bạn có thể thử gửi lại. Bạn cũng có thể kết hợp cơ chế này để tự duy trì trạng thái của từng message id trong bộ nhớ; nếu quá thời gian nhất định mà chưa nhận được callback của message thì có thể gửi lại.
 
-Khác biệt lớn nhất giữa cơ chế transaction và cơ chế `confirm` là **transaction là đồng bộ**: sau khi commit transaction, luồng sẽ **bị block** tại đó. Còn cơ chế `confirm` là **bất đồng bộ**: sau khi gửi message thì có thể gửi message kế tiếp; khi RabbitMQ nhận message đó, nó sẽ bất đồng bộ gọi lại một interface để thông báo đã nhận.
+Khác biệt lớn nhất giữa cơ chế transaction và cơ chế `confirm` là **transaction là đồng bộ**: sau khi commit transaction sẽ **bị block** tại đó. Còn cơ chế `confirm` là **bất đồng bộ**: sau khi gửi message thì có thể gửi message kế tiếp; khi RabbitMQ nhận message đó, nó sẽ bất đồng bộ gọi lại một interface để thông báo đã nhận.
 
 Vì vậy, để **tránh mất dữ liệu** ở phía producer, thông thường dùng cơ chế `confirm`.
 
@@ -64,7 +64,7 @@ Có 3 cách triển khai `confirm` phía producer của client:
 ```java
 channel.basicPublish(ConfirmConfig.exchangeName, ConfirmConfig.routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, ConfirmConfig.msg_10B.getBytes());
 if (!channel.waitForConfirms()) {
-    // 消息发送失败
+    // Gửi message thất bại
     // ...
 }
 ```
@@ -77,7 +77,7 @@ for (int i = 0; i < batchCount; ++i) {
     channel.basicPublish(ConfirmConfig.exchangeName, ConfirmConfig.routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, ConfirmConfig.msg_10B.getBytes());
 }
 if (!channel.waitForConfirms()) {
-    // 消息发送失败
+    // Gửi message thất bại
     // ...
 }
 ```

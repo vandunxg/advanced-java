@@ -13,7 +13,7 @@ Thực ra, câu hỏi này chủ yếu có hai mục đích:
 -   Xem bạn có hiểu toàn diện Redis có những chức năng nào, thường dùng ra sao và tình huống nào dùng tính năng nào không; họ lo bạn chỉ biết các thao tác KV đơn giản nhất.
 -   Xem bạn đã dùng Redis như thế nào trong các dự án thực tế.
 
-Nếu câu trả lời của bạn không tốt, không nêu được vài kiểu dữ liệu cũng như tình huống sử dụng, thì bạn sẽ gặp bất lợi; người phỏng vấn chắc chắn có ấn tượng không tốt và nghĩ rằng bình thường bạn chỉ làm vài thao tác set và get đơn giản.
+Nếu câu trả lời của bạn không tốt, không nêu được vài kiểu dữ liệu cũng như tình huống sử dụng, thì coi như xong; người phỏng vấn chắc chắn có ấn tượng không tốt và nghĩ rằng bình thường bạn chỉ làm vài thao tác set và get đơn giản.
 
 ## Phân tích câu hỏi phỏng vấn
 
@@ -63,7 +63,7 @@ Ví dụ, có thể dùng list để lưu các cấu trúc dữ liệu dạng da
 Chẳng hạn, có thể dùng lệnh lrange để đọc các phần tử trong một khoảng đóng, rồi dựa vào list để thực hiện truy vấn phân trang. Đây là một chức năng rất hữu ích: dùng Redis tạo phân trang đơn giản, hiệu năng cao, chẳng hạn kiểu tải thêm từng trang như trên Weibo; hiệu năng tốt vì chỉ lấy từng trang một.
 
 ```bash
-# 0开始位置，-1结束位置，结束位置为-1时，表示列表的最后一个位置，即查看所有。
+# Vị trí bắt đầu là 0, vị trí kết thúc là -1; khi vị trí kết thúc là -1, đó là vị trí cuối cùng của danh sách, tức là xem tất cả.
 lrange mylist 0 -1
 ```
 
@@ -82,44 +82,44 @@ rpop mylist
 
 Sets là tập hợp không có thứ tự và tự động loại bỏ phần tử trùng lặp.
 
-Có thể đưa dữ liệu cần khử trùng lặp trong hệ thống trực tiếp vào set để tự động loại bỏ phần tử trùng. Nếu cần khử trùng lặp toàn cục thật nhanh cho một số dữ liệu, bạn cũng có thể dùng HashSet trong bộ nhớ JVM; nhưng nếu hệ thống được triển khai trên nhiều máy thì sao? Khi đó cần dùng Redis để khử trùng lặp set trên toàn hệ thống.
+Có thể đưa dữ liệu cần khử trùng lặp trong hệ thống trực tiếp vào set để tự động loại bỏ phần tử trùng. Nếu cần khử trùng lặp toàn cục thật nhanh cho một số dữ liệu, bạn cũng có thể dùng HashSet trong bộ nhớ JVM; nhưng nếu hệ thống được triển khai trên nhiều máy thì sao? Khi đó cần dùng Redis để khử trùng lặp toàn cục bằng set.
 
-Có thể dùng set để thực hiện phép giao, hợp và hiệu. Chẳng hạn với phép giao, lấy giao của danh sách follower của hai người để xem họ có bạn chung nào. Đúng không?
+Có thể dùng set để thực hiện phép giao, hợp và hiệu. Chẳng hạn với phép giao, lấy giao của danh sách follower của hai người để xem bạn chung của hai người là ai. Đúng không?
 
 Đưa follower của hai người nổi tiếng vào hai set riêng rồi lấy giao của hai set.
 
 ```bash
-#-------操作一个set-------
-# 添加元素
+#-------Thao tác với một set-------
+# Thêm phần tử
 sadd mySet 1
 
-# 查看全部元素
+# Xem toàn bộ phần tử
 smembers mySet
 
-# 判断是否包含某个值
+# Kiểm tra có chứa một giá trị hay không
 sismember mySet 3
 
-# 删除某个/些元素
+# Xóa một hoặc một số phần tử
 srem mySet 1
 srem mySet 2 4
 
-# 查看元素个数
+# Xem số lượng phần tử
 scard mySet
 
-# 随机删除一个元素
+# Xóa ngẫu nhiên một phần tử
 spop mySet
 
-#-------操作多个set-------
-# 将一个set的元素移动到另外一个set
+#-------Thao tác với nhiều set-------
+# Di chuyển phần tử của một set sang set khác
 smove yourSet mySet 2
 
-# 求两set的交集
+# Tìm giao của hai set
 sinter yourSet mySet
 
-# 求两set的并集
+# Tìm hợp của hai set
 sunion yourSet mySet
 
-# 求在yourSet中而不在mySet中的元素
+# Tìm các phần tử có trong yourSet nhưng không có trong mySet
 sdiff yourSet mySet
 ```
 
@@ -133,9 +133,9 @@ zadd board 72 lisi
 zadd board 96 wangwu
 zadd board 63 zhaoliu
 
-# 获取排名前三的用户（默认是升序，所以需要 rev 改为降序）
+# Lấy ba người dùng đứng đầu bảng xếp hạng (mặc định là tăng dần, nên cần dùng rev để chuyển sang giảm dần)
 zrevrange board 0 3
 
-# 获取某用户的排名
+# Lấy thứ hạng của một người dùng
 zrank board zhaoliu
 ```

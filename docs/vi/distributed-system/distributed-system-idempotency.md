@@ -1,33 +1,33 @@
-# Thiết kế tính idempotency cho giao diện dịch vụ phân tán như thế nào?
+# Thiết kế tính idempotent cho interface dịch vụ phân tán như thế nào?
 
 ## Câu hỏi phỏng vấn
 
-Thiết kế tính idempotency cho giao diện dịch vụ phân tán như thế nào (ví dụ không được trừ tiền nhiều lần)?
+Thiết kế tính idempotent cho interface dịch vụ phân tán như thế nào (ví dụ không được trừ tiền nhiều lần)?
 
-## Phân tích góc nhìn của người phỏng vấn
+## Phân tích tâm lý người phỏng vấn
 
-Bắt đầu từ câu hỏi này, người phỏng vấn đã chuyển sang hỏi về **các vấn đề thực tế trong môi trường production**.
+Từ câu hỏi này, người phỏng vấn đã bắt đầu đi sâu vào **các vấn đề thực tế trong môi trường production**.
 
-Làm thế nào để bảo đảm tính idempotency cho một giao diện trong hệ thống phân tán? Đây thực ra là một vấn đề kỹ thuật production mà bạn phải cân nhắc khi xây dựng hệ thống phân tán. Ý nghĩa cụ thể là gì?
+Trong một hệ thống phân tán, làm thế nào để bảo đảm tính idempotent cho một interface? Đây thực ra là một vấn đề kỹ thuật trong môi trường production mà bạn bắt buộc phải cân nhắc khi xây dựng hệ thống phân tán. Cụ thể là gì?
 
-Giả sử bạn có một dịch vụ cung cấp một số giao diện cho bên ngoài gọi; dịch vụ được triển khai trên 5 máy. Một trong các giao diện đó là **giao diện thanh toán**. Khi người dùng thao tác trên giao diện phía trước, không biết vì sao nhưng một đơn hàng **vô tình gửi yêu cầu thanh toán hai lần**, và hai yêu cầu được chuyển đến các máy khác nhau của dịch vụ. Kết quả là đơn hàng bị trừ tiền hai lần.
+Giả sử bạn có một dịch vụ cung cấp một số interface cho bên ngoài gọi đến, và dịch vụ này được triển khai trên 5 máy. Trong đó có một **interface thanh toán**. Khi người dùng thao tác trên frontend, không biết vì sao, nhưng tóm lại là một đơn hàng **vô tình phát sinh hai yêu cầu thanh toán**, rồi hai yêu cầu này được phân tán đến những máy khác nhau trong số các máy triển khai dịch vụ. Kết quả là một đơn hàng bị trừ tiền hai lần.
 
-Hoặc hệ thống đơn hàng gọi hệ thống thanh toán để thanh toán, nhưng vô tình gặp **timeout mạng**; hệ thống đơn hàng chạy cơ chế thử lại đã nói ở phần trước và gửi lại yêu cầu. Hệ thống thanh toán nhận cùng một yêu cầu thanh toán hai lần, mà do thuật toán cân bằng tải, chúng lại đến các máy khác nhau — thật khó xử...
+Hoặc hệ thống đơn hàng gọi hệ thống thanh toán để thanh toán, nhưng không may xảy ra **timeout mạng**, nên hệ thống đơn hàng sử dụng cơ chế retry đã nói ở phần trước và thử lại một lần. Hệ thống thanh toán nhận cùng một yêu cầu thanh toán hai lần; do thuật toán cân bằng tải, hai yêu cầu lại được chuyển đến các máy khác nhau. Thật khó xử...
 
-Vì vậy, chắc chắn bạn phải hiểu vấn đề này; nếu không, hệ thống phân tán bạn xây dựng có thể tiềm ẩn lỗi.
+Vì vậy, bạn chắc chắn phải hiểu vấn đề này; nếu không, hệ thống phân tán bạn xây dựng rất dễ để lại những lỗi tiềm ẩn.
 
 ## Phân tích câu hỏi phỏng vấn
 
-Đây không phải vấn đề có một phương pháp kỹ thuật chung cho mọi trường hợp; cần bảo đảm tính idempotency bằng cách **kết hợp với nghiệp vụ**.
+Đây không phải là vấn đề có thể giải quyết bằng một phương pháp kỹ thuật chung; cần **kết hợp với nghiệp vụ** để bảo đảm tính idempotent.
 
-**Tính idempotency** nghĩa là khi cùng một yêu cầu được gửi nhiều lần đến một giao diện, giao diện phải bảo đảm kết quả chính xác, chẳng hạn không trừ tiền nhiều lần, không chèn thêm một bản ghi trùng, không cộng thêm 1 nhiều lần vào giá trị thống kê. Đó chính là tính idempotency.
+**Tính idempotent** nghĩa là khi cùng một yêu cầu được gửi đến một interface nhiều lần, interface đó phải bảo đảm kết quả chính xác; chẳng hạn, không được trừ tiền nhiều lần, không được chèn thêm một bản ghi, cũng không được cộng thêm 1 vào giá trị thống kê nhiều lần. Đó chính là tính idempotent.
 
-Về cơ bản, có ba điểm để bảo đảm tính idempotency:
+Về cơ bản, có ba điểm chính để bảo đảm tính idempotent:
 
--   Mỗi yêu cầu phải có một định danh duy nhất. Ví dụ, yêu cầu thanh toán đơn hàng chắc chắn phải có order id; mỗi order id chỉ được thanh toán tối đa một lần, đúng không?
--   Sau mỗi lần xử lý yêu cầu, phải có bản ghi đánh dấu rằng yêu cầu đã được xử lý. Một phương án phổ biến là ghi trạng thái trong MySQL; ví dụ, trước khi thanh toán thì ghi một bản ghi giao dịch thanh toán cho đơn hàng.
--   Mỗi khi nhận yêu cầu, cần kiểm tra xem yêu cầu đã được xử lý trước đó hay chưa. Chẳng hạn, nếu một đơn hàng đã được thanh toán thì đã có bản ghi giao dịch thanh toán; khi yêu cầu này được gửi lại, trước tiên hãy chèn bản ghi giao dịch. orderId đã tồn tại nên ràng buộc khóa duy nhất có hiệu lực và thao tác chèn báo lỗi. Sau đó không cần trừ tiền nữa.
+-   Đối với mỗi yêu cầu, phải có một định danh duy nhất. Ví dụ, yêu cầu thanh toán đơn hàng chắc chắn phải chứa order id; một order id chỉ được thanh toán tối đa một lần, đúng không?
+-   Sau mỗi lần xử lý yêu cầu, phải có một bản ghi đánh dấu yêu cầu đó đã được xử lý. Một phương án phổ biến là ghi lại trạng thái trong MySQL; ví dụ, trước khi thanh toán, ghi một bản ghi giao dịch thanh toán cho đơn hàng.
+-   Mỗi khi nhận yêu cầu, cần kiểm tra xem yêu cầu đó đã được xử lý trước đó hay chưa. Ví dụ, nếu một đơn hàng đã được thanh toán thì đã có một bản ghi giao dịch thanh toán; khi yêu cầu trùng lặp được gửi đến, trước tiên hãy chèn bản ghi giao dịch. Vì orderId đã tồn tại nên ràng buộc khóa duy nhất có hiệu lực, thao tác chèn sẽ báo lỗi và không chèn được. Sau đó, bạn không cần trừ tiền nữa.
 
-Trong thực tế vận hành, cần kết hợp với nghiệp vụ của mình; chẳng hạn dùng Redis với orderId làm khóa duy nhất. Chỉ sau khi chèn thành công bản ghi giao dịch thanh toán mới được thực hiện thao tác trừ tiền thực tế.
+Trong thực tế vận hành, cần kết hợp với nghiệp vụ cụ thể của mình; chẳng hạn, sử dụng Redis với orderId làm khóa duy nhất. Chỉ khi chèn thành công bản ghi giao dịch thanh toán thì mới được thực hiện thao tác trừ tiền thực tế.
 
-Yêu cầu là mỗi lần thanh toán đơn hàng phải chèn một bản ghi giao dịch thanh toán và tạo khóa duy nhất `unique key` trên order_id. Trước khi thanh toán đơn hàng, hãy chèn một bản ghi giao dịch thanh toán để order_id được ghi nhận. Sau đó có thể ghi một dấu hiệu vào Redis: `set order_id payed`. Khi yêu cầu trùng lặp đến lần sau, trước tiên hãy tra value tương ứng với order_id trong Redis; nếu là `payed` thì nghĩa là đã thanh toán, không được thanh toán lại.
+Yêu cầu là khi thanh toán một đơn hàng, bắt buộc phải chèn một bản ghi giao dịch thanh toán và tạo khóa duy nhất `unique key` trên order_id. Trước khi thanh toán một đơn hàng, trước tiên hãy chèn một bản ghi giao dịch thanh toán để order_id được ghi nhận. Sau đó, có thể ghi một giá trị đánh dấu vào Redis: `set order_id payed`. Khi yêu cầu trùng lặp đến vào lần sau, trước tiên hãy kiểm tra value tương ứng với order_id trong Redis; nếu value là `payed` thì nghĩa là đã thanh toán rồi, không được thanh toán lại.

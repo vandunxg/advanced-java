@@ -28,7 +28,7 @@ Do không có quá nhiều tải, dịch vụ khởi động nhanh. Nếu dịch
 
 Ngoài những ưu điểm trên, mô hình nhiều instance dịch vụ trên một máy chủ cũng có nhược điểm. Một nhược điểm chính là mức độ cô lập giữa các instance dịch vụ rất thấp hoặc không có, trừ khi mỗi instance là một tiến trình độc lập. Nếu muốn giám sát chính xác mức sử dụng tài nguyên của từng instance thì không thể giới hạn tài nguyên sử dụng của mỗi instance. Vì vậy, một instance dịch vụ lỗi có thể chiếm hết bộ nhớ hoặc CPU của máy chủ.
 
-Nhiều instance dịch vụ trong cùng một tiến trình không được cô lập. Ví dụ, tất cả instance có thể dùng chung một JVM heap. Một instance dịch vụ lỗi có thể dễ dàng ảnh hưởng đến các dịch vụ khác trong cùng tiến trình; thậm chí có thể không giám sát được mức sử dụng tài nguyên của từng instance.
+Nhiều instance dịch vụ trong cùng một tiến trình không được cô lập. Ví dụ, tất cả instance có thể dùng chung một JVM heap. Một instance dịch vụ lỗi có thể dễ dàng gây ảnh hưởng xấu đến các dịch vụ khác trong cùng tiến trình; thậm chí có thể không giám sát được mức sử dụng tài nguyên của từng instance.
 
 Một vấn đề nghiêm trọng khác là đội vận hành phải nắm rõ các bước triển khai chi tiết. Các dịch vụ có thể được viết bằng ngôn ngữ và framework khác nhau nên đội phát triển chắc chắn có nhiều điều cần trao đổi với đội vận hành. Độ phức tạp tăng lên cũng làm tăng khả năng xảy ra lỗi trong quá trình triển khai.
 
@@ -56,11 +56,11 @@ Mô hình một instance dịch vụ trên mỗi máy ảo có nhiều ưu đi�
 
 Một lợi ích khác là người dùng có thể dùng kiến trúc đám mây hoàn thiện như AWS cung cấp; các dịch vụ đám mây có nhiều chức năng hữu ích như cân bằng tải và khả năng mở rộng.
 
-Một lợi ích nữa là công nghệ triển khai dịch vụ được đóng gói tự chứa. Khi dịch vụ đã được đóng gói thành VM thì nó trở thành một hộp đen. API quản lý VM trở thành API triển khai dịch vụ, nhờ đó triển khai rất đơn giản và đáng tin cậy.
+Một lợi ích nữa là công nghệ hiện thực dịch vụ được đóng gói thành một đơn vị độc lập. Khi dịch vụ đã được đóng gói thành VM thì nó trở thành một hộp đen. API quản lý VM trở thành API triển khai dịch vụ, nhờ đó triển khai rất đơn giản và đáng tin cậy.
 
 Mô hình một instance trên mỗi máy ảo cũng có nhược điểm. Một nhược điểm là sử dụng tài nguyên không hiệu quả. Mỗi instance dịch vụ chiếm tài nguyên của cả VM, bao gồm hệ điều hành. Hơn nữa, trong một môi trường IaaS công cộng điển hình, tài nguyên VM được chuẩn hóa và có thể không được sử dụng hết.
 
-Ngoài ra, IaaS công cộng tính phí theo VM bất kể VM có bận hay không. Ví dụ, AWS cung cấp chức năng tự động mở rộng nhưng phản hồi không đủ nhanh với ứng dụng theo nhu cầu, khiến người dùng phải triển khai thêm VM và tăng chi phí triển khai.
+Ngoài ra, IaaS công cộng tính phí theo VM bất kể VM có bận hay không. Ví dụ, AWS cung cấp chức năng tự động mở rộng nhưng không phản hồi đủ nhanh đối với các ứng dụng theo nhu cầu, khiến người dùng phải triển khai thêm VM và tăng chi phí triển khai.
 
 Một nhược điểm khác là triển khai phiên bản dịch vụ mới chậm. Ảnh VM có kích thước lớn nên tạo chậm; vì cùng lý do, khởi tạo VM cũng chậm và hệ điều hành cần thời gian để khởi động. Tuy nhiên, điều này không phải lúc nào cũng đúng; một số VM nhẹ như VM tạo bằng Boxfuse khởi động khá nhanh.
 
@@ -88,7 +88,7 @@ Dùng container cũng có một số nhược điểm. Dù kiến trúc containe
 
 Công nghệ container cũng đòi hỏi nhiều công việc tùy chỉnh để quản lý ảnh container. Trừ khi dùng các dịch vụ như Google Container Engine hoặc Amazon EC2 Container Service (ECS), nếu không người dùng phải đồng thời quản lý cả kiến trúc container và kiến trúc VM.
 
-Thứ ba, container thường được triển khai trên hạ tầng tính phí theo VM; hiển nhiên khách hàng cũng sẽ tăng chi phí triển khai để đáp ứng tải tăng lên.
+Thứ ba, container thường được triển khai trên hạ tầng tính phí theo VM; hiển nhiên khách hàng cũng phải chịu thêm chi phí triển khai để đáp ứng tải tăng lên.
 
 Điều thú vị là ranh giới giữa container và VM ngày càng mờ đi. Như đã nói, VM của Boxfuse được tạo và khởi động nhanh; công nghệ Clear Container hướng đến tạo VM nhẹ. Công nghệ của công ty unikernel cũng thu hút sự chú ý; gần đây Docker đã mua lại Unikernel.
 
@@ -96,19 +96,18 @@ Ngoài ra, công nghệ triển khai serverless tránh được các nhược đ
 
 ## Triển khai serverless
 
-AWS Lambda là một ví dụ về công nghệ triển khai serverless, hỗ trợ dịch vụ Java, Node.js và Python. Chỉ cần đóng gói dịch vụ thành tệp ZIP rồi tải lên AWS Lambda để triển khai. Có thể cung cấp metadata, bao gồm tên hàm xử lý yêu cầu dịch vụ (một sự kiện). AWS Lambda tự động chạy đủ số lượng microservice để xử lý yêu cầu, và chỉ tính phí theo thời gian chạy cùng lượng bộ nhớ sử dụng. Tất nhiên, chi tiết quyết định thành bại và AWS Lambda cũng có giới hạn. Nhưng việc không cần lo lắng về bất kỳ khía cạnh nào của máy chủ, máy ảo hay container là điều rất hấp dẫn.
+AWS Lambda là một ví dụ về công nghệ triển khai serverless, hỗ trợ dịch vụ Java, Node.js và Python. Chỉ cần đóng gói dịch vụ thành tệp ZIP rồi tải lên AWS Lambda để triển khai. Có thể cung cấp metadata, bao gồm tên hàm xử lý yêu cầu dịch vụ (một sự kiện). AWS Lambda tự động chạy số lượng microservice cần thiết để xử lý yêu cầu, và chỉ tính phí theo thời gian chạy cùng lượng bộ nhớ sử dụng. Tất nhiên, chi tiết quyết định thành bại và AWS Lambda cũng có giới hạn. Nhưng việc không cần lo lắng về bất kỳ khía cạnh nào của máy chủ, máy ảo hay container là điều rất hấp dẫn.
 
-Hàm Lambda là dịch vụ phi trạng thái. Thông thường, hàm xử lý yêu cầu bằng cách được kích hoạt bởi dịch vụ AWS. Ví dụ, khi ảnh được tải lên S3 bucket và kích hoạt hàm Lambda, hàm này có thể chèn một bản ghi vào bảng ảnh DynamoDB, xuất bản một thông điệp lên luồng Kinesis và kích hoạt thao tác xử lý ảnh. Hàm Lambda cũng có thể được kích hoạt bởi dịch vụ web bên thứ ba.
+Hàm Lambda là dịch vụ phi trạng thái. Thông thường, hàm xử lý yêu cầu bằng cách được kích hoạt bởi dịch vụ AWS. Ví dụ, khi một ảnh được tải lên S3 bucket, sự kiện đó kích hoạt hàm Lambda; hàm này có thể chèn một bản ghi vào bảng ảnh DynamoDB, xuất bản một thông điệp lên luồng Kinesis và kích hoạt thao tác xử lý ảnh. Hàm Lambda cũng có thể được kích hoạt bởi dịch vụ web bên thứ ba.
 
 Có bốn cách kích hoạt hàm Lambda:
 
 -   Trực tiếp, bằng yêu cầu dịch vụ web
 -   Tự động, phản hồi sự kiện do AWS S3, DynamoDB, Kinesis hoặc Simple Email Service tạo ra
--   Tự động, thông qua AWS API Gateway để xử lý yêu cầu HTTP do client ứng dụng gửi
+-   Tự động, thông qua AWS API Gateway để xử lý yêu cầu HTTP do client của ứng dụng gửi
 -   Theo lịch, phản hồi theo cron — tương tự bộ hẹn giờ
 
 Có thể thấy AWS Lambda là một cách triển khai microservice rất thuận tiện. Cách tính phí theo yêu cầu có nghĩa là người dùng chỉ phải trả cho tải xử lý nghiệp vụ của mình; ngoài ra, vì không cần quan tâm đến hạ tầng nên người dùng chỉ cần phát triển ứng dụng.
 
 Tuy nhiên, vẫn có khá nhiều giới hạn. Không nên dùng để triển khai dịch vụ chạy lâu dài, chẳng hạn tiêu thụ thông điệp được chuyển tiếp từ broker bên thứ ba. Yêu cầu phải hoàn tất trong 300 giây; dịch vụ phải phi trạng thái vì về lý thuyết AWS Lambda tạo instance riêng cho từng yêu cầu; cần dùng một ngôn ngữ được hỗ trợ; dịch vụ phải khởi động nhanh, nếu không sẽ bị dừng do timeout.
-
 Triển khai ứng dụng microservice cũng là một thách thức. Có hàng trăm, hàng nghìn dịch vụ được viết bằng nhiều ngôn ngữ và framework khác nhau. Mỗi dịch vụ là một ứng dụng nhỏ, có yêu cầu riêng về triển khai, tài nguyên, mở rộng và giám sát. Có một số mô hình triển khai microservice, bao gồm một instance trên mỗi VM và một instance trên mỗi container. Một lựa chọn khác là AWS Lambda, một phương pháp serverless.

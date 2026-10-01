@@ -13,13 +13,13 @@
 
 #### Giao thức REST HTTP
 
-Yêu cầu REST là một trong những cách giao tiếp phổ biến nhất trong microservice; nó dựa trên giao thức HTTP\\HTTPS. Đặc điểm của RESTful là:
+Yêu cầu REST là một trong những cách giao tiếp phổ biến nhất trong microservice; nó dựa trên giao thức HTTP\HTTPS. Đặc điểm của RESTful là:
 
 1. Mỗi URI đại diện cho một loại tài nguyên.
 2. Client dùng bốn động từ GET, POST, PUT, DELETE để biểu thị cách thao tác tài nguyên phía server: GET dùng để lấy tài nguyên, POST dùng để tạo tài nguyên mới (cũng có thể dùng để cập nhật), PUT dùng để cập nhật tài nguyên, DELETE dùng để xóa tài nguyên.
 3. Thao tác với tài nguyên thông qua biểu diễn của tài nguyên đó.
 4. Biểu diễn tài nguyên là XML hoặc HTML.
-5. Tương tác giữa client và server không trạng thái giữa các yêu cầu: mỗi yêu cầu từ client đến server phải chứa thông tin cần thiết để hiểu yêu cầu.
+5. Tương tác giữa client và server là phi trạng thái giữa các yêu cầu: mỗi yêu cầu từ client đến server phải chứa thông tin cần thiết để hiểu yêu cầu.
 
 Ví dụ, phía dịch vụ cung cấp giao diện sau:
 
@@ -85,7 +85,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * RPC 服务端用来注册远程方法的接口和实现类
+ * Interface và lớp triển khai dùng để đăng ký các phương thức từ xa trên RPC server
  */
 public class RPCServer {
     private static ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -93,7 +93,7 @@ public class RPCServer {
     private static final ConcurrentHashMap<String, Class> serviceRegister = new ConcurrentHashMap<>();
 
     /**
-     * 注册方法
+     * Phương thức đăng ký
      * @param service
      * @param impl
      */
@@ -102,7 +102,7 @@ public class RPCServer {
     }
 
     /**
-     * 启动方法
+     * Phương thức khởi động
      * @param port
      */
     public void start(int port) {
@@ -141,7 +141,7 @@ public class RPCServer {
             ObjectOutputStream output = null;
             try {
                 input = new ObjectInputStream(client.getInputStream());
-                // 按照顺序读取对方写过来的内容
+                // Đọc lần lượt nội dung do phía bên kia ghi
                 String serviceName = input.readUTF();
                 String methodName = input.readUTF();
                 Class<?>[] parameterTypes = (Class<?>[]) input.readObject();
@@ -160,7 +160,7 @@ public class RPCServer {
 
             } finally {
                 try {
-                    // 这里就不写 output!=null才关闭这个逻辑了
+                    // Ở đây không viết logic chỉ đóng khi output!=null
                     output.close();
                     input.close();
                     client.close();
@@ -188,11 +188,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- * RPC 客户端
+ * RPC client
  */
 public class RPCclient<T> {
     /**
-     * 通过动态代理将参数发送过去到 RPCServer ,RPCserver 返回结果这个方法处理成为正确的实体
+     * Dùng dynamic proxy để gửi các tham số đến RPCServer; phương thức này xử lý kết quả do RPCserver trả về thành entity phù hợp
      */
     public static <T> T getRemoteProxyObj(final Class<T> service, final InetSocketAddress addr) {
 
@@ -207,7 +207,7 @@ public class RPCclient<T> {
                     socket = new Socket();
                     socket.connect(addr);
 
-                    // 将实体类,参数,发送给远程调用方
+                    // Gửi entity class và các tham số đến bên gọi từ xa
                     out = new ObjectOutputStream(socket.getOutputStream());
                     out.writeUTF(service.getSimpleName());
                     out.writeUTF(method.getName());
@@ -277,6 +277,6 @@ Kết quả xuất ra là `send message rpc 测试用例`.
 
 ### Bất đồng bộ
 
-#### Middleware thông điệp
+#### Middleware truyền thông điệp
 
-Các middleware thông điệp phổ biến gồm Kafka, ActiveMQ, RabbitMQ và RocketMQ; các giao thức thường gặp gồm AMQP, MQTTP, STOMP và XMPP. Ở đây không mở rộng thêm về hàng đợi thông điệp; cách sử dụng cụ thể xin xem tài liệu chính thức.
+Các middleware truyền thông điệp phổ biến gồm Kafka, ActiveMQ, RabbitMQ và RocketMQ; các giao thức thường gặp gồm AMQP, MQTTP, STOMP và XMPP. Ở đây không mở rộng thêm về hàng đợi thông điệp; cách sử dụng cụ thể xin xem tài liệu chính thức.

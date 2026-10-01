@@ -39,7 +39,7 @@ const vietnameseSidebar = [
         ],
       },
       {
-        text: "Search engine",
+        text: "Công cụ tìm kiếm",
         collapsed: true,
         link: "/vi/high-concurrency/es-introduction.md",
         items: [
@@ -78,7 +78,7 @@ const vietnameseSidebar = [
             link: "/vi/high-concurrency/redis-data-types.md",
           },
           {
-            text: "Chính sách hết hạn và thuật toán LRU của Redis",
+            text: "Chính sách hết hạn của Redis",
             link: "/vi/high-concurrency/redis-expiration-policies-and-lru.md",
           },
           {
@@ -208,15 +208,15 @@ const vietnameseSidebar = [
             link: "/vi/distributed-system/dubbo-spi.md",
           },
           {
-            text: "Quản trị dịch vụ dựa trên Dubbo như thế nào?",
+            text: "Phương án quản trị dịch vụ",
             link: "/vi/distributed-system/dubbo-service-management.md",
           },
           {
-            text: "Thiết kế tính idempotency cho giao diện dịch vụ phân tán như thế nào?",
+            text: "Thiết kế idempotency cho interface",
             link: "/vi/distributed-system/distributed-system-idempotency.md",
           },
           {
-            text: "Làm thế nào để bảo đảm thứ tự yêu cầu của giao diện dịch vụ phân tán?",
+            text: "Thiết kế thứ tự yêu cầu của interface",
             link: "/vi/distributed-system/distributed-system-request-sequence.md",
           },
           {
@@ -230,7 +230,7 @@ const vietnameseSidebar = [
         ],
       },
       {
-        text: "Distributed lock",
+        text: "Khóa phân tán",
         collapsed: true,
         items: [
           {
@@ -406,7 +406,7 @@ const vietnameseSidebar = [
         link: "/vi/big-data/find-mid-value-in-500-millions.md",
       },
       {
-        text: "Sắp xếp query theo tần suất",
+        text: "Sắp xếp chuỗi truy vấn theo tần suất",
         link: "/vi/big-data/sort-the-query-strings-by-counts.md",
       },
       {
@@ -468,11 +468,11 @@ export const locales = {
       darkModeSwitchLabel: "Giao diện",
       lightModeSwitchTitle: "Chuyển sang giao diện sáng",
       darkModeSwitchTitle: "Chuyển sang giao diện tối",
-      sidebarMenuLabel: "Thanh bên",
+      sidebarMenuLabel: "Mở thanh bên",
       returnToTopLabel: "Về đầu trang",
       langMenuLabel: "Đổi ngôn ngữ",
       navMenuLabel: "Điều hướng chính",
-      mobileMenuLabel: "Menu",
+      mobileMenuLabel: "Mở menu",
       extraMenuLabel: "Tùy chọn khác",
       skipToContentLabel: "Chuyển đến nội dung",
       notFound: { title: "Trang không tồn tại" },
