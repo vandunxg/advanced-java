@@ -37,7 +37,7 @@ Thực ra, xóa cache thay vì cập nhật cache là tư tưởng tính toán l
 
 Vấn đề: cập nhật database trước, sau đó xóa cache. Nếu xóa cache thất bại thì database chứa dữ liệu mới, còn cache chứa dữ liệu cũ, khiến dữ liệu không nhất quán.
 
-![redis-junior-inconsistent](./images/redis-junior-inconsistent.png)
+![redis-junior-inconsistent](../../high-concurrency/images/redis-junior-inconsistent.png)
 
 Hướng giải quyết 1: xóa cache trước, sau đó cập nhật database. Nếu cập nhật database thất bại thì database chứa dữ liệu cũ, cache trống nên dữ liệu không bị không nhất quán. Vì cache không có dữ liệu khi đọc nên sẽ đọc dữ liệu cũ từ database rồi cập nhật vào cache.
 

@@ -18,7 +18,7 @@ Nói thật, tối ưu hiệu năng es không có viên đạn bạc. Nghĩa là
 
 Dữ liệu bạn ghi vào es thực tế được ghi vào các file trên đĩa. **Khi truy vấn**, hệ điều hành tự động cache dữ liệu trong file trên đĩa vào `filesystem cache`.
 
-![es-search-process](./images/es-search-process.png)
+![es-search-process](../../high-concurrency/images/es-search-process.png)
 
 Search engine của es phụ thuộc rất nhiều vào `filesystem cache` bên dưới. Nếu cấp thêm bộ nhớ cho `filesystem cache`, cố gắng để bộ nhớ chứa được toàn bộ file dữ liệu chỉ mục `idx segment file `, thì khi tìm kiếm hầu hết thao tác sẽ chạy trong bộ nhớ và hiệu năng sẽ rất cao.
 

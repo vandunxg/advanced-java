@@ -93,7 +93,7 @@ Tiếp đó, tạo dự án `dubbo provider` và thêm dependency JAR bạn vừ
 
 Khi provider khởi động, cấu hình `my=com.bingo.MyProtocol` trong JAR của chúng ta sẽ được nạp; sau đó cấu hình của bạn sẽ khiến Dubbo dùng MyProtocol mà bạn đã định nghĩa. Đây chỉ là giải thích đơn giản: theo cách trên, có thể thay thế nhiều thành phần bên trong Dubbo — chỉ cần thêm JAR của bạn rồi cấu hình.
 
-![dubbo-spi](./images/dubbo-spi.png)
+![dubbo-spi](../../distributed-system/images/dubbo-spi.png)
 
 Dubbo cung cấp nhiều điểm mở rộng tương tự như trên. Muốn mở rộng một chức năng, chỉ cần tự viết một JAR, thêm JAR đó làm dependency cho dự án consumer hoặc provider, rồi đặt tệp có tên tương ứng với giao diện vào đúng thư mục trong JAR và khai báo `key=class triển khai`.
 

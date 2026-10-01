@@ -19,7 +19,7 @@ Với es, về cơ bản nó là hộp đen; bạn còn có thể làm gì? Vi�
 -   `primary shard` trên node thực tế xử lý request, sau đó đồng bộ dữ liệu đến `replica node`.
 -   Khi `coordinating node` nhận thấy `primary node` và toàn bộ `replica node` đã hoàn tất, nó trả kết quả phản hồi cho client.
 
-![es-write](./images/es-write.png)
+![es-write](../../high-concurrency/images/es-write.png)
 
 ### Quy trình đọc dữ liệu es
 
@@ -51,7 +51,7 @@ Tìm kiếm theo từ khóa `java` để tìm ra các `document` có chứa `jav
 
 ### Nguyên lý bên dưới khi ghi dữ liệu
 
-![es-write-detail](./images/es-write-detail.png)
+![es-write-detail](../../high-concurrency/images/es-write-detail.png)
 
 Trước tiên, dữ liệu được ghi vào memory buffer; trong lúc nằm trong buffer thì chưa thể tìm kiếm được. Đồng thời, dữ liệu cũng được ghi vào file log translog.
 

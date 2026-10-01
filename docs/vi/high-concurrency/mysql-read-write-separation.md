@@ -18,7 +18,7 @@ Thực ra rất đơn giản: dựa trên kiến trúc replication primary-repli
 
 Primary database ghi các thay đổi vào binlog. Sau khi replica database kết nối với primary database, một IO thread trên replica sẽ sao chép binlog của primary về máy cục bộ rồi ghi vào relay log. Tiếp đó, một SQL thread trên replica đọc binlog từ relay log và thực thi nội dung trong binlog, tức thực thi lại câu lệnh SQL trên máy của mình. Như vậy, dữ liệu của replica sẽ giống với primary.
 
-![mysql-master-slave](./images/mysql-master-slave.png)
+![mysql-master-slave](../../high-concurrency/images/mysql-master-slave.png)
 
 Một điểm rất quan trọng là quá trình replica đồng bộ dữ liệu của primary được tuần tự hóa. Nghĩa là các thao tác được thực hiện song song trên primary sẽ được thực thi tuần tự trên replica. Đây là điểm rất quan trọng: do đặc điểm replica sao chép log từ primary và thực thi SQL tuần tự, trong tình huống high concurrency, dữ liệu của replica chắc chắn sẽ chậm hơn primary một chút, tức **có độ trễ**. Vì vậy thường xảy ra tình huống dữ liệu vừa ghi vào primary chưa đọc được ngay; phải đợi vài chục mili giây, thậm chí vài trăm mili giây mới đọc được.
 

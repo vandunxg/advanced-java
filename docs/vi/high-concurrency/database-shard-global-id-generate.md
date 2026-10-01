@@ -26,7 +26,7 @@ Có thể co giãn theo chiều ngang bằng cách đặt sequence của databas
 
 Ví dụ, hiện có 8 service node; mỗi node dùng một chức năng sequence để tạo ID. ID bắt đầu của mỗi sequence khác nhau và tăng dần theo thứ tự; bước tăng đều bằng 8.
 
-![database-id-sequence-step](./images/database-id-sequence-step.png)
+![database-id-sequence-step](../../high-concurrency/images/database-id-sequence-step.png)
 
 **Tình huống phù hợp**: Phương án này tương đối dễ triển khai và có thể đáp ứng mục tiêu hiệu năng, đồng thời ngăn ID tạo ra bị trùng giữa các node. Tuy nhiên, số service node và bước tăng đều cố định; nếu sau này cần thêm service node thì sẽ khó xử lý.
 

@@ -18,7 +18,7 @@ Trước tiên, nhìn chung tôi khuyên bạn nên thiết kế hệ thống ng
 
 Dưới đây là phương án chúng tôi từng dùng. Nói đơn giản, trước hết dùng chiến lược cân bằng tải consistent hash của Dubbo để phân phối các yêu cầu ứng với cùng một order id đến một máy cụ thể. Tiếp đó, vì trên máy đó các yêu cầu vẫn có thể được thực thi đồng thời bằng nhiều luồng, cần đưa ngay các yêu cầu ứng với order id đó vào một **hàng đợi trong bộ nhớ** và buộc chúng xếp hàng, qua đó bảo đảm thứ tự.
 
-![distributed-system-request-sequence](./images/distributed-system-request-sequence.png)
+![distributed-system-request-sequence](../../distributed-system/images/distributed-system-request-sequence.png)
 
 Tuy nhiên, cách này kéo theo nhiều vấn đề khác. Chẳng hạn, nếu yêu cầu ứng với một đơn hàng quá nhiều khiến một máy trở thành **điểm nóng** thì phải làm sao? Giải quyết các vấn đề này lại đòi hỏi thêm hàng loạt giải pháp kỹ thuật phức tạp... Trước đây những vấn đề loại này từng khiến chúng tôi rất đau đầu, nên tôi vẫn khuyên điều gì?
 

@@ -4,7 +4,7 @@
 
 Website thương mại điện tử nhỏ dùng phương pháp tĩnh hóa toàn bộ trang để hiển thị nội dung. Cơ sở dữ liệu lưu tất cả thông tin sản phẩm; hệ thống tĩnh hóa trang đưa dữ liệu vào template tĩnh, tạo thành trang đã tĩnh hóa rồi đẩy lên máy chủ Nginx. Khi người dùng duyệt trang web, hệ thống lấy một trang html đã được tĩnh hóa sẵn và trả về trực tiếp, không cần xử lý logic nghiệp vụ nào.
 
-![e-commerce-website-detail-page-architecture-1](./images/e-commerce-website-detail-page-architecture-1.png)
+![e-commerce-website-detail-page-architecture-1](../../high-availability/images/e-commerce-website-detail-page-architecture-1.png)
 
 Sau đây là một Demo đơn giản về template trang.
 
@@ -30,7 +30,7 @@ Trong thiết kế hệ thống trang chi tiết sản phẩm của website thư
 
 Khi người dùng duyệt trang web, dữ liệu cục bộ của Nginx được kết xuất động vào template html cục bộ rồi trả về cho người dùng.
 
-![e-commerce-website-detail-page-architecture-2](./images/e-commerce-website-detail-page-architecture-2.png)
+![e-commerce-website-detail-page-architecture-2](../../high-availability/images/e-commerce-website-detail-page-architecture-2.png)
 
 Cách này không nhanh bằng việc trả về trực tiếp trang html, nhưng vì dữ liệu nằm trong cache cục bộ nên vẫn rất nhanh. Chi phí hiệu năng chủ yếu là kết xuất động một trang html. Nếu template html thay đổi, không cần tĩnh hóa lại tất cả các trang, cũng không cần gửi request nên không phát sinh chi phí request mạng; chỉ cần kết xuất dữ liệu vào template html mới nhất rồi phản hồi.
 

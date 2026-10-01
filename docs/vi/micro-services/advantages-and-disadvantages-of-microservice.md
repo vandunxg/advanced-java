@@ -4,7 +4,7 @@
 
 Giả sử bạn chuẩn bị phát triển một phần mềm điều phối taxi để cạnh tranh với Uber và Hailo. Sau các cuộc họp ban đầu và phân tích yêu cầu, bạn có thể bắt đầu dự án mới bằng cách tạo thủ công hoặc dùng trình tạo dựa trên Rails, Spring Boot, Play hay Maven. Ứng dụng có kiến trúc lục giác theo mô-đun như sơ đồ dưới đây:
 
-![monolithic-application-architecture-diagram](./images/monolithic-application-architecture-diagram.png)
+![monolithic-application-architecture-diagram](../../micro-services/images/monolithic-application-architecture-diagram.png)
 
 Lõi ứng dụng là logic nghiệp vụ, được triển khai bởi các mô-đun định nghĩa dịch vụ, đối tượng miền và sự kiện. Xung quanh phần lõi là các adapter giao tiếp với thế giới bên ngoài. Adapter gồm các thành phần truy cập cơ sở dữ liệu, thành phần gửi và xử lý thông điệp, các mô-đun web cung cấp quyền truy cập qua API hoặc giao diện người dùng, v.v.
 
@@ -40,7 +40,7 @@ Một microservice thường hoàn thành một chức năng cụ thể, chẳng
 
 Ví dụ, hệ thống đã mô tả ở trên có thể được phân rã như sau:
 
-![deal-with-complex things-1](./images/deal-with-complex-things-1.png)
+![deal-with-complex things-1](../../micro-services/images/deal-with-complex-things-1.png)
 
 Mỗi vùng chức năng của ứng dụng được triển khai bằng microservice. Ngoài ra, ứng dụng web được tách thành một loạt ứng dụng web đơn giản (chẳng hạn một ứng dụng cho hành khách, một ứng dụng cho tài xế taxi). Việc tách này giúp triển khai dễ hơn cho các nhóm người dùng, thiết bị và trường hợp sử dụng đặc thù khác nhau.
 
@@ -48,19 +48,19 @@ Mỗi dịch vụ phía sau cung cấp một REST API; nhiều dịch vụ cũng
 
 Một số REST API cũng được cung cấp cho ứng dụng di động mà hành khách và tài xế sử dụng. Các ứng dụng này không truy cập trực tiếp vào dịch vụ phía sau mà truyền thông điệp trung gian qua API Gateway. API Gateway chịu trách nhiệm cân bằng tải, cache, kiểm soát truy cập, giám sát tính phí API và nhiều tác vụ khác; có thể dễ dàng triển khai bằng NGINX. Các bài viết sau sẽ giới thiệu API Gateway.
 
-![deal-with-complex-things-2](./images/deal-with-complex-things-2.png)
+![deal-with-complex-things-2](../../micro-services/images/deal-with-complex-things-2.png)
 
 Trong sơ đồ trên, mô hình kiến trúc microservice tương ứng với trục Y của Scale Cube mở rộng, mô hình mở rộng ba chiều được mô tả trong sách *The Art of Scalability*. Hai trục mở rộng còn lại: trục X gồm nhiều bản sao ứng dụng chạy phía sau bộ cân bằng tải; trục Z định tuyến yêu cầu đến dịch vụ liên quan.
 
 Về cơ bản, có thể biểu diễn ứng dụng theo ba chiều trên; trục Y biểu thị việc chia ứng dụng thành microservice. Khi chạy, trục X biểu thị nhiều instance chạy phía sau bộ cân bằng tải để cung cấp thông lượng. Một số ứng dụng vẫn có thể phân vùng dịch vụ theo trục Z. Hình bên dưới minh họa cách triển khai dịch vụ quản lý chuyến đi trên Docker chạy trên AWS EC2.
 
-![deal-with-complex-things-3](./images/deal-with-complex-things-3.png)
+![deal-with-complex-things-3](../../micro-services/images/deal-with-complex-things-3.png)
 
 Khi chạy, dịch vụ quản lý chuyến đi gồm nhiều instance dịch vụ. Mỗi instance là một container Docker. Để bảo đảm tính sẵn sàng cao, các container này thường chạy trên nhiều máy ảo đám mây. Phía trước các instance dịch vụ là một tầng cân bằng tải như NGINX, chịu trách nhiệm phân phối yêu cầu giữa các instance. Bộ cân bằng tải đồng thời xử lý các yêu cầu khác, chẳng hạn cache, kiểm soát quyền, thống kê và giám sát API.
 
 Mô hình kiến trúc microservice làm thay đổi sâu sắc mối quan hệ giữa ứng dụng và cơ sở dữ liệu. **Khác với mô hình truyền thống, trong đó nhiều dịch vụ dùng chung một cơ sở dữ liệu, kiến trúc microservice có cơ sở dữ liệu riêng cho từng dịch vụ**. Ý tưởng này cũng ảnh hưởng đến mô hình dữ liệu doanh nghiệp. Mô hình này đồng nghĩa với việc có nhiều bản sao dữ liệu; tuy nhiên, nếu muốn tận dụng lợi ích của microservice thì mỗi dịch vụ phải có cơ sở dữ liệu riêng, vì kiến trúc này đòi hỏi sự liên kết lỏng. Hình bên dưới minh họa kiến trúc cơ sở dữ liệu của ứng dụng ví dụ.
 
-![deal-with-complex-things-4](./images/deal-with-complex-things-4.png)
+![deal-with-complex-things-4](../../micro-services/images/deal-with-complex-things-4.png)
 
 Mỗi loại dịch vụ có cơ sở dữ liệu riêng; ngoài ra, mỗi dịch vụ có thể chọn loại cơ sở dữ liệu phù hợp nhất với mình. Cách này còn được gọi là kiến trúc nhất quán đa ngôn ngữ. Chẳng hạn, quản lý tài xế (xác định tài xế nào ở gần hành khách hơn) phải dùng cơ sở dữ liệu hỗ trợ truy vấn thông tin địa lý.
 

@@ -127,7 +127,7 @@ Phương pháp này khá phù hợp cho việc truy vấn URL hoặc số điệ
 
 Cấu trúc cụ thể và cách truy vấn cây từ điển (trie) sẽ không trình bày ở đây; có thể tự tìm trên Baidu. Phần này chủ yếu nói về ưu điểm và nhược điểm.
 
-![](./images/topk-trie.png)
+![](../../big-data/images/topk-trie.png)
 
 Ý tưởng của cây từ điển là xây dựng thông tin chỉ mục từ trước để có thể truy vấn lặp lại nhiều lần về sau; việc thêm và xóa dữ liệu sau đó cũng rất thuận tiện. Cấu trúc này phù hợp với trường hợp cần truy vấn lặp lại nhiều lần.
 

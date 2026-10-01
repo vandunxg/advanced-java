@@ -92,11 +92,11 @@ Thông thường có thể chọn một trong hai phương án. Tuy nhiên, tôi
 
 **Sharding ngang** nghĩa là đưa dữ liệu của một table vào nhiều table thuộc nhiều database, nhưng cấu trúc table ở mỗi database đều giống nhau; chỉ khác là mỗi database/table chứa dữ liệu khác nhau. Tổng hợp dữ liệu của tất cả database/table sẽ tạo thành toàn bộ dữ liệu. Ý nghĩa của sharding ngang là phân phối dữ liệu đồng đều sang nhiều database hơn, dùng nhiều database để chịu concurrency cao hơn và dùng dung lượng lưu trữ của nhiều database để mở rộng.
 
-![database-split-horizon](./images/database-split-horizon.png)
+![database-split-horizon](../../high-concurrency/images/database-split-horizon.png)
 
 **Sharding dọc** nghĩa là **tách một table có nhiều field thành nhiều table** hoặc **tách sang nhiều database**. Cấu trúc của mỗi database/table khác nhau; mỗi database/table chứa một phần field. Thông thường, **đưa các field ít hơn nhưng được truy cập thường xuyên vào một table**, sau đó **đưa các field nhiều hơn nhưng ít được truy cập vào một table khác**. Vì database có cache, số field của các hàng được truy cập thường xuyên càng ít thì cache càng lưu được nhiều hàng và hiệu năng càng tốt. Cách này thường được dùng nhiều hơn ở cấp table.
 
-![database-split-vertically](./images/database-split-vertically.png)
+![database-split-vertically](../../high-concurrency/images/database-split-vertically.png)
 
 Việc này khá phổ biến; không nhất thiết chỉ có tôi nói, nhiều bạn có thể đã tự làm rồi: tách một table lớn thành table đơn hàng, table thanh toán đơn hàng và table sản phẩm trong đơn hàng.
 

@@ -20,7 +20,7 @@ Từ nay, tất cả bài viết gốc của tôi sẽ được đăng đầu ti
 -   **Cập nhật định kỳ**: cố gắng đăng 1–2 bài mỗi tuần để duy trì tần suất cập nhật nhất định.
 
 <div style="text-align:center; ">
-  <img src="./images/article-demo.png" width="300px; "/>
+  <img src="../../extra-page/images/article-demo.png" width="300px; "/>
 </div>
 
 ## Hiện có những bài viết nào?
@@ -52,5 +52,5 @@ Có. Nhóm WeChat “**Những người bạn công nghệ của Doocs**” hi�
 **Lưu ý**, nghiêm cấm mọi quảng cáo rác trong nhóm, bao gồm nhờ hỗ trợ mini program, trò chơi nhỏ, quảng bá nhóm, quảng bá tài khoản WeChat chính thức, mã quảng bá Alipay, v.v. Mọi người có thể tự do chia sẻ kiến thức liên quan đến GitHub và phát triển phần mềm, nhưng không khuyến khích trò chuyện lan man cả ngày; nên dành thêm thời gian nâng cao bản thân.
 
 <div style="text-align:center; ">
-  <img src="./images/wechat-group-for-doocs.png" width="300px; "/>
+  <img src="../../extra-page/images/wechat-group-for-doocs.png" width="300px; "/>
 </div>

@@ -10,7 +10,7 @@ Trong cùng một request context, nếu có nhiều command với cùng tham s�
 
 Lấy một ví dụ. Trong một request context, ta yêu cầu lấy dữ liệu có productId bằng 1. Lần đầu cache chưa có dữ liệu nên hệ thống lấy dữ liệu từ dịch vụ sản phẩm, trả về kết quả mới nhất đồng thời lưu dữ liệu vào bộ nhớ. Nếu sau đó trong cùng request context vẫn có yêu cầu lấy dữ liệu có productId bằng 1, chỉ cần lấy trực tiếp từ cache.
 
-![hystrix-request-cache](./images/hystrix-request-cache.png)
+![hystrix-request-cache](../../high-availability/images/hystrix-request-cache.png)
 
 Cả HystrixCommand và HystrixObservableCommand đều có thể chỉ định một cache key; Hystrix sẽ tự động cache. Sau đó, nếu truy cập lại trong cùng request context, hệ thống sẽ lấy trực tiếp dữ liệu cache.
 

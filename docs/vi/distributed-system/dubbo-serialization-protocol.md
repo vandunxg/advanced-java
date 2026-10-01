@@ -14,7 +14,7 @@ Sau đó có thể hỏi sâu hơn về tầng bên dưới, chẳng hạn bắt
 
 **Tuần tự hóa** là quá trình chuyển cấu trúc dữ liệu hoặc đối tượng thành chuỗi nhị phân; **giải tuần tự hóa** là quá trình chuyển chuỗi nhị phân được tạo ra khi tuần tự hóa trở lại thành cấu trúc dữ liệu hoặc đối tượng.
 
-![serialize-deserialize](./images/serialize-deserialize.png)
+![serialize-deserialize](../../distributed-system/images/serialize-deserialize.png)
 
 ### Dubbo hỗ trợ nhiều giao thức giao tiếp
 
@@ -26,11 +26,11 @@ Theo **mặc định**, Dubbo dùng giao thức dubbo, một kết nối dài du
 
 Nói đơn giản, kết nối dài là kết nối được thiết lập một lần rồi có thể tiếp tục gửi yêu cầu mà không cần thiết lập lại kết nối.
 
-![dubbo-keep-connection](./images/dubbo-keep-connection.png)
+![dubbo-keep-connection](../../distributed-system/images/dubbo-keep-connection.png)
 
 Với kết nối ngắn, cần thiết lập lại kết nối trước mỗi lần gửi yêu cầu.
 
-![dubbo-not-keep-connection](./images/dubbo-not-keep-connection.png)
+![dubbo-not-keep-connection](../../distributed-system/images/dubbo-not-keep-connection.png)
 
 -   Giao thức rmi `rmi://`
 

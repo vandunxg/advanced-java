@@ -14,7 +14,7 @@ Máy chủ đơn khối là cách tự nhiên để xây dựng loại hệ th�
 
 Ứng dụng đơn khối có thể thành công, nhưng ngày càng nhiều người không hài lòng với chúng — đặc biệt khi triển khai thêm ứng dụng lên đám mây. Chu kỳ thay đổi bị gắn chặt với nhau: dù chỉ thay đổi một phần nhỏ của ứng dụng cũng cần xây dựng lại và triển khai toàn bộ khối. Theo thời gian, thường khó duy trì cấu trúc mô-đun tốt và càng khó bảo đảm một thay đổi chỉ ảnh hưởng đến một mô-đun. Khi mở rộng hệ thống, buộc phải mở rộng toàn bộ ứng dụng thay vì chỉ mở rộng những phần cần thêm tài nguyên.
 
-![sketch](./images/sketch.png)
+![sketch](../../micro-services/images/sketch.png)
 
 Những bất mãn này dẫn đến phong cách kiến trúc microservice: xây dựng ứng dụng thành một tập hợp dịch vụ. Ngoài việc mỗi dịch vụ có thể triển khai và mở rộng độc lập, mỗi dịch vụ còn tạo ra ranh giới mô-đun chặt chẽ; thậm chí các dịch vụ khác nhau có thể được viết bằng ngôn ngữ lập trình khác nhau và do các nhóm khác nhau quản lý.
 
@@ -46,11 +46,11 @@ Khi chia một ứng dụng lớn thành nhiều phần, ban quản lý thườn
 
 > Bất kỳ tổ chức nào thiết kế một hệ thống (theo nghĩa rộng) đều sẽ tạo ra một thiết kế có cấu trúc là bản sao cấu trúc giao tiếp của chính tổ chức đó.<br> — Melvin Conway, 1967
 
-![conways-law](./images/conways-law.png)
+![conways-law](../../micro-services/images/conways-law.png)
 
 Microservice chia hệ thống theo cách khác: chia thành nhiều dịch vụ xoay quanh chức năng nghiệp vụ. Các dịch vụ triển khai nhiều phần mềm cho lĩnh vực nghiệp vụ đó, bao gồm giao diện người dùng, lưu trữ bền vững và mọi hoạt động cộng tác bên ngoài. Vì vậy, nhóm là nhóm đa chức năng, có đủ kỹ năng cần thiết để phát triển: trải nghiệm người dùng, cơ sở dữ liệu và quản lý dự án.
 
-![PreferFunctionalStaffOrganization](./images/PreferFunctionalStaffOrganization.png)
+![PreferFunctionalStaffOrganization](../../micro-services/images/PreferFunctionalStaffOrganization.png)
 
 Một công ty được tổ chức theo cách này là [www.comparethemarket.com](http://www.comparethemarket.com/). Các nhóm đa chức năng chịu trách nhiệm xây dựng và vận hành từng sản phẩm; mỗi sản phẩm được chia thành nhiều dịch vụ độc lập, giao tiếp với nhau qua bus thông điệp.
 
@@ -106,7 +106,7 @@ Vấn đề này thường thấy giữa các ứng dụng, nhưng cũng có th�
 
 Cũng như việc phi tập trung hóa quyết định về mô hình khái niệm, microservice phi tập trung hóa quyết định lưu trữ dữ liệu. Trong khi ứng dụng đơn khối thường thích một cơ sở dữ liệu logic duy nhất để lưu trữ bền vững, doanh nghiệp thường muốn nhiều ứng dụng cùng dùng một cơ sở dữ liệu chung — các quyết định này bị chi phối bởi mô hình cấp phép thương mại của nhà cung cấp. Microservice thiên về để mỗi dịch vụ quản lý cơ sở dữ liệu riêng, có thể là instance riêng của cùng một công nghệ cơ sở dữ liệu hoặc một hệ thống cơ sở dữ liệu hoàn toàn khác — đây được gọi là [polyglot persistence](https://martinfowler.com/bliki/PolyglotPersistence.html) (lưu trữ đa mô hình). Có thể dùng lưu trữ đa mô hình trong ứng dụng đơn khối, nhưng cách này thường thấy hơn trong ứng dụng chia thành dịch vụ.
 
-![decentralised-data](./images/decentralised-data.png)
+![decentralised-data](../../micro-services/images/decentralised-data.png)
 
 Việc phân tán trách nhiệm đối với dữ liệu giữa các microservice ảnh hưởng đến cách quản lý cập nhật. Phương pháp phổ biến để xử lý cập nhật là dùng giao dịch nhằm bảo đảm nhất quán khi cập nhật nhiều tài nguyên. Phương pháp này thường được dùng trong đơn khối.
 
@@ -120,7 +120,7 @@ Công nghệ tự động hóa hạ tầng đã thay đổi đáng kể trong v�
 
 Nhiều sản phẩm hoặc hệ thống được xây dựng bằng microservice là kết quả của các nhóm có nhiều kinh nghiệm về phân phối liên tục và tích hợp liên tục. Các nhóm xây dựng phần mềm theo cách này sử dụng rộng rãi công nghệ tự động hóa hạ tầng, như pipeline xây dựng được minh họa dưới đây.
 
-![basic-pipeline](./images/basic-pipeline.png)
+![basic-pipeline](../../micro-services/images/basic-pipeline.png)
 
 Vì đây không phải bài viết về phân phối liên tục, ở đây chúng tôi chỉ tập trung vào một vài đặc điểm chính của nó. Chúng tôi muốn có độ tin cậy cao nhất có thể rằng phần mềm hoạt động bình thường, vì vậy thực hiện nhiều **kiểm thử tự động**. Muốn phần mềm đạt trạng thái “Promotion” để được “đẩy lên” pipeline nghĩa là phần mềm phải được **triển khai tự động** trong từng môi trường mới.
 
@@ -128,7 +128,7 @@ Vì đây không phải bài viết về phân phối liên tục, ở đây ch�
 
 Một lĩnh vực khác mà chúng tôi thấy các nhóm đầu tư nhiều vào tự động hóa hạ tầng là quản lý microservice trong môi trường production. So với nhận định ở trên (miễn triển khai nhàm chán) thì đơn khối và microservice không khác nhau nhiều, nhưng môi trường chạy của từng lần triển khai có thể rất khác nhau.
 
-![micro-deployment](./images/micro-deployment.png)
+![micro-deployment](../../micro-services/images/micro-deployment.png)
 
 ### Thiết kế để sẵn sàng cho lỗi
 

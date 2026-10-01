@@ -16,7 +16,7 @@ Vấn đề mất dữ liệu có thể xảy ra ở producer, MQ hoặc consume
 
 ### RabbitMQ
 
-![rabbitmq-message-lose](./images/rabbitmq-message-lose.png)
+![rabbitmq-message-lose](../../high-concurrency/images/rabbitmq-message-lose.png)
 
 #### Producer làm mất dữ liệu
 
@@ -137,7 +137,7 @@ Lúc này cần dùng cơ chế `ack` của RabbitMQ. Nói đơn giản, phải 
 
 > Để đảm bảo message được truyền đáng tin cậy từ queue đến consumer, RabbitMQ cung cấp cơ chế xác nhận message. Khi khai báo queue, consumer có thể chỉ định tham số noAck. Khi noAck=false, RabbitMQ chờ consumer gửi tín hiệu ack tường minh rồi mới xóa message khỏi bộ nhớ (và đĩa nếu là message persistent). Nếu không, ngay khi consumer nhận message, RabbitMQ sẽ lập tức xóa message khỏi queue.
 
-![rabbitmq-message-lose-solution](./images/rabbitmq-message-lose-solution.png)
+![rabbitmq-message-lose-solution](../../high-concurrency/images/rabbitmq-message-lose-solution.png)
 
 ### Kafka
 

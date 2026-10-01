@@ -26,7 +26,7 @@ Xác minh một lượt, mọi thứ ổn, thật hoàn hảo. Mọi người v�
 
 Tuy nhiên, phương án này khá đơn giản và ai cũng làm được; hãy xem phương án chuyên nghiệp hơn.
 
-![database-shard-method-1](./images/database-shard-method-1.png)
+![database-shard-method-1](../../high-concurrency/images/database-shard-method-1.png)
 
 ### Phương án migration dual write
 
@@ -40,4 +40,4 @@ Sau một lượt nạp dữ liệu, có thể dữ liệu vẫn chưa nhất qu
 
 Sau khi dữ liệu hoàn toàn nhất quán là được. Triển khai lại phiên bản code mới nhất chỉ sử dụng sharding database/table; như vậy hệ thống sẽ chỉ thao tác trên sharding database/table, mà không cần dừng hệ thống hàng giờ và vẫn rất ổn định. Vì vậy, hiện nay các công việc như migration dữ liệu thường được thực hiện theo cách này.
 
-![database-shard-method-2](./images/database-shard-method-2.png)
+![database-shard-method-2](../../high-concurrency/images/database-shard-method-2.png)

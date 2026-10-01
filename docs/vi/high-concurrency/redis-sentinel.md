@@ -67,7 +67,7 @@ Quá trình chuyển đổi primary/standby có thể gây mất dữ liệu:
 
 Do replication từ master đến slave là bất đồng bộ, một phần dữ liệu có thể chưa được sao chép sang slave thì master đã bị sập; khi đó phần dữ liệu này bị mất.
 
-![async-replication-data-lose-case](./images/async-replication-data-lose-case.png)
+![async-replication-data-lose-case](../../high-concurrency/images/async-replication-data-lose-case.png)
 
 -   Mất dữ liệu do split-brain
 
@@ -75,7 +75,7 @@ Split-brain nghĩa là máy chứa một master nào đó đột nhiên **mất 
 
 Lúc này dù một slave đã được chuyển thành master, client có thể chưa kịp chuyển sang master mới và vẫn tiếp tục ghi dữ liệu vào master cũ. Vì vậy khi master cũ hoạt động trở lại, nó sẽ được gắn làm slave của master mới; dữ liệu của chính nó sẽ bị xóa và được replication lại từ master mới. Nhưng master mới không có dữ liệu mà client đã ghi sau đó, vì vậy phần dữ liệu này cũng bị mất.
 
-![Redis-cluster-split-brain](./images/Redis-cluster-split-brain.png)
+![Redis-cluster-split-brain](../../high-concurrency/images/redis-cluster-split-brain.png)
 
 ### Giải pháp cho vấn đề mất dữ liệu
 

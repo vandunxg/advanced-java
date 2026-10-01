@@ -96,7 +96,7 @@ HystrixThreadPoolProperties.Setter().withCoreSize(int value);
 
 Nếu cả 10 thread trong thread pool đều đang làm việc và không còn thread rảnh để xử lý việc khác, request mới sẽ được đưa vào queue chờ. Nếu queue đã đầy mà vẫn có request đến, request đó sẽ bị reject; logic fallback degradation được thực thi để trả về nhanh.
 
-![hystrix-thread-pool-queue](./images/hystrix-thread-pool-queue.png)
+![hystrix-thread-pool-queue](../../high-availability/images/hystrix-thread-pool-queue.png)
 
 Tham số này kiểm soát ngưỡng reject khi queue đầy. Vì không thể thay đổi nóng maxQueueSize nên tham số này được cung cấp để có thể thay đổi nóng và kiểm soát kích thước tối đa của queue.
 

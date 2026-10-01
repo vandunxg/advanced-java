@@ -36,7 +36,7 @@ Tất nhiên, từ năm ngoái Spring Cloud rất nổi bật và nhiều công 
 -   Bước thứ ba: consumer gọi provider.
 -   Bước thứ tư: consumer và provider đều thông báo bất đồng bộ cho trung tâm giám sát.
 
-![dubbo-operating-principle](./images/dubbo-operating-principle.png)
+![dubbo-operating-principle](../../distributed-system/images/dubbo-operating-principle.png)
 
 ### Nếu trung tâm đăng ký bị lỗi thì các dịch vụ có thể tiếp tục giao tiếp không?
 

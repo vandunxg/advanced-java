@@ -114,6 +114,6 @@ public String getProductInfos(String productIds) {
 
 Bây giờ, hãy xem lại cách kỹ thuật thread pool của Hystrix thực hiện isolation tài nguyên.
 
-![hystrix-thread-pool-isolation](./images/hystrix-thread-pool-isolation.png)
+![hystrix-thread-pool-isolation](../../high-availability/images/hystrix-thread-pool-isolation.png)
 
 Nếu bắt đầu từ Nginx mà toàn bộ cache đã hết hạn thì Nginx sẽ gọi dịch vụ sản phẩm thông qua dịch vụ cache. Kích thước thread mặc định của dịch vụ cache là 10, vì thế nhiều nhất chỉ có 10 thread gọi API của dịch vụ sản phẩm. Dù API dịch vụ sản phẩm gặp sự cố thì nhiều nhất cũng chỉ có 10 thread bị treo khi gọi API này; các thread Tomcat khác của dịch vụ cache vẫn có thể dùng để gọi dịch vụ khác và xử lý công việc khác.

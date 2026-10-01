@@ -2,7 +2,7 @@
 
 Phần trước đã trình bày request cache, fallback degradation mềm mại và circuit breaker ngắt mạch nhanh của Hystrix. Trong bài này, chúng ta sẽ tìm hiểu chi tiết về isolation thread pool và rate limit API của Hystrix.
 
-![hystrix-process](./images/hystrix-process.png)
+![hystrix-process](../../high-availability/images/hystrix-process.png)
 
 Hystrix kiểm tra thread pool hoặc semaphore có đầy hay không; request vượt quá dung lượng sẽ bị Reject và đi vào degradation trực tiếp, nhờ đó thực hiện được rate limit.
 
@@ -14,7 +14,7 @@ Hystrix sử dụng kỹ thuật Bulkhead Partition (isolation khoang tàu) đ�
 
 **Isolation khoang tàu** là việc chia không gian bên trong thân tàu thành nhiều khoang. Nếu một vài khoang bị thủng và nước tràn vào, dòng nước sẽ không chảy qua lại giữa các khoang. Nhờ vậy, khi tàu bị hư hại, tàu vẫn có đủ lực nổi và độ ổn định để giảm nguy cơ chìm ngay lập tức.
 
-![bulkhead-partition](./images/bulkhead-partition.jpg)
+![bulkhead-partition](../../high-availability/images/bulkhead-partition.jpg)
 
 Hystrix dùng một thread pool riêng cho mỗi dependency bên ngoài. Vì vậy, nếu lời gọi đến dependency đó bị trễ nghiêm trọng thì nhiều nhất chỉ thread pool của dependency đó bị cạn; các lời gọi đến dependency khác không bị ảnh hưởng.
 

@@ -60,7 +60,7 @@ Giả sử có một Redis cluster gồm 5 Redis master instance. Sau đó thự
 5. Nếu tạo khóa thất bại thì lần lượt xóa các khóa đã tạo trước đó;
 6. Chỉ cần người khác đã tạo một khóa phân tán thì bạn phải **liên tục thăm dò để thử lấy khóa**.
 
-![redis-redlock](./images/redis-redlock.png)
+![redis-redlock](../../distributed-system/images/redis-redlock.png)
 
 [Redis chính thức](https://redis.io/) đưa ra hai cách triển khai khóa phân tán dựa trên Redis ở trên; xem mô tả chi tiết tại https://redis.io/topics/distlock .
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/doocs/advanced-java"><img src="./images/advanced-java-doocs-shishan.png" alt="Chiến dịch bảo vệ quyền lợi"></a>
+  <a href="https://github.com/doocs/advanced-java"><img src="../../extra-page/images/advanced-java-doocs-shishan.png" alt="Chiến dịch bảo vệ quyền lợi"></a>
 </p>
 
 ## Tuyên bố

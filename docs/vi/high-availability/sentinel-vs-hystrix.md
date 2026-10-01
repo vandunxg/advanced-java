@@ -73,10 +73,10 @@ Sentinel hỗ trợ nhiều chiến lược điều chỉnh lưu lượng. Khi Q
 
 -   **Chế độ từ chối trực tiếp**: từ chối trực tiếp các request vượt ngưỡng.
 -   **Chế độ khởi động chậm/làm nóng**: khi lưu lượng tăng đột biến, kiểm soát tốc độ lưu lượng đi qua; tăng dần lưu lượng trong một khoảng thời gian cho đến ngưỡng tối đa, tạo thời gian làm nóng hệ thống lạnh và tránh làm hệ thống bị quá tải.
-    ![Slow-Start-Preheating-Mode](./images/Slow-Start-Preheating-Mode.jpg)
+    ![Slow-Start-Preheating-Mode](../../high-availability/images/Slow-Start-Preheating-Mode.jpg)
 
 -   **Chế độ điều tốc đều**: chế độ đều được triển khai bằng thuật toán Leaky Bucket, kiểm soát chặt chẽ khoảng thời gian giữa các request được phép đi qua; các request tích tụ sẽ xếp hàng, request vượt quá thời lượng timeout sẽ bị từ chối trực tiếp. Sentinel cũng hỗ trợ rate limit dựa trên quan hệ gọi, bao gồm rate limit theo bên gọi, theo entry point của call chain, theo lưu lượng liên quan, v.v. Dựa vào thông tin thống kê call chain mạnh mẽ của Sentinel, hệ thống có thể cung cấp rate limit chính xác theo nhiều chiều khác nhau.
-    ![Homogenizer-mode](./images/Homogenizer-mode.jpg)
+    ![Homogenizer-mode](../../high-availability/images/Homogenizer-mode.jpg)
 
 Hiện Sentinel chưa hỗ trợ tốt call chain bất đồng bộ; các phiên bản sau sẽ tập trung cải thiện hỗ trợ lời gọi bất đồng bộ.
 
@@ -84,7 +84,7 @@ Hiện Sentinel chưa hỗ trợ tốt call chain bất đồng bộ; các phiê
 
 Sentinel cung cấp bảo vệ ở cấp độ hệ thống; thuật toán bảo vệ tải lấy ý tưởng từ TCP BBR. Khi tải hệ thống cao mà vẫn tiếp tục cho request đi vào thì hệ thống có thể sập và không thể phản hồi. Trong môi trường cluster, load balancer mạng có thể chuyển lưu lượng mà máy này đáng lẽ phải gánh sang các máy khác. Nếu những máy khác lúc đó cũng đang ở trạng thái cận ngưỡng, lượng lưu lượng tăng thêm có thể khiến các máy đó sập, cuối cùng làm toàn bộ cluster không khả dụng. Với tình huống này, Sentinel cung cấp cơ chế bảo vệ tương ứng để cân bằng lưu lượng đầu vào và tải hệ thống, đảm bảo hệ thống xử lý được nhiều request nhất trong phạm vi năng lực của mình.
 
-![BRP](./images/BRP.jpg)
+![BRP](../../high-availability/images/BRP.jpg)
 
 ### 4. Giám sát thời gian thực và control panel
 
@@ -92,7 +92,7 @@ Sentinel cung cấp HTTP API để lấy thông tin giám sát thời gian thự
 
 Sentinel Dashboard cung cấp các chức năng phát hiện máy, cấu hình rule, xem giám sát thời gian thực và xem thông tin call chain, giúp người dùng dễ dàng xem giám sát và cấu hình.
 
-![Sentinel-Dashboard](./images/Sentinel-Dashboard.jpg)
+![Sentinel-Dashboard](../../high-availability/images/Sentinel-Dashboard.jpg)
 
 ### 5. Hệ sinh thái
 

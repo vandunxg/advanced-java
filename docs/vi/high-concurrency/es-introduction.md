@@ -59,7 +59,7 @@ Bất kỳ server nào cũng có thể gặp sự cố hoặc ngừng hoạt đ�
 
 Nói như thế này: shard được chia thành primary shard và replica shard. Primary shard thường được gọi tắt là shard, còn replica shard thường được gọi tắt là replica.
 
-![es-cluster-0](./images/es-cluster-0.png)
+![es-cluster-0](../../high-concurrency/images/es-cluster-0.png)
 
 ## So sánh khái niệm cốt lõi ES và DB
 

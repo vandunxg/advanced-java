@@ -4,7 +4,7 @@ Có một số bạn trước đây chủ yếu làm trong ngành truyền thố
 
 Hệ thống nghiệp vụ phân tán là việc chia một hệ thống lớn ban đầu được phát triển bằng Java thành **nhiều hệ thống con**; các hệ thống con gọi lẫn nhau để tạo thành một hệ thống tổng thể. Giả sử trước đây bạn làm một hệ thống OA gồm mô-đun phân quyền, mô-đun nhân viên, mô-đun nghỉ phép và mô-đun tài chính; chúng nằm trong một dự án, gồm nhiều mô-đun gọi lẫn nhau và được triển khai trên một máy. Bây giờ, nếu tách hệ thống đó thành bốn hệ thống riêng: hệ thống phân quyền, hệ thống nhân viên, hệ thống nghỉ phép và hệ thống tài chính, tức bốn dự án được triển khai trên bốn máy. Khi một yêu cầu đến, để hoàn thành yêu cầu đó, hệ thống nhân viên gọi hệ thống phân quyền, hệ thống nghỉ phép và hệ thống tài chính; mỗi hệ thống hoàn thành một phần công việc. Chỉ sau khi cả bốn hệ thống hoàn tất mới coi yêu cầu đã hoàn thành.
 
-![simple-distributed-system-oa](./images/simple-distributed-system-oa.png)
+![simple-distributed-system-oa](../../distributed-system/images/simple-distributed-system-oa.png)
 
 > Vài năm gần đây Spring Cloud bắt đầu thịnh hành; công nghệ này mới phổ biến chứ chưa được triển khai rộng rãi. Hiện nay Dubbo được dùng phổ biến hơn, vì vậy ở đây chủ yếu nói về Dubbo.
 

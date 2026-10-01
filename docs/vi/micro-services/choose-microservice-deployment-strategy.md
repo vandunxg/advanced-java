@@ -14,7 +14,7 @@ Một cách triển khai microservice là mô hình nhiều instance dịch vụ
 
 Sơ đồ dưới đây minh họa kiến trúc này:
 
-![deployment-strategy-1](./images/deployment-strategy-1.png)
+![deployment-strategy-1](../../micro-services/images/deployment-strategy-1.png)
 
 Mô hình này có một số tham số; một tham số cho biết mỗi instance dịch vụ gồm bao nhiêu tiến trình. Ví dụ, cần triển khai một instance dịch vụ Java thành ứng dụng web trên Apache Tomcat Server. Một instance dịch vụ Node.js có thể gồm một tiến trình cha và một số tiến trình con.
 
@@ -42,7 +42,7 @@ Một cách khác để triển khai microservice là mô hình một instance d
 
 Với mô hình một instance trên mỗi máy ảo, thông thường đóng gói dịch vụ thành ảnh máy ảo, chẳng hạn một Amazon EC2 AMI. Mỗi instance dịch vụ là một VM (ví dụ, một instance EC2) được khởi chạy từ ảnh này. Sơ đồ dưới đây minh họa kiến trúc này:
 
-![deployment-strategy-2](./images/deployment-strategy-2.png)
+![deployment-strategy-2](../../micro-services/images/deployment-strategy-2.png)
 
 Netflix dùng kiến trúc này để triển khai dịch vụ truyền phát video. Netflix dùng Aminator để đóng gói từng dịch vụ thành một EC2 AMI. Mỗi instance dịch vụ đang chạy là một instance EC2.
 
@@ -74,7 +74,7 @@ Theo mô hình này, mỗi instance dịch vụ chạy trong một container ri�
 
 Sơ đồ dưới đây minh họa mô hình này:
 
-![deployment-strategy-3](./images/deployment-strategy-3.png)
+![deployment-strategy-3](../../micro-services/images/deployment-strategy-3.png)
 
 Theo mô hình này, cần đóng gói dịch vụ thành ảnh container. Ảnh container là một hệ thống tệp chứa các thư viện và ứng dụng cần thiết để chạy dịch vụ. Một số ảnh container gồm toàn bộ hệ thống tệp gốc Linux, số khác thì nhẹ hơn. Ví dụ, để triển khai dịch vụ Java, cần tạo ảnh container có môi trường chạy Java, có thể cả máy chủ Apache Tomcat, cùng ứng dụng Java đã biên dịch.
 

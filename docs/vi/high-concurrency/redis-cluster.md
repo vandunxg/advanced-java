@@ -35,11 +35,11 @@ Có hai cách duy trì metadata của cluster: tập trung và protocol Gossip. 
 
 **Kiểu tập trung** lưu metadata của cluster (thông tin node, sự cố, v.v.) tập trung tại một node. Một đại diện tiêu biểu của cách lưu metadata tập trung là `storm` trong lĩnh vực big data. Đây là engine tính toán dữ liệu lớn phân tán theo thời gian thực, dùng cấu trúc lưu trữ metadata tập trung; bên dưới dựa trên zookeeper (middleware điều phối phân tán) để lưu trữ và duy trì toàn bộ metadata.
 
-![zookeeper-centralized-storage](./images/zookeeper-centralized-storage.png)
+![zookeeper-centralized-storage](../../high-concurrency/images/zookeeper-centralized-storage.png)
 
 Redis duy trì metadata cluster theo một cách khác là protocol `gossip`: tất cả node đều giữ một bản metadata. Nếu metadata thay đổi ở một node nào đó thì node đó liên tục gửi metadata đến các node khác để chúng cũng cập nhật metadata.
 
-![Redis-gossip](./images/redis-gossip.png)
+![Redis-gossip](../../high-concurrency/images/redis-gossip.png)
 
 **Ưu điểm** của kiểu **tập trung** là đọc và cập nhật metadata rất kịp thời: ngay khi metadata thay đổi, nó lập tức được cập nhật vào nơi lưu trữ tập trung và các node khác có thể nhận biết khi đọc. **Nhược điểm** là toàn bộ áp lực cập nhật metadata tập trung tại một nơi, có thể gây áp lực lên nơi lưu trữ metadata.
 
@@ -83,7 +83,7 @@ Mỗi lần ping, node gửi thông tin của chính mình và thông tin của 
 
 Khi nhận một key, trước tiên tính giá trị hash rồi lấy modulo theo số node. Sau đó ghi vào các master node khác nhau. Khi một master node bị sập, mọi request đến sẽ lấy modulo theo số master node còn lại mới nhất rồi thử lấy dữ liệu. Việc này khiến **phần lớn request không thể lấy được cache hợp lệ**, dẫn đến lượng lớn lưu lượng đổ vào database.
 
-![hash](./images/hash.png)
+![hash](../../high-concurrency/images/hash.png)
 
 #### Thuật toán consistent hash
 
@@ -95,7 +95,7 @@ Trong consistent hash, nếu một node bị sập thì chỉ dữ liệu nằm 
 
 Tuy nhiên, khi có quá ít node thì consistent hash dễ phân bố không đồng đều và gây ra vấn đề **hotspot cache**. Để giải quyết vấn đề hotspot này, consistent hash đưa vào cơ chế virtual node: tính nhiều giá trị hash cho mỗi node và đặt một virtual node tại từng vị trí tính được. Như vậy dữ liệu được phân bố đồng đều và cân bằng tải.
 
-![consistent-hashing-algorithm](./images/consistent-hashing-algorithm.png)
+![consistent-hashing-algorithm](../../high-concurrency/images/consistent-hashing-algorithm.png)
 
 #### Thuật toán hash slot của Redis cluster
 
@@ -105,7 +105,7 @@ Mỗi master trong Redis cluster giữ một phần slot; chẳng hạn có 3 ma
 
 Nếu bất kỳ máy nào bị sập thì hai node còn lại không bị ảnh hưởng, vì key được tra theo hash slot chứ không theo máy.
 
-![hash-slot](./images/hash-slot.png)
+![hash-slot](../../high-concurrency/images/hash-slot.png)
 
 ### High availability của Redis cluster và nguyên lý chuyển đổi primary/standby
 

@@ -24,7 +24,7 @@ Xét tình huống sau: dữ liệu 1/2/3 lần lượt đi vào Kafka. Kafka g�
 
 Lưu ý: các phiên bản Kafka mới đã chuyển nơi lưu offset từ Zookeeper sang Kafka broker và dùng topic offset nội bộ `__consumer_offsets` để lưu trữ.
 
-![mq-10](./images/mq-10.png)
+![mq-10](../../high-concurrency/images/mq-10.png)
 
 Nếu consumer lấy mỗi bản ghi rồi ghi một bản ghi vào database thì dữ liệu 1/2 có thể bị chèn hai lần vào database, khiến dữ liệu sai.
 
@@ -45,6 +45,6 @@ Thực ra vẫn cần suy nghĩ dựa trên nghiệp vụ; dưới đây là m�
 -   Ví dụ, nếu không thuộc hai tình huống trên thì xử lý phức tạp hơn một chút: khi producer gửi mỗi bản ghi, cần thêm vào đó một id duy nhất toàn cục, tương tự order id. Khi consumer nhận được message, trước tiên dùng id này tra trong Redis xem đã tiêu thụ chưa. Nếu chưa thì xử lý rồi ghi id này vào Redis; nếu đã tiêu thụ thì không xử lý nữa. Chỉ cần đảm bảo không xử lý lặp lại cùng một message.
 -   Ví dụ, dùng unique key của database để đảm bảo dữ liệu trùng không bị chèn nhiều lần. Do có ràng buộc unique key nên insert dữ liệu trùng chỉ phát sinh lỗi, không khiến database xuất hiện dữ liệu bẩn.
 
-![mq-11](./images/mq-11.png)
+![mq-11](../../high-concurrency/images/mq-11.png)
 
 Dĩ nhiên, cách đảm bảo việc tiêu thụ MQ có tính idempotent trong ứng dụng thực tế cần được cân nhắc theo nghiệp vụ cụ thể.

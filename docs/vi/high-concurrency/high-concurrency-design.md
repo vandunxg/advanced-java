@@ -41,7 +41,7 @@ Có thể chia thành 6 điểm sau:
 -   Read/write separation
 -   ElasticSearch
 
-![high-concurrency-system-design](./images/high-concurrency-system-design.png)
+![high-concurrency-system-design](../../high-concurrency/images/high-concurrency-system-design.png)
 
 ### Tách hệ thống
 

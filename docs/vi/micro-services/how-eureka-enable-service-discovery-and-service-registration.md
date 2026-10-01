@@ -20,11 +20,11 @@ Một giải pháp tốt hơn là `khám phá dịch vụ (Service Discovery)`. 
 
 Thêm các dependency liên quan đến `Eureka Server` vào dự án, rồi thêm chú thích `@EnableEurekaServer` vào lớp khởi chạy để dùng dự án làm trung tâm đăng ký. Sau khi khởi động dịch vụ, truy cập trang như sau:
 
-![eureka-server-homepage.png](./images/eureka-server-homepage.png)
+![eureka-server-homepage.png](../../micro-services/images/eureka-server-homepage.png)
 
 Tiếp tục thêm hai mô-đun `service-provider` và `service-consumer`, thêm chú thích `@EnableEurekaClient` vào lớp khởi chạy và chỉ định địa chỉ trung tâm đăng ký là `Eureka Server` vừa khởi động. Khi truy cập lại, có thể thấy hai dịch vụ đã được đăng ký.
 
-![eureka-instance-registered-currently.png](./images/eureka-instance-registered-currently.png)
+![eureka-instance-registered-currently.png](../../micro-services/images/eureka-instance-registered-currently.png)
 
 Có thể thấy sử dụng `Eureka` rất đơn giản: chỉ cần thêm một vài chú thích và cấu hình là có thể đăng ký và khám phá dịch vụ. Tiếp theo, hãy xem các chức năng này được triển khai như thế nào.
 
@@ -32,7 +32,7 @@ Có thể thấy sử dụng `Eureka` rất đơn giản: chỉ cần thêm mộ
 
 Trung tâm đăng ký cung cấp giao diện đăng ký dịch vụ, được gọi khi dịch vụ mới khởi chạy để đăng ký dịch vụ, hoặc khi heartbeat phát hiện trạng thái dịch vụ bất thường để thay đổi trạng thái tương ứng. Đăng ký dịch vụ là gửi yêu cầu `POST` kèm thông tin instance hiện tại đến phương thức `addInstance` của lớp `ApplicationResource`.
 
-![eureka-server-applicationresource-addinstance.png](./images/eureka-server-applicationresource-addinstance.png)
+![eureka-server-applicationresource-addinstance.png](../../micro-services/images/eureka-server-applicationresource-addinstance.png)
 
 Có thể thấy phương thức này gọi phương thức `register` của lớp `PeerAwareInstanceRegistryImpl`. Phương thức này chủ yếu gồm hai bước:
 
@@ -41,37 +41,37 @@ Có thể thấy phương thức này gọi phương thức `register` của l�
 
 Thông tin đăng ký dịch vụ được lưu trong một `map` lồng nhau, có cấu trúc như sau:
 
-![eureka-server-registry-structure.png](./images/eureka-server-registry-structure.png)
+![eureka-server-registry-structure.png](../../micro-services/images/eureka-server-registry-structure.png)
 
 `key` của `map` tầng thứ nhất là tên ứng dụng (ứng với `SERVICE-PROVIDER` trong `Demo`); `key` của `map` tầng thứ hai là tên instance tương ứng với ứng dụng (ứng với `mghio-mbp:service-provider:9999` trong `Demo`). Một ứng dụng có thể có nhiều instance; quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-server-register-sequence-chart.png](./images/eureka-server-register-sequence-chart.png)
+![eureka-server-register-sequence-chart.png](../../micro-services/images/eureka-server-register-sequence-chart.png)
 
 ### Gia hạn dịch vụ (Renew)
 
 Nhà cung cấp dịch vụ (chẳng hạn `service-provider` trong `Demo`) định kỳ gia hạn dịch vụ, tương tự heartbeat, để thông báo trạng thái của mình cho trung tâm đăng ký `Eureka Server` và tránh bị `Eureka Server` cho là đã ngừng hoạt động rồi gỡ xuống. Gia hạn dịch vụ là gửi yêu cầu `PUT` kèm thông tin instance hiện tại đến phương thức `renewLease` của lớp `InstanceResource`.
 
-![eureka-server-instanceresource-renew.png](./images/eureka-server-instanceresource-renew.png)
+![eureka-server-instanceresource-renew.png](../../micro-services/images/eureka-server-instanceresource-renew.png)
 
 Trong phương thức `renew` của `PeerAwareInstanceRegistryImpl`, có thể thấy các bước gia hạn dịch vụ nhìn chung giống với đăng ký dịch vụ: trước tiên cập nhật trạng thái của nút `Eureka Server` hiện tại; sau khi gia hạn thành công, đồng bộ trạng thái sang các nút `Eureka Server` khác theo cách bất đồng bộ. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-server-renew-sequence-chart.png](./images/eureka-server-renew-sequence-chart.png)
+![eureka-server-renew-sequence-chart.png](../../micro-services/images/eureka-server-renew-sequence-chart.png)
 
 ### Gỡ dịch vụ (Cancel)
 
 Khi nhà cung cấp dịch vụ (chẳng hạn `service-provider` trong `Demo`) dừng dịch vụ, nó gửi yêu cầu để thông báo cho trung tâm đăng ký `Eureka Server` gỡ dịch vụ, tránh để consumer gọi dịch vụ không còn tồn tại từ trung tâm đăng ký. Gỡ dịch vụ là gửi yêu cầu `DELETE` kèm thông tin instance hiện tại đến phương thức `cancelLease` của lớp `InstanceResource`.
 
-![eureka-server-instanceresource-cancellease.png](./images/eureka-server-instanceresource-cancellease.png)
+![eureka-server-instanceresource-cancellease.png](../../micro-services/images/eureka-server-instanceresource-cancellease.png)
 
 Trong phương thức `cancel` của `PeerAwareInstanceRegistryImpl`, có thể thấy các bước gỡ dịch vụ nhìn chung giống với gia hạn dịch vụ: trước tiên gỡ dịch vụ khỏi nút `Eureka Server` hiện tại; sau khi gỡ thành công, đồng bộ trạng thái sang các nút `Eureka Server` khác theo cách bất đồng bộ. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-server-cancellease-sequence-chart.png](./images/eureka-server-cancellease-sequence-chart.png)
+![eureka-server-cancellease-sequence-chart.png](../../micro-services/images/eureka-server-cancellease-sequence-chart.png)
 
 ### Loại bỏ dịch vụ (Eviction)
 
 Khi khởi động, trung tâm đăng ký `Eureka Server` chạy một luồng nền `evictionTimer` để định kỳ (mặc định `60` giây) kiểm tra dịch vụ. Tiêu chí loại bỏ là dịch vụ không thực hiện `Renew` trong một khoảng thời gian nhất định; thời gian hết hạn mặc định là `90` giây. Nghĩa là nếu dịch vụ đã đăng ký không gia hạn dịch vụ (`Renew`) với trung tâm đăng ký `Eureka Server` trong `90` giây thì sẽ bị loại khỏi trung tâm đăng ký. Có thể sửa thời gian hết hạn bằng cấu hình `eureka.instance.leaseExpirationDurationInSeconds`; có thể sửa khoảng thời gian kiểm tra định kỳ bằng cấu hình `eureka.server.evictionIntervalTimerInMs`. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-server-evict-sequence-chart.png](./images/eureka-server-evict-sequence-chart.png)
+![eureka-server-evict-sequence-chart.png](../../micro-services/images/eureka-server-evict-sequence-chart.png)
 
 ## Nhà cung cấp dịch vụ (Service Provider)
 
@@ -81,19 +81,19 @@ Khi khởi động, trung tâm đăng ký `Eureka Server` chạy một luồng n
 
 Để cung cấp dịch vụ ra bên ngoài, trước hết dịch vụ phải đăng ký thông tin liên quan với trung tâm đăng ký `Eureka Server`. Để làm được điều này, cần cấu hình `eureka.client.register-with-eureka=true`; giá trị mặc định là `true`. Trung tâm đăng ký không cần tự đăng ký với chính nó, nên đặt cấu hình này thành `false`. Lời gọi này khá đơn giản; quy trình chính như sơ đồ dưới đây:
 
-![eureka-service-provider-register-sequence-chart.png](./images/eureka-server-register-sequence-chart.png)
+![eureka-service-provider-register-sequence-chart.png](../../micro-services/images/eureka-server-register-sequence-chart.png)
 
 ### Gia hạn dịch vụ (Renew)
 
 Phía nhà cung cấp dịch vụ định kỳ gửi heartbeat (mặc định `30` giây), chủ yếu để thông báo với trung tâm đăng ký `Eureka Server` rằng trạng thái vẫn bình thường và dịch vụ vẫn hoạt động. Có thể thay đổi bằng cấu hình `eureka.instance.lease-renewal-interval-in-seconds`. Tất nhiên, để gia hạn dịch vụ cần cấu hình `eureka.client.register-with-eureka=true` để đăng ký dịch vụ với trung tâm đăng ký. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-service-provider-renew-sequence-chart.png](./images/eureka-service-provider-renew-sequence-chart.png)
+![eureka-service-provider-renew-sequence-chart.png](../../micro-services/images/eureka-service-provider-renew-sequence-chart.png)
 
 ### Gỡ dịch vụ (Cancel)
 
 Khi dịch vụ ở phía nhà cung cấp dừng, nó phải gửi yêu cầu `DELETE` để thông báo với trung tâm đăng ký `Eureka Server` rằng mình đã dừng, để trung tâm đăng ký gỡ dịch vụ và tránh cho phía consumer lấy dịch vụ không khả dụng từ trung tâm đăng ký. Quy trình này được triển khai khá đơn giản: phương thức `shutdown` trong lớp `DiscoveryClient` được gắn chú thích `@PreDestroy`; khi dịch vụ dừng, thao tác gỡ dịch vụ sẽ tự động được kích hoạt. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-service-provider-cancel-sequence-chart.png](./images/eureka-service-provider-cancel-sequence-chart.png)
+![eureka-service-provider-cancel-sequence-chart.png](../../micro-services/images/eureka-service-provider-cancel-sequence-chart.png)
 
 ## Consumer dịch vụ (Service Consumer)
 
@@ -103,17 +103,17 @@ Nếu consumer dịch vụ ở đây không cần được dịch vụ khác g�
 
 Sau khi khởi động, consumer dịch vụ trước tiên cần lấy danh sách dịch vụ khả dụng từ trung tâm đăng ký `Eureka Server` và đồng thời lưu một bản cache cục bộ. Thao tác lấy danh sách này được thực hiện khi dịch vụ khởi động và instance của lớp `DiscoverClient` được khởi tạo.
 
-![eureka-service-consumer-fetchregistry.png](./images/eureka-service-consumer-fetchregistry.png)
+![eureka-service-consumer-fetchregistry.png](../../micro-services/images/eureka-service-consumer-fetchregistry.png)
 
 Có thể thấy để thực hiện thao tác lấy danh sách dịch vụ thì cần cấu hình `eureka.client.fetch-registry=true`; giá trị mặc định là `true`. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-service-consumer-fetch-sequence-chart.png](./images/eureka-service-consumer-fetch-sequence-chart.png)
+![eureka-service-consumer-fetch-sequence-chart.png](../../micro-services/images/eureka-service-consumer-fetch-sequence-chart.png)
 
 ### Cập nhật danh sách dịch vụ (Update)
 
 Như đã thấy trong quy trình `lấy danh sách dịch vụ (Fetch)` ở trên, một bản sao cũng được lưu cục bộ. Vì vậy, cần định kỳ lấy cấu hình dịch vụ mới nhất từ trung tâm đăng ký `Eureka Server`, so sánh rồi cập nhật cache cục bộ. Có thể sửa khoảng thời gian cập nhật bằng cấu hình `eureka.client.registry-fetch-interval-seconds`; mặc định là `30` giây. Để thực hiện cập nhật danh sách dịch vụ, cần cấu hình `eureka.client.register-with-eureka=true`; giá trị mặc định là `true`. Quy trình gọi chính như sơ đồ dưới đây:
 
-![eureka-service-consumer-update-sequence-chart.png](./images/eureka-service-consumer-update-sequence-chart.png)
+![eureka-service-consumer-update-sequence-chart.png](../../micro-services/images/eureka-service-consumer-update-sequence-chart.png)
 
 ## Tổng kết
 

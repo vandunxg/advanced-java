@@ -30,7 +30,7 @@ Chế độ standalone chỉ ở mức Demo; thông thường bạn khởi chạ
 
 Chế độ cluster thông thường nghĩa là khởi chạy nhiều RabbitMQ instance trên nhiều máy, mỗi máy một instance. **Queue bạn tạo chỉ nằm trên một RabbitMQ instance**, nhưng metadata của queue được đồng bộ đến từng instance (có thể xem metadata là một số thông tin cấu hình của queue; thông qua metadata có thể tìm ra instance chứa queue). Khi consumer tiêu thụ, nếu kết nối đến một instance khác thì instance đó sẽ lấy dữ liệu từ instance chứa queue.
 
-![mq-7](./images/mq-7.png)
+![mq-7](../../high-concurrency/images/mq-7.png)
 
 Cách này thực sự khá phiền và không tốt, **không đạt được cái gọi là phân tán**, chỉ là một cluster thông thường. Vì vậy hoặc consumer kết nối ngẫu nhiên đến một instance mỗi lần rồi lấy dữ liệu, hoặc kết nối cố định đến instance chứa queue để tiêu thụ. Cách đầu có **chi phí lấy dữ liệu**; cách sau dẫn đến **nút thắt hiệu năng ở một instance đơn lẻ**.
 
@@ -44,7 +44,7 @@ Vì vậy, tình huống này khá khó xử: **không có high availability th�
 
 Trước đây, đây từng là chế độ high availability của RabbitMQ. Khác với chế độ cluster thông thường, trong mirror cluster, queue bạn tạo — cả metadata lẫn message trong queue — đều **tồn tại trên nhiều instance**. Nghĩa là mỗi RabbitMQ node đều có một **mirror đầy đủ** của queue, bao gồm toàn bộ dữ liệu queue. Sau đó, mỗi lần ghi message vào queue, message sẽ tự động được **đồng bộ** đến queue trên nhiều instance.
 
-![mq-8](./images/mq-8.png)
+![mq-8](../../high-concurrency/images/mq-8.png)
 
 Vậy **bật chế độ mirror cluster** như thế nào? Thực ra rất đơn giản. RabbitMQ có management console tốt; chỉ cần thêm policy trong backend. Policy này là **policy cho chế độ mirror cluster**; khi chỉ định, có thể yêu cầu đồng bộ dữ liệu đến mọi node hoặc đến một số node xác định. Khi tạo queue tiếp theo và áp dụng policy này, dữ liệu sẽ tự động được đồng bộ sang các node khác.
 
@@ -92,11 +92,11 @@ Trước Kafka 0.8 chưa có cơ chế HA: nếu một broker bị sập thì pa
 
 Ví dụ, giả sử tạo một topic và chỉ định có 3 partition, lần lượt nằm trên ba máy. Nếu máy thứ hai bị sập thì 1/3 dữ liệu của topic bị mất; do đó không thể đạt high availability.
 
-![kafka-before](./images/kafka-before.png)
+![kafka-before](../../high-concurrency/images/kafka-before.png)
 
 Từ Kafka 0.8 trở đi có cơ chế HA là replica (bản sao). Dữ liệu của mỗi partition được đồng bộ sang các máy khác để tạo nhiều replica riêng. Các replica sẽ bầu ra một leader; producer và consumer đều làm việc với leader, còn các replica khác là follower. Khi ghi, leader chịu trách nhiệm đồng bộ dữ liệu sang tất cả follower; khi đọc thì đọc trực tiếp dữ liệu trên leader. Chỉ có thể đọc ghi leader thôi sao? Rất đơn giản: **nếu tùy ý đọc ghi từng follower thì phải quan tâm đến vấn đề nhất quán dữ liệu**, khiến độ phức tạp của hệ thống quá cao và rất dễ phát sinh vấn đề. Kafka phân phối đồng đều mọi replica của một partition lên các máy khác nhau để tăng khả năng chịu lỗi.
 
-![kafka-after](./images/kafka-after.png)
+![kafka-after](../../high-concurrency/images/kafka-after.png)
 
 Làm như vậy sẽ có **high availability**: nếu một broker bị sập thì không sao, vì partition trên broker đó đều có bản sao ở các máy khác. Nếu partition trên broker bị sập là leader thì hệ thống sẽ **bầu chọn lại** một leader mới từ các follower; mọi người tiếp tục đọc ghi trên leader mới. Đó chính là high availability.
 

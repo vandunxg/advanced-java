@@ -20,11 +20,11 @@ Trước tiên hãy xem hai tình huống có thể làm sai thứ tự:
 
 -   **RabbitMQ**: một queue, nhiều consumer. Ví dụ producer gửi ba bản ghi data1/data2/data3 theo thứ tự vào RabbitMQ; chúng được đưa vào một memory queue của RabbitMQ. Có ba consumer lần lượt tiêu thụ một bản ghi trong số đó. Kết quả, consumer 2 hoàn tất trước và lưu data2 vào database, sau đó mới đến data1/data3. Rõ ràng thứ tự đã bị đảo lộn.
 
-![rabbitmq-order-01](./images/rabbitmq-order-01.png)
+![rabbitmq-order-01](../../high-concurrency/images/rabbitmq-order-01.png)
 
 -   **Kafka**: giả sử tạo một topic có ba partition. Khi ghi dữ liệu, producer có thể chỉ định một key; chẳng hạn chỉ định order id làm key thì dữ liệu liên quan đến cùng một đơn hàng chắc chắn được phân phối vào cùng một partition, và dữ liệu trong partition đó chắc chắn có thứ tự.<br>Khi consumer lấy dữ liệu từ partition thì cũng có thứ tự. Đến đây thứ tự vẫn ổn, chưa bị đảo. Tiếp đó trong consumer, có thể dùng **nhiều thread để xử lý message đồng thời**. Vì nếu consumer chỉ dùng một thread để tiêu thụ và xử lý mà mỗi lần xử lý mất nhiều thời gian, chẳng hạn hàng chục mili giây cho một message, thì một giây chỉ xử lý được vài chục message, throughput quá thấp. Nhưng nếu nhiều thread chạy đồng thời thì thứ tự có thể bị đảo lộn.
 
-![kafka-order-01](./images/kafka-order-01.png)
+![kafka-order-01](../../high-concurrency/images/kafka-order-01.png)
 
 ### Phương án giải quyết
 
@@ -32,7 +32,7 @@ Trước tiên hãy xem hai tình huống có thể làm sai thứ tự:
 
 Tách thành nhiều queue, mỗi queue có một consumer; chỉ là có thêm một số queue nên đúng là hơi phiền, đồng thời làm giảm throughput. Có thể dùng nhiều thread bên trong consumer để tiêu thụ.
 
-![rabbitmq-order-02](./images/rabbitmq-order-02.png)
+![rabbitmq-order-02](../../high-concurrency/images/rabbitmq-order-02.png)
 
 Hoặc chỉ dùng một queue và gắn với một consumer; bên trong consumer dùng memory queue để xếp hàng rồi phân phối cho các worker khác nhau ở tầng dưới xử lý.
 
@@ -43,4 +43,4 @@ Lưu ý, consumer không trực tiếp tiêu thụ message mà hash message theo
 -   Một topic, một partition, một consumer và một thread tiêu thụ bên trong. Throughput của một thread quá thấp nên thông thường không dùng cách này.
 -   Tạo N memory queue; dữ liệu có cùng key đều vào cùng một memory queue. Sau đó tạo N thread, mỗi thread tiêu thụ một memory queue là có thể đảm bảo thứ tự.
 
-![kafka-order-02](./images/kafka-order-02.png)
+![kafka-order-02](../../high-concurrency/images/kafka-order-02.png)

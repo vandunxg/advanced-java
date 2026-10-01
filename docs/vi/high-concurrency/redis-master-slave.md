@@ -2,7 +2,7 @@
 
 Một Redis instance đơn lẻ có thể xử lý khoảng vài chục nghìn QPS. Cache thường được dùng để hỗ trợ **đọc với high concurrency**. Vì vậy kiến trúc được triển khai theo mô hình primary-replica (master-slave): một primary và nhiều replica; primary phụ trách ghi và sao chép dữ liệu sang các replica khác, còn các node replica phụ trách đọc. **Toàn bộ request đọc đều đi qua các replica**. Cách này cũng giúp mở rộng theo chiều ngang dễ dàng, **hỗ trợ đọc với high concurrency**.
 
-![Redis-master-slave](./images/redis-master-slave.png)
+![Redis-master-slave](../../high-concurrency/images/redis-master-slave.png)
 
 Redis replication -> kiến trúc primary-replica -> tách đọc ghi -> mở rộng theo chiều ngang để hỗ trợ đọc với high concurrency
 
@@ -25,7 +25,7 @@ Khi khởi động slave node, nó gửi lệnh `PSYNC` đến master node.
 
 Nếu đây là lần đầu slave node kết nối với master node thì sẽ kích hoạt `full resynchronization` — sao chép toàn bộ dữ liệu. Lúc này master khởi động một luồng nền để tạo file snapshot `RDB`, đồng thời lưu vào bộ nhớ mọi lệnh ghi mới nhận từ client. Sau khi tạo xong file `RDB`, master gửi file này cho slave; slave **ghi file vào đĩa cục bộ trước rồi mới nạp vào bộ nhớ**. Tiếp theo, master gửi các lệnh ghi đang được lưu trong bộ nhớ cho slave để slave đồng bộ dữ liệu. Nếu slave node gặp sự cố mạng với master node và mất kết nối, nó sẽ tự động kết nối lại. Sau khi kết nối, master node chỉ sao chép cho slave phần dữ liệu còn thiếu.
 
-![Redis-master-slave-replication](./images/redis-master-slave-replication.png)
+![Redis-master-slave-replication](../../high-concurrency/images/redis-master-slave-replication.png)
 
 ### Tiếp tục replication từ điểm bị gián đoạn
 
@@ -56,7 +56,7 @@ Khi khởi động, slave node lưu thông tin của master node tại máy cụ
 
 Slave node có một tác vụ định kỳ bên trong; mỗi giây tác vụ này kiểm tra xem có master node mới nào cần kết nối và replication hay không. Nếu có, nó thiết lập kết nối mạng socket với master node. Sau đó slave node gửi lệnh `ping` đến master node. Nếu master được cấu hình requirepass thì slave node phải gửi mật khẩu masterauth để xác thực. **Lần đầu tiên, master node thực hiện sao chép toàn bộ dữ liệu** và gửi toàn bộ dữ liệu cho slave node. Từ những lần sau, master node liên tục sao chép bất đồng bộ các lệnh ghi cho slave node.
 
-![Redis-master-slave-replication-detail](./images/redis-master-slave-replication-detail.png)
+![Redis-master-slave-replication-detail](../../high-concurrency/images/redis-master-slave-replication-detail.png)
 
 ### Sao chép toàn bộ dữ liệu
 

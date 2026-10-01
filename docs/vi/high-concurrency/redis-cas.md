@@ -14,7 +14,7 @@ Hơn nữa, bản thân Redis đã có phương án optimistic lock kiểu CAS t
 
 Tại một thời điểm, nhiều system instance cùng cập nhật một key. Có thể dùng zookeeper để triển khai distributed lock. Mỗi hệ thống lấy distributed lock thông qua zookeeper, đảm bảo tại cùng một thời điểm chỉ có một system instance thao tác trên một key; các instance khác không được đọc hoặc ghi.
 
-![zookeeper-distributed-lock](./images/zookeeper-distributed-lock.png)
+![zookeeper-distributed-lock](../../high-concurrency/images/zookeeper-distributed-lock.png)
 
 Dữ liệu bạn ghi vào cache đều được truy vấn từ mysql và cũng phải được ghi vào mysql. Khi ghi vào mysql, bắt buộc phải lưu một timestamp; khi truy vấn từ mysql cũng lấy timestamp đó ra.
 

@@ -41,7 +41,7 @@ Nhiều socket có thể đồng thời phát sinh các thao tác khác nhau; m�
 
 Hãy xem quá trình giao tiếp giữa client và Redis:
 
-![Redis-single-thread-model](./images/redis-single-thread-model.png)
+![Redis-single-thread-model](../../high-concurrency/images/redis-single-thread-model.png)
 
 Cần hiểu rằng giao tiếp được thực hiện qua socket. Nếu chưa biết socket, bạn có thể tìm hiểu lập trình mạng socket trước.
 

@@ -40,13 +40,13 @@ Trước tiên nói về các tình huống sử dụng phổ biến của messa
 
 Hãy xem tình huống sau. Hệ thống A gửi dữ liệu đến ba hệ thống B, C và D bằng cách gọi API. Nếu hệ thống E cũng cần dữ liệu này thì sao? Nếu hệ thống D hiện không cần nữa thì sao? Người phụ trách hệ thống A gần như phát điên...
 
-![mq-1](./images/mq-1.png)
+![mq-1](../../high-concurrency/images/mq-1.png)
 
 Trong tình huống này, hệ thống A bị coupling chặt với đủ loại hệ thống khác. A tạo ra một dữ liệu quan trọng và nhiều hệ thống đều cần A gửi dữ liệu đó. A phải luôn cân nhắc phải làm gì nếu một trong các hệ thống BCDE bị sập: có nên gửi lại không, có nên lưu message không? Đau đầu quá!
 
 Nếu dùng MQ, hệ thống A tạo một dữ liệu rồi gửi vào MQ; hệ thống nào cần dữ liệu thì tự lấy từ MQ. Nếu có hệ thống mới cần dữ liệu thì chỉ việc lấy từ MQ; nếu hệ thống nào đó không cần dữ liệu nữa thì hủy đăng ký nhận message MQ là xong. Như vậy, hệ thống A hoàn toàn không cần cân nhắc phải gửi dữ liệu cho ai, không cần duy trì đoạn code này, cũng không cần quan tâm hệ thống kia gọi thành công hay thất bại, timeout, v.v.
 
-![mq-2](./images/mq-2.png)
+![mq-2](../../high-concurrency/images/mq-2.png)
 
 **Tóm lại**: thông qua MQ và mô hình Pub/Sub (publish-subscribe), hệ thống A được tách rời hoàn toàn khỏi các hệ thống khác.
 
@@ -56,13 +56,13 @@ Nếu dùng MQ, hệ thống A tạo một dữ liệu rồi gửi vào MQ; hệ
 
 Xem thêm tình huống sau: hệ thống A nhận một request, cần ghi vào database cục bộ và cũng cần ghi vào database của ba hệ thống B, C, D. Ghi vào database cục bộ mất 3ms; ghi vào database của B, C, D lần lượt mất 300ms, 450ms và 200ms. Tổng độ trễ của request là 3 + 300 + 450 + 200 = 953ms, gần 1 giây; người dùng sẽ thấy mọi thứ chậm kinh khủng. Người dùng gửi request qua browser rồi phải đợi 1 giây, gần như không thể chấp nhận được.
 
-![mq-3](./images/mq-3.png)
+![mq-3](../../high-concurrency/images/mq-3.png)
 
 Thông thường, các doanh nghiệp Internet yêu cầu mỗi thao tác trực tiếp của người dùng phải hoàn tất trong vòng 200ms để người dùng gần như không nhận thấy độ trễ.
 
 Nếu **dùng MQ**, hệ thống A liên tục gửi 3 message vào hàng đợi MQ; giả sử mất 5ms. Từ lúc nhận request đến lúc trả response cho người dùng, tổng thời gian của hệ thống A là 3 + 5 = 8ms. Với người dùng, cảm giác chỉ là bấm một nút rồi 8ms sau đã nhận được kết quả; thật thoải mái! Website làm tốt quá, nhanh thật!
 
-![mq-4](./images/mq-4.png)
+![mq-4](../../high-concurrency/images/mq-4.png)
 
 #### Làm phẳng đỉnh tải
 
@@ -72,11 +72,11 @@ MySQL thông thường chỉ chịu được khoảng 2.000 request mỗi giây;
 
 Nhưng sau khi giờ cao điểm qua đi, đến buổi chiều lại thành giờ thấp điểm; có thể chỉ khoảng 10.000 người dùng đồng thời thao tác trên website và số request mỗi giây chỉ khoảng 50, gần như không gây áp lực cho toàn hệ thống.
 
-![mq-5](./images/mq-5.png)
+![mq-5](../../high-concurrency/images/mq-5.png)
 
 Nếu dùng MQ, mỗi giây có 5.000 request được ghi vào MQ; hệ thống A xử lý tối đa 2.000 request mỗi giây vì MySQL chỉ xử lý được tối đa 2.000 request mỗi giây. Hệ thống A từ từ lấy request từ MQ, mỗi giây lấy 2.000 request và không vượt quá số request tối đa nó có thể xử lý mỗi giây; thế là ổn. Như vậy, dù trong giờ cao điểm, hệ thống A cũng không bị sập. MQ nhận 5.000 request mỗi giây và chỉ đưa ra 2.000 request, vì thế vào giờ cao điểm buổi trưa (một giờ), có thể có vài trăm nghìn đến vài triệu request bị dồn trong MQ.
 
-![mq-6](./images/mq-6.png)
+![mq-6](../../high-concurrency/images/mq-6.png)
 
 Lượng request bị dồn trong thời gian cao điểm ngắn này vẫn ổn. Sau giờ cao điểm, mỗi giây chỉ có 50 request vào MQ nhưng hệ thống A vẫn xử lý với tốc độ 2.000 request mỗi giây. Vì vậy, ngay sau khi giờ cao điểm qua đi, hệ thống A sẽ nhanh chóng xử lý hết các message còn tồn đọng.
 

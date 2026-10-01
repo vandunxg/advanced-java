@@ -16,7 +16,7 @@ Với hệ thống A, giả sử vào giờ cao điểm có 5000 request mỗi g
 
 Đó là cache avalanche.
 
-![redis-caching-avalanche](./images/redis-caching-avalanche.png)
+![redis-caching-avalanche](../../high-concurrency/images/redis-caching-avalanche.png)
 
 Khoảng 3 năm trước, một công ty Internet khá nổi tiếng trong nước từng gặp sự cố cache gây avalanche; toàn bộ hệ thống backend bị sập. Sự cố kéo dài từ chiều hôm đó đến 3–4 giờ sáng, gây thiệt hại cho công ty hàng chục triệu.
 
@@ -26,7 +26,7 @@ Các phương án xử lý cache avalanche trước, trong và sau sự cố nh�
 -   Trong sự cố: dùng cache ehcache cục bộ + rate limit và degradation của hystrix để tránh làm sập MySQL.
 -   Sau sự cố: persistence Redis; khi khởi động lại sẽ tự động tải dữ liệu từ đĩa để nhanh chóng khôi phục dữ liệu cache.
 
-![redis-caching-avalanche-solution](./images/redis-caching-avalanche-solution.png)
+![redis-caching-avalanche-solution](../../high-concurrency/images/redis-caching-avalanche-solution.png)
 
 Người dùng gửi request; sau khi hệ thống A nhận request, trước tiên nó truy vấn cache ehcache cục bộ. Nếu không tìm thấy thì truy vấn Redis. Nếu cả ehcache và Redis đều không có thì truy vấn database, rồi ghi kết quả từ database vào ehcache và Redis.
 
@@ -46,7 +46,7 @@ Cache không tìm thấy 4000 request tấn công đó; mỗi lần truy vấn d
 
 Lấy một ví dụ. id trong database bắt đầu từ 1, nhưng các request do hacker gửi đều có id âm. Khi đó cache không có dữ liệu; request mỗi lần đều “**coi cache như không tồn tại**” và truy vấn thẳng database. Tình huống cache penetration do tấn công độc hại như vậy có thể trực tiếp làm sập database.
 
-![redis-caching-penetration](./images/redis-caching-penetration.png)
+![redis-caching-penetration](../../high-concurrency/images/redis-caching-penetration.png)
 
 Cách giải quyết rất đơn giản: mỗi lần hệ thống A không tìm thấy dữ liệu trong database thì ghi một giá trị rỗng vào cache, chẳng hạn `set -999 UNKNOWN`. Sau đó đặt thời gian hết hạn; lần sau khi có truy cập với key giống vậy thì có thể lấy dữ liệu trực tiếp từ cache cho đến khi cache hết hạn.
 
@@ -57,7 +57,7 @@ Tất nhiên, nếu hacker dùng một id âm khác nhau trong mỗi lần tấn
 
 Bloom filter giúp sàng lọc sơ bộ các request truy cập, tránh áp lực truy vấn do dữ liệu không tồn tại gây ra.
 
-![redis-caching-avoid-penetration](./images/redis-caching-avoid-penetration.png)
+![redis-caching-avoid-penetration](../../high-concurrency/images/redis-caching-avoid-penetration.png)
 
 ### Cache breakdown (Hotspot Invalid)
 

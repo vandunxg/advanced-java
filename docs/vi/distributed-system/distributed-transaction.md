@@ -33,7 +33,7 @@ Nếu cần thao tác trên cơ sở dữ liệu thuộc dịch vụ khác, khô
 
 Nếu muốn thao tác trên cơ sở dữ liệu của dịch vụ khác, bắt buộc phải thực hiện thông qua **gọi giao diện của dịch vụ đó**; tuyệt đối không được truy cập chéo cơ sở dữ liệu của dịch vụ khác.
 
-![distributed-transacion-XA](./images/distributed-transaction-XA.png)
+![distributed-transacion-XA](../../distributed-system/images/distributed-transaction-XA.png)
 
 ### Phương án TCC
 
@@ -51,7 +51,7 @@ Ngoài ra, tốt nhất là thời gian thực thi của từng nghiệp vụ đ
 
 Tuy nhiên, thành thật mà nói, nói chung nên tránh cách này nếu có thể. Tự viết logic rollback hoặc bù trừ rất khó chịu, và mã nghiệp vụ sẽ khó bảo trì.
 
-![distributed-transacion-TCC](./images/distributed-transaction-TCC.png)
+![distributed-transacion-TCC](../../distributed-system/images/distributed-transaction-TCC.png)
 
 ### Phương án Saga
 
@@ -61,7 +61,7 @@ Các nghiệp vụ như hệ thống tài chính cốt lõi có thể chọn ph�
 
 Mỗi bên tham gia trong quy trình nghiệp vụ commit giao dịch cục bộ của mình. Nếu một bên tham gia thất bại thì bù trừ các bên đã thành công trước đó. Bên trái của hình dưới là quy trình giao dịch bình thường; khi xảy ra lỗi ở T3 thì bắt đầu quy trình bù trừ giao dịch ở bên phải, thực thi ngược các dịch vụ bù trừ C3, C2, C1 cho T3, T2, T1 để hoàn lại các dữ liệu đã bị T3, T2, T1 thay đổi.
 
-![distributed-transacion-TCC](./images/distributed-transaction-saga.png)
+![distributed-transacion-TCC](../../distributed-system/images/distributed-transaction-saga.png)
 
 #### Tình huống sử dụng
 
@@ -99,7 +99,7 @@ Bảng thông điệp cục bộ là ý tưởng do eBay ở nước ngoài đ�
 
 Thành thật mà nói, vấn đề lớn nhất của phương án này là **phụ thuộc nghiêm trọng vào bảng thông điệp trong cơ sở dữ liệu để quản lý giao dịch**. Sẽ thế nào nếu có mức đồng thời cao? Làm sao mở rộng? Vì vậy, thực tế phương án này ít được dùng.
 
-![distributed-transaction-local-message-table](./images/distributed-transaction-local-message-table.png)
+![distributed-transaction-local-message-table](../../distributed-system/images/distributed-transaction-local-message-table.png)
 
 ### Phương án nhất quán cuối cùng bằng thông điệp tin cậy
 
@@ -114,7 +114,7 @@ Thành thật mà nói, vấn đề lớn nhất của phương án này là **p
 5. Nếu giao dịch của hệ thống B thất bại thì sao? Hãy thử lại, tự động tiếp tục thử cho đến khi thành công. Nếu thực sự không được thì có thể rollback nghiệp vụ quan trọng về dòng tiền; chẳng hạn sau khi hệ thống B rollback cục bộ, tìm cách thông báo hệ thống A cũng rollback. Hoặc gửi cảnh báo để con người rollback và bù trừ thủ công.
 6. Phương án này khá phù hợp và hiện được phần lớn công ty Internet trong nước sử dụng. Bạn có thể dùng tính năng được RocketMQ hỗ trợ hoặc tự xây dựng một bộ logic tương tự dựa trên ActiveMQ hay RabbitMQ; ý tưởng chung là như vậy.
 
-![distributed-transaction-reliable-message](./images/distributed-transaction-reliable-message.png)
+![distributed-transaction-reliable-message](../../distributed-system/images/distributed-transaction-reliable-message.png)
 
 ### Phương án thông báo với nỗ lực tối đa
 

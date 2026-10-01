@@ -4,7 +4,7 @@
 
 Circuit breaker của Hystrix có ba trạng thái: đóng (Closed), mở (Open) và nửa mở (Half-Open). Quan hệ chuyển đổi giữa ba trạng thái như sau:
 
-![image-20191104211642271](./images/hystrix-circuit-breaker-state-machine.png)
+![image-20191104211642271](../../high-availability/images/hystrix-circuit-breaker-state-machine.png)
 
 1. `Closed` — circuit breaker đóng: request gọi xuống dịch vụ phía dưới được đi qua bình thường
 1. `Open` — circuit breaker mở: chặn lời gọi đến dịch vụ phía dưới và chuyển thẳng sang logic Fallback

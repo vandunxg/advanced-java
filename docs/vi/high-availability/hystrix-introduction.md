@@ -36,7 +36,7 @@ Xét một hệ thống phân tán trong đó service A phụ thuộc vào servi
 
 Gọi service C chỉ mất 20ms. Nhưng hiện service C gặp sự cố, chẳng hạn bị trễ hoặc ngừng hoạt động, khiến các thread bị treo khoảng 2 giây. Cả 40 thread đều bị kẹt; do request liên tục đổ vào, các thread khác cũng được dùng để gọi service C và cũng bị kẹt tương tự. Điều này làm cạn tài nguyên thread của service B, khiến service không thể nhận request mới; thậm chí có thể tự sập do quá nhiều thread liên tục hoạt động. Ảnh hưởng này chắc chắn sẽ lan đến service A và khiến service A cũng ngừng hoạt động.
 
-![service-invoke-road](./images/service-invoke-road.png)
+![service-invoke-road](../../high-availability/images/service-invoke-road.png)
 
 Hystrix có thể thực hiện isolation tài nguyên, chẳng hạn giới hạn service B chỉ dùng 40 thread để gọi service C. Khi 40 thread này bị treo, 60 thread còn lại vẫn có thể gọi các dịch vụ khác và hoạt động bình thường. Nhờ đó, toàn bộ hệ thống không bị kéo sập.
 

@@ -59,13 +59,13 @@ Vậy triển khai như thế nào?
 
 Thực ra cách triển khai rất đơn giản, như hình bên dưới mô tả.
 
-![](./images/lru.png)
+![](../../high-concurrency/images/lru.png)
 
 Bạn có thể viết tay thuật toán LRU nguyên thủy ngay tại buổi phỏng vấn, nhưng lượng code khá lớn và có vẻ không thực tế.
 
 Không nhất thiết phải tự tay xây dựng LRU từ đầu, nhưng ít nhất cần biết cách tận dụng cấu trúc dữ liệu có sẵn trong JDK để triển khai LRU bằng Java.
 
-![](./images/lru-cache.png)
+![](../../high-concurrency/images/lru-cache.png)
 
 ```java
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {

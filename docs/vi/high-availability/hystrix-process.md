@@ -12,7 +12,7 @@ Trong khi giải thích quy trình này, tôi cũng sẽ giới thiệu một s�
 
 Đây là sơ đồ quy trình gồm 8 bước; tôi sẽ giải thích chi tiết từng bước. Trong lúc học, hãy đối chiếu với sơ đồ quy trình này để theo dõi sẽ dễ hình dung hơn.
 
-![hystrix-process](./images/new-hystrix-process.jpg)
+![hystrix-process](../../high-availability/images/new-hystrix-process.jpg)
 
 ## Bước 1: Tạo command
 

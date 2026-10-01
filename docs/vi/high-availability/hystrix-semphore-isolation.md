@@ -15,7 +15,7 @@ Phần trước đã nói về kỹ thuật thread pool; mục này sẽ trình 
 
 Isolation tài nguyên bằng semaphore chỉ đóng vai trò như một công tắc. Ví dụ, nếu semaphore của service A có kích thước 10 thì chỉ cho phép tối đa 10 thread Tomcat truy cập service A cùng lúc; các request khác sẽ bị từ chối. Nhờ đó, hệ thống thực hiện isolation tài nguyên và bảo vệ bằng rate limit.
 
-![hystrix-semphore](./images/hystrix-semphore.png)
+![hystrix-semphore](../../high-availability/images/hystrix-semphore.png)
 
 ## Khác biệt giữa thread pool và semaphore
 
@@ -23,7 +23,7 @@ Kỹ thuật isolation bằng thread pool không phải là kiểm soát thread 
 
 Isolation bằng thread pool dùng thread riêng của Hystrix để thực hiện lời gọi; isolation bằng semaphore để thread Tomcat trực tiếp gọi dịch vụ phụ thuộc. Semaphore chỉ là một chốt kiểm soát: có bao nhiêu semaphore thì cho phép bấy nhiêu thread Tomcat đi qua để thực thi.
 
-![hystrix-semphore-thread-pool](./images/hystrix-semphore-thread-pool.png)
+![hystrix-semphore-thread-pool](../../high-availability/images/hystrix-semphore-thread-pool.png)
 
 **Tình huống áp dụng**:
 

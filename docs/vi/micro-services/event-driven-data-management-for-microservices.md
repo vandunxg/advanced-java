@@ -23,7 +23,7 @@ Thách thức thứ nhất là làm thế nào hoàn thành một giao dịch đ
 
 Ngược lại, trong kiến trúc microservice, bảng đơn hàng và bảng khách hàng lần lượt là bảng riêng của dịch vụ tương ứng, như hình dưới đây:
 
-![service table](./images/Private-table-of-the-corresponding-service.png)
+![service table](../../micro-services/images/Private-table-of-the-corresponding-service.png)
 
 Dịch vụ đơn hàng không thể truy cập trực tiếp bảng khách hàng, chỉ có thể truy cập thông qua API do dịch vụ khách hàng cung cấp. Dịch vụ đơn hàng cũng có thể dùng giao dịch phân tán, tức cơ chế commit hai giai đoạn (2PC) quen thuộc. Tuy nhiên, 2PC hiện không phải lựa chọn phù hợp cho ứng dụng. Theo lý thuyết CAP, cần lựa chọn giữa tính sẵn sàng (availability) và tính nhất quán ACID (consistency); thông thường tính sẵn sàng là lựa chọn tốt hơn. Nhưng nhiều công nghệ hiện đại, chẳng hạn nhiều cơ sở dữ liệu NoSQL, không hỗ trợ 2PC. Duy trì tính nhất quán dữ liệu giữa dịch vụ và cơ sở dữ liệu là yêu cầu căn bản nên cần tìm giải pháp khác.
 
@@ -37,15 +37,15 @@ Có thể dùng sự kiện để triển khai giao dịch nghiệp vụ xuyên 
 
 1. Dịch vụ đơn hàng tạo một Order ở trạng thái NEW và phát sự kiện “Order Created Event” (Sự kiện tạo đơn hàng).
 
-![Order-Created-Event](./images/Order-Created-Event.png)
+![Order-Created-Event](../../micro-services/images/Order-Created-Event.png)
 
 2. Dịch vụ khách hàng tiêu thụ sự kiện Order Created Event, giữ chỗ tín dụng cho đơn hàng này rồi phát sự kiện “Credit Reserved Event” (Sự kiện giữ chỗ tín dụng).
 
-![Credit-Reserved-Event](./images/Credit-Reserved-Event.png)
+![Credit-Reserved-Event](../../micro-services/images/Credit-Reserved-Event.png)
 
 3. Dịch vụ đơn hàng tiêu thụ sự kiện Credit Reserved Event và đổi trạng thái đơn hàng thành OPEN.
 
-![Status-is-OPEN](./images/Status-is-OPEN.png)
+![Status-is-OPEN](../../micro-services/images/Status-is-OPEN.png)
 
 Trong tình huống phức tạp hơn có thể có thêm nhiều bước, chẳng hạn giữ chỗ tồn kho đồng thời với kiểm tra tín dụng khách hàng.
 
@@ -53,7 +53,7 @@ Xét đến (a) mỗi dịch vụ cập nhật cơ sở dữ liệu của mình 
 
 Cũng có thể dùng sự kiện để duy trì các khung nhìn hiện thực đã join trước (pre-join) dữ liệu thuộc nhiều microservice. Dịch vụ duy trì khung nhìn này đăng ký các sự kiện liên quan rồi cập nhật khung nhìn. Ví dụ, dịch vụ cập nhật khung nhìn đơn hàng khách hàng (duy trì khung nhìn đơn hàng của khách hàng) sẽ đăng ký sự kiện do dịch vụ khách hàng và dịch vụ đơn hàng phát ra.
 
-![pre-join](./images/pre-join.png)
+![pre-join](../../micro-services/images/pre-join.png)
 
 Khi dịch vụ cập nhật khung nhìn đơn hàng khách hàng nhận được sự kiện khách hàng hoặc đơn hàng, nó sẽ cập nhật tập dữ liệu khung nhìn đó. Có thể dùng cơ sở dữ liệu tài liệu như MongoDB để triển khai khung nhìn đơn hàng khách hàng, lưu một tài liệu cho mỗi người dùng. Dịch vụ truy vấn khung nhìn đơn hàng khách hàng chịu trách nhiệm trả lời truy vấn khách hàng và các đơn hàng gần đây (bằng cách truy vấn tập dữ liệu khung nhìn đơn hàng khách hàng).
 
@@ -67,7 +67,7 @@ Kiến trúc hướng sự kiện còn gặp vấn đề về tính nguyên tử
 
 Một cách đạt tính nguyên tử là dùng quy trình nhiều bước chỉ gồm các giao dịch cục bộ để phát sự kiện. Bí quyết là có một bảng EVENT, đóng vai trò danh sách thông điệp trong cơ sở dữ liệu lưu thực thể nghiệp vụ. Ứng dụng bắt đầu một giao dịch cơ sở dữ liệu (cục bộ), cập nhật trạng thái thực thể nghiệp vụ, chèn một sự kiện vào bảng EVENT rồi commit giao dịch đó. Một tiến trình hoặc luồng ứng dụng riêng sẽ truy vấn bảng EVENT, phát sự kiện đến message broker, sau đó dùng giao dịch cục bộ đánh dấu sự kiện đã được phát, như hình dưới đây:
 
-![multi-step process](./images/multi-step-process.png)
+![multi-step process](../../micro-services/images/multi-step-process.png)
 
 Dịch vụ đơn hàng chèn một hàng vào bảng ORDER rồi chèn sự kiện Order Created vào bảng EVENT. Luồng hoặc tiến trình phát sự kiện truy vấn bảng EVENT để lấy những sự kiện chưa được phát, gửi chúng đi rồi cập nhật bảng EVENT để đánh dấu sự kiện đã được phát.
 
@@ -79,7 +79,7 @@ Phương pháp này dùng giao dịch cục bộ của ứng dụng để cập 
 
 Một cách khác để đạt tính nguyên tử khi luồng hoặc tiến trình phát sự kiện mà không cần 2PC là khai thác nhật ký giao dịch hoặc nhật ký commit của cơ sở dữ liệu. Ứng dụng cập nhật cơ sở dữ liệu và tạo thay đổi trong nhật ký giao dịch; tiến trình hoặc luồng khai thác nhật ký giao dịch đọc các nhật ký này rồi xuất bản chúng lên message broker. Như hình dưới đây:
 
-![No-2PC-required](./images/No-2PC-required.png)
+![No-2PC-required](../../micro-services/images/No-2PC-required.png)
 
 Một ví dụ về phương pháp này là dự án LinkedIn Databus. Databus khai thác nhật ký giao dịch Oracle và phát sự kiện dựa trên những thay đổi; LinkedIn dùng Databus để bảo đảm tính nhất quán giữa các bản ghi trong hệ thống.
 
@@ -95,7 +95,7 @@ Event sourcing (nguồn sự kiện) đạt tính nguyên tử mà không cần 
 
 Để hiểu cách event sourcing hoạt động, hãy lấy thực thể đơn hàng làm ví dụ. Theo cách truyền thống, mỗi đơn hàng tương ứng với một hàng trong bảng ORDER, chẳng hạn các mục đơn hàng nằm trong bảng ORDER_LINE_ITEM. Còn theo event sourcing, dịch vụ đơn hàng lưu trạng thái đơn hàng bằng các sự kiện thay đổi trạng thái: đã tạo, đã duyệt, đã giao hàng, đã hủy. Mỗi sự kiện chứa đủ dữ liệu để xây dựng lại trạng thái đơn hàng.
 
-![Event-sourcing](./images/Event-sourcing.png)
+![Event-sourcing](../../micro-services/images/Event-sourcing.png)
 
 Sự kiện được lưu lâu dài trong kho sự kiện, nơi cung cấp API để thêm và lấy sự kiện của thực thể. Kho sự kiện tương tự message broker đã mô tả trước đó, có API để đăng ký nhận sự kiện. Kho sự kiện gửi sự kiện đến tất cả bên đăng ký quan tâm; đây là nền tảng của kiến trúc microservice hướng sự kiện.
 

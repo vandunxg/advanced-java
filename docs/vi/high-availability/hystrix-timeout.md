@@ -6,7 +6,7 @@ Bạn gọi nhiều loại dịch vụ phụ thuộc khác nhau; đặc biệt �
 
 Peter Steiner từng nói: "[On the Internet, nobody knows you're a dog](https://en.wikipedia.org/wiki/On_the_Internet,_nobody_knows_you%27re_a_dog)", nghĩa là ở đầu bên kia Internet, bạn thậm chí không biết liệu đang có một con chó ngồi đó hay không.
 
-![220px-Internet_dog.jpg](./images/220px-Internet_dog.jpg)
+![220px-Internet_dog.jpg](../../high-availability/images/220px-Internet_dog.jpg)
 
 Trong các hệ thống phân tán đặc biệt phức tạp, nhất là ở công ty lớn có nhiều đội ngũ và sự phối hợp quy mô lớn, có thể bạn không biết service thuộc về ai; thậm chí người phát triển service có thể chỉ là một thực tập sinh. Hiệu năng API của dịch vụ phụ thuộc có thể rất thiếu ổn định: lúc thì 2ms, lúc thì 200ms, thậm chí 2s.
 

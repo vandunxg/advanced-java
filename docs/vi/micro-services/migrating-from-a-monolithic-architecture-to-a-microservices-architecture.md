@@ -16,7 +16,7 @@ Hãy cùng xem các chiến lược khả thi khác.
 
 Định luật Cái hố (Law of Holes) nói rằng khi đã tự đào mình vào hố thì nên dừng đào. Đây là lời khuyên tốt nhất khi ứng dụng đơn khối không còn quản lý được. Nói cách khác, cần ngăn ứng dụng đơn khối tiếp tục phình to; khi phát triển chức năng mới, không nên thêm mã mới vào ứng dụng đơn khối cũ. Cách tốt nhất là xây dựng chức năng mới thành microservice độc lập. Như hình dưới đây:
 
-![1](./images/Law-of-Holes.png)
+![1](../../micro-services/images/Law-of-Holes.png)
 
 Ngoài dịch vụ mới và ứng dụng truyền thống, còn có hai thành phần. Thứ nhất là bộ định tuyến yêu cầu, chịu trách nhiệm xử lý yêu cầu đầu vào (HTTP), hơi giống API Gateway đã nói ở trên. Bộ định tuyến gửi yêu cầu chức năng mới đến dịch vụ mới được phát triển, còn yêu cầu truyền thống vẫn chuyển đến ứng dụng đơn khối.
 
@@ -44,7 +44,7 @@ Một chiến lược để giảm độ phức tạp của ứng dụng đơn k
 
 Giữa tầng trình bày và tầng nghiệp vụ/truy cập dữ liệu có sự tách biệt rõ ràng. Tầng nghiệp vụ cung cấp API hạt lớn (coarse-grained) gồm một số phương diện, chứa các thành phần logic nghiệp vụ. API là ranh giới tự nhiên để tách nghiệp vụ của ứng dụng đơn khối thành hai ứng dụng nhỏ hơn: một ứng dụng tầng trình bày, ứng dụng còn lại chứa logic nghiệp vụ và truy cập dữ liệu. Sau khi tách, ứng dụng logic trình bày gọi từ xa ứng dụng logic nghiệp vụ. Hình dưới đây cho thấy kiến trúc trước và sau khi chuyển đổi:
 
-![2](./images/Before-and-after-migration.png)
+![2](../../micro-services/images/Before-and-after-migration.png)
 
 Tách ứng dụng đơn khối theo cách này có hai lợi ích. Thứ nhất, hai phần ứng dụng có thể được phát triển, triển khai và mở rộng độc lập; đặc biệt, nó cho phép nhà phát triển tầng trình bày nhanh chóng thử nghiệm lựa chọn giao diện người dùng và thực hiện A/B testing. Thứ hai, một số API từ xa có thể được microservice gọi.
 
@@ -70,7 +70,7 @@ Bước đầu tiên để trích xuất mô-đun là định nghĩa giao diện
 
 Khi đã hoàn tất giao diện hạt lớn, có thể chuyển mô-đun thành microservice độc lập. Để thực hiện, cần viết mã giúp ứng dụng đơn khối và microservice trao đổi thông tin qua API sử dụng cơ chế giao tiếp giữa các tiến trình (IPC). Hình dưới đây so sánh kiến trúc trước và sau khi chuyển đổi:
 
-![3](./images/30103116_ZCcM.png)
+![3](../../micro-services/images/30103116_ZCcM.png)
 
 Trong ví dụ này, mô-đun Z đang dùng mô-đun Y là ứng viên để trích xuất; các thành phần của nó cũng đang được mô-đun X sử dụng. Bước đầu tiên trong quá trình chuyển đổi là định nghĩa một bộ API hạt lớn. Giao diện thứ nhất là giao diện nội bộ mà mô-đun X sử dụng để kích hoạt mô-đun Z; giao diện thứ hai là giao diện bên ngoài mà mô-đun Z sử dụng để kích hoạt mô-đun Y.
 

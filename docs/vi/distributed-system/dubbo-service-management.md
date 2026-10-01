@@ -24,7 +24,7 @@ Trong một hệ thống phân tán lớn, hay nói theo kiến trúc microservi
 
 Vì vậy, trong hệ thống phân tán dựa trên Dubbo cần tự động ghi lại các lời gọi giữa những dịch vụ, rồi tự động tạo ra **mối quan hệ phụ thuộc và chuỗi gọi giữa các dịch vụ**, thể hiện chúng thành sơ đồ để mọi người có thể theo dõi.
 
-![dubbo-service-invoke-road](./images/dubbo-service-invoke-road.png)
+![dubbo-service-invoke-road](../../distributed-system/images/dubbo-service-invoke-road.png)
 
 #### 2. Thống kê áp lực truy cập và thời gian xử lý dịch vụ
 
