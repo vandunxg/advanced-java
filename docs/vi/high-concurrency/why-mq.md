@@ -16,7 +16,7 @@ Thực ra người phỏng vấn chủ yếu muốn xem:
 
     Người chưa từng tự hỏi tại sao kiến trúc của mình lại như vậy thì chắc hẳn bình thường ít suy nghĩ; người phỏng vấn thường có ấn tượng không tốt với những ứng viên này. Người phỏng vấn lo rằng sau khi vào team, bạn chỉ biết cắm đầu làm việc máy móc mà không tự suy nghĩ.
 
--   **Thứ hai**, nếu đã dùng message queue thì bạn có biết ưu điểm và **nhược điểm** của nó không?
+-   **Thứ hai**, nếu đã dùng message queue thì bạn có biết ưu điểm và nhược điểm của nó không?
 
     Nếu chưa từng cân nhắc điều này mà bạn cứ mù quáng đưa MQ vào hệ thống, sau này có vấn đề thì bạn sẽ bỏ đi và để lại rắc rối cho công ty sao? Nếu chưa từng cân nhắc nhược điểm và rủi ro có thể phát sinh khi đưa một công nghệ vào, ứng viên kiểu này khi được tuyển vào team có thể là người chuyên tạo ra vấn đề. Chỉ sợ bạn làm một năm, để lại cả đống vấn đề rồi chuyển việc, gây hậu quả không dứt cho công ty.
 
