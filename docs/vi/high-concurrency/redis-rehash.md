@@ -31,7 +31,7 @@ Khi mở rộng hoặc thu nhỏ hash table, chương trình cần rehash toàn 
 
 ### 1. Cấp phát bộ nhớ cho hash table dự phòng của dictionary.
 
-Nếu thực hiện thao tác mở rộng thì kích thước hash table dự phòng là lũy thừa 2 nhỏ nhất lớn hơn hoặc bằng số cặp key-value trong hash table cần mở rộng nhân 2: 2^(số mũ n);【`5*2=10,` nên dung lượng hash table dự phòng là lũy thừa 2 nhỏ nhất lớn hơn 10, tức 16】
+Nếu thực hiện thao tác mở rộng thì kích thước hash table dự phòng là lũy thừa 2 nhỏ nhất lớn hơn hoặc bằng số cặp key-value trong hash table cần mở rộng*2 的 2"(2 的 n 次方幂);【`5*2=10,` nên dung lượng hash table dự phòng là số 2" nhỏ nhất lớn hơn 10, tức 16】
 
 Nếu thực hiện thao tác thu nhỏ thì kích thước hash table dự phòng là lũy thừa 2 nhỏ nhất lớn hơn hoặc bằng số cặp key-value trong hash table cần mở rộng (`ht[0] .used`).
 
