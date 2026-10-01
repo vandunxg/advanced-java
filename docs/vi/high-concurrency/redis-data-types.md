@@ -63,7 +63,7 @@ Ví dụ, có thể dùng list để lưu các cấu trúc dữ liệu dạng da
 Chẳng hạn, có thể dùng lệnh lrange để đọc các phần tử trong một khoảng đóng, rồi dựa vào list để thực hiện truy vấn phân trang. Đây là một chức năng rất hữu ích: dùng Redis tạo phân trang đơn giản, hiệu năng cao, chẳng hạn kiểu tải thêm từng trang như trên Weibo; hiệu năng tốt vì chỉ lấy từng trang một.
 
 ```bash
-# Vị trí bắt đầu là 0, vị trí kết thúc là -1. Khi vị trí kết thúc là -1, nghĩa là phần tử cuối cùng của danh sách, tức xem toàn bộ danh sách.
+# 0开始位置，-1结束位置，结束位置为-1时，表示列表的最后一个位置，即查看所有。
 lrange mylist 0 -1
 ```
 
@@ -89,37 +89,37 @@ Có thể dùng set để thực hiện phép giao, hợp và hiệu. Chẳng h�
 Đưa follower của hai người nổi tiếng vào hai set riêng rồi lấy giao của hai set.
 
 ```bash
-#-------Thao tác trên một set-------
-# Thêm phần tử
+#-------操作一个set-------
+# 添加元素
 sadd mySet 1
 
-# Xem toàn bộ phần tử
+# 查看全部元素
 smembers mySet
 
-# Kiểm tra có chứa một giá trị không
+# 判断是否包含某个值
 sismember mySet 3
 
-# Xóa một hoặc nhiều phần tử
+# 删除某个/些元素
 srem mySet 1
 srem mySet 2 4
 
-# Xem số lượng phần tử
+# 查看元素个数
 scard mySet
 
-# Xóa ngẫu nhiên một phần tử
+# 随机删除一个元素
 spop mySet
 
-#-------Thao tác trên nhiều set-------
-# Chuyển một phần tử từ set này sang set khác
+#-------操作多个set-------
+# 将一个set的元素移动到另外一个set
 smove yourSet mySet 2
 
-# Lấy giao của hai set
+# 求两set的交集
 sinter yourSet mySet
 
-# Lấy hợp của hai set
+# 求两set的并集
 sunion yourSet mySet
 
-# Lấy các phần tử có trong yourSet nhưng không có trong mySet
+# 求在yourSet中而不在mySet中的元素
 sdiff yourSet mySet
 ```
 
@@ -133,9 +133,9 @@ zadd board 72 lisi
 zadd board 96 wangwu
 zadd board 63 zhaoliu
 
-# Lấy ba người dùng đứng đầu (mặc định sắp xếp tăng dần nên cần dùng rev để đổi sang giảm dần)
+# 获取排名前三的用户（默认是升序，所以需要 rev 改为降序）
 zrevrange board 0 3
 
-# Lấy thứ hạng của người dùng
+# 获取某用户的排名
 zrank board zhaoliu
 ```
